@@ -1,0 +1,21 @@
+.previewerDemo {
+  position: relative;
+  padding: 0;
+  border-top: 24px solid #e4e9ec;
+  box-sizing: border-box;
+  border-radius: 4px;
+  &::after {
+    content: "";
+    position: absolute;
+    top: -19px;
+    left: 8px;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #fd6458;
+    box-shadow:
+      20px 0 #ffbf2b,
+      40px 0 #24cc3d;
+  }
+}

@@ -1,0 +1,45 @@
+.indexPage {
+  max-width: 100vw;
+  background: #f6f9fc;
+  min-height: 100vh;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 20px;
+  .bgImg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 40vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+  }
+  .indexContent {
+    position: relative;
+    z-index: 1;
+    margin: 0 auto;
+    width: 1200px;
+    max-width: calc(100vw - 40px);
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 50px;
+      padding: 24px;
+      .logo {
+        height: 24px;
+        object-fit: cover;
+      }
+    }
+    .info {
+      margin-top: 176px;
+      width: 476px;
+      max-width: calc(100vw - 40px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      
+    }
+  }
+}
