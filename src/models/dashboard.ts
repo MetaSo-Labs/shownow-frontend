@@ -1,5 +1,6 @@
+import useIntervalAsync from "@/hooks/useIntervalAsync";
 import { getMetaidByAddress, getPubKey } from "@/request/api";
-import { fetchShowConf } from "@/request/dashboard";
+import { fetchFees, fetchShowConf } from "@/request/dashboard";
 import { useCallback, useEffect, useState } from "react";
 export const showNowConf = {
   alias: "default",
@@ -36,6 +37,7 @@ export default () => {
   const [loading, setLoading] = useState(true);
   const [showConf, setShowConf] = useState<DB.ShowConfDto>();
   const [manPubKey, setManPubKey] = useState<string>();
+  const [fees, setFees] = useState<DB.FeeDto[]>([]);
   const fetchConfig = useCallback(async () => {
     const ret = await fetchShowConf();
     // if (true) {
@@ -54,6 +56,12 @@ export default () => {
     });
     setLoading(false);
   }, []);
+
+  const _fetchFees = useCallback(async () => {
+    const ret = await fetchFees();
+    setFees(ret);
+  }, []);
+
   useEffect(() => {
     fetchConfig();
   }, [fetchConfig]);
@@ -65,16 +73,21 @@ export default () => {
     fetchManPubKey();
   }, [fetchManPubKey]);
 
-  const fetchServiceFee = (feeType: keyof DB.ShowConfDto) => {
-    if (showConf && showConf["service_fee_address"] && showConf[feeType]) {
+  const fetchServiceFee = (
+    feeType: keyof DB.FeeDto,
+    chain: "BTC" | "MVC" = "BTC"
+  ) => {
+    const _fee = fees.find((item) => item.chain === chain);
+    if (_fee) {
       return {
-        address: showConf["service_fee_address"] as string,
-        satoshis: String(showConf[feeType]) as string,
+        address: _fee["service_fee_address"] as string,
+        satoshis: String(_fee[feeType]) as string,
       };
     } else {
       return undefined;
     }
   };
+  const updateFees = useIntervalAsync(_fetchFees, 600000);
   return {
     loading,
     fetchConfig,
@@ -83,5 +96,7 @@ export default () => {
     fetchServiceFee,
     manPubKey,
     setShowConf,
+    updateFees,
+    fees,
   };
 };

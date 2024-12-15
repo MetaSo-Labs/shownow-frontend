@@ -23,4 +23,20 @@ declare namespace DB {
     comment_service_fee_amount: number;
     like_service_fee_amount: number;
   };
+
+  type LoginWithWallerDto = {
+    btcAddress: string;
+    signature: string;
+    mvcAddress: string;
+    publicKey: string;
+  };
+  type FeeDto = {
+    id: number;
+    chain: string;
+    service_fee_address: string;
+    follow_service_fee_amount: number;
+    post_service_fee_amount: number;
+    comment_service_fee_amount: number;
+    like_service_fee_amount: number;
+  };
 }

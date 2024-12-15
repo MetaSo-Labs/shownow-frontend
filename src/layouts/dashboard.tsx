@@ -1,9 +1,11 @@
 import { ChromeOutlined, DollarOutlined, SettingOutlined } from '@ant-design/icons';
 import { PageContainer, ProLayout } from '@ant-design/pro-components';
 import { useState } from 'react';
-import { Link, Outlet, useModel, history } from 'umi';
+import { Link, Outlet, useModel, history, useLocation } from 'umi';
 export default () => {
-    const [pathname, setPathname] = useState('/dashboard/styles');
+    const location = useLocation();
+    const path = location.pathname;
+    const [pathname, setPathname] = useState(path);
     return <div
         style={{
             height: '100vh',

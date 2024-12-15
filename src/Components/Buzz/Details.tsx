@@ -291,7 +291,6 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         }
 
     }, [showTrans, transResult, decryptContent, isTranslating])
-    console.log('textContent', textContent)
 
 
     return <Card className="tweet"
