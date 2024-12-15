@@ -1,11 +1,9 @@
 import { BASE_MAN_URL, curNetwork } from "@/config";
-import { fetchFollowDetailPin, fetchFollowingList, getUserInfo } from "@/request/api";
+import { fetchFollowDetailPin, fetchFollowerList, fetchFollowingList, getUserInfo } from "@/request/api";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, Button, Card, Divider, Space } from "antd"
 import { F, isEmpty } from "ramda";
 import { useModel, history } from "umi";
-import defaultImg from '@/assets/img 2@1x.png'
-import { Divide } from "lucide-react";
 import { FollowButtonComponent } from "../Follow";
 import UserAvatar from "../UserAvatar";
 import { EditOutlined } from "@ant-design/icons";
@@ -22,27 +20,23 @@ export default ({ address }: Props) => {
         queryKey: ['userInfo', address],
         queryFn: () => getUserInfo({ address }),
     });
-    const { data: followDetailData } = useQuery({
-        queryKey: [
-            'followDetail',
-            btcConnector?.metaid,
-            profileUserData?.data?.metaid,
-        ],
-        enabled:
-            !isEmpty(btcConnector?.metaid ?? '') &&
-            !isEmpty(profileUserData?.data?.metaid),
-        queryFn: () =>
-            fetchFollowDetailPin({
-                metaId: profileUserData?.data?.metaid ?? '',
-                followerMetaId: btcConnector?.metaid ?? '',
-            }),
-    });
+
 
     const { data: followingListData } = useQuery({
         queryKey: ['following', profileUserData?.data?.metaid],
         enabled: !isEmpty(profileUserData?.data?.metaid ?? ''),
         queryFn: () =>
             fetchFollowingList({
+                metaid: profileUserData?.data?.metaid ?? '',
+                params: { cursor: '0', size: '100', followDetail: false },
+            }),
+    });
+
+    const { data: followerListData } = useQuery({
+        queryKey: ['follower', profileUserData?.data?.metaid],
+        enabled: !isEmpty(profileUserData?.data?.metaid ?? ''),
+        queryFn: () =>
+            fetchFollowerList({
                 metaid: profileUserData?.data?.metaid ?? '',
                 params: { cursor: '0', size: '100', followDetail: false },
             }),
@@ -88,7 +82,7 @@ export default ({ address }: Props) => {
 
                 <Space >
                     <Space>
-                        <span>{followDetailData?.total || 0}</span>
+                        <span>{followerListData?.total || 0}</span>
                         <span><Trans>Followers</Trans> </span>
                     </Space>
                     <Divider type='vertical' />

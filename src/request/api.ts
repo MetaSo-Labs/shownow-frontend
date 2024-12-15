@@ -189,6 +189,31 @@ export async function fetchFollowingList({
   }
 }
 
+export async function fetchFollowerList({
+  metaid,
+  params,
+}: {
+  metaid: string;
+  params: {
+    cursor: string;
+    size: string;
+    followDetail: boolean;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): Promise<{ list: any; total: number }> {
+  try {
+    const data = await axios
+      .get(`${BASE_MAN_URL}/api/metaid/followerList/${metaid}`, {
+        params,
+      })
+      .then((res) => res.data);
+    return data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function getPinDetailByPid({
   pid,
 }: {
@@ -447,9 +472,7 @@ export const getUserNFTCollectionItems = async (params: {
   });
 };
 
-export const getNFTItem = async (params: {
-  pinId: string;
-}) => {
+export const getNFTItem = async (params: { pinId: string }) => {
   return request<{
     code: number;
     data: API.NFT;

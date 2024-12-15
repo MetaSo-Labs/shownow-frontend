@@ -5,6 +5,7 @@ import { Form, Input, Upload, Button, message, Avatar, UploadProps, theme } from
 import { FileImageFilled, LoadingOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { useModel } from "umi";
 import Trans from "../Trans";
+import './index.less'
 
 const getBase64 = (img: FileType, callback: (url: string) => void) => {
     const reader = new FileReader();
@@ -25,7 +26,7 @@ const beforeUpload = (file: FileType) => {
     return isJpgOrPng && isLt300k;
 };
 
-const UploadAvatar = (props: any) => {
+const UploadBackground = (props: any) => {
     const { token: { colorText } } = theme.useToken()
     const { user } = useModel('user');
     const [imageUrl, setImageUrl] = useState<string>(props.value);
@@ -55,32 +56,31 @@ const UploadAvatar = (props: any) => {
     };
 
     const uploadButton = (
-        <button style={{ border: 0, background: 'none', color: colorText }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}><Trans>Upload</Trans></div>
-        </button>
+        <Button block icon={<PlusOutlined />} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '240px', border: 'none' }} type='text'>
+            <Trans>Upload</Trans>
+        </Button>
     );
     const handleUpload = async ({ file, onSuccess, onError }) => {
         onSuccess()
     }
 
     return (
-        <Upload
+        <Upload.Dragger
             beforeUpload={beforeUpload}
             onChange={handleChange}
-            name="avatar"
-            listType={props.listType || "picture-circle"}
-            className="avatar-uploader"
+
             showUploadList={false}
-            style={{ overflow: 'hidden' }}
             customRequest={handleUpload}
+            style={{ width: '100%', height: 240, padding: 0, boxSizing: 'border-box', overflow: 'hidden' }}
+            className="setting-background-uploader"
+
         >
-            {imageUrl ? <div style={{ position: 'relative', width: 100, height: 100 }}>
-                <img src={imageUrl} alt="avatar" style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%', overflow: 'hidden' }} />
-                <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} shape='circle' type='link'  icon={<FileImageFilled />}></Button>
+            {imageUrl ? <div style={{ position: 'relative', width: '100%', height: 240, overflow: 'hidden',borderRadius: 8 }}>
+                <img src={imageUrl} alt="avatar" style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 8, overflow: 'hidden' }} />
+                <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} shape='circle' type='text' icon={<FileImageFilled />}></Button>
             </div> : uploadButton}
-        </Upload>
+        </Upload.Dragger>
     );
 };
 
-export default UploadAvatar;
+export default UploadBackground;

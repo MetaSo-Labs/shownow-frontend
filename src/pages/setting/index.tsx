@@ -1,4 +1,5 @@
 import UploadAvatar from "@/Components/ProfileCard/UploadAvatar";
+import UploadBackground from "@/Components/ProfileCard/UploadBackground";
 import Trans from "@/Components/Trans";
 import { BASE_MAN_URL, curNetwork } from "@/config";
 import { getUserInfo } from "@/request/api";
@@ -24,7 +25,7 @@ export default () => {
     const profileUserData = useQuery({
         queryKey: ['userInfo', user.address],
         enabled: Boolean(user.address && connector),
-        queryFn: () =>getUserInfo({ address: user.address }),
+        queryFn: () => getUserInfo({ address: user.address }),
     });
 
     useEffect(() => {
@@ -129,19 +130,38 @@ export default () => {
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 14 }}
                 layout="horizontal"
-                style={{ maxWidth: 600 }}
+              
                 form={form}
             >
+                <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} bordered={false} cover={
+                    <div
+                        style={{ height: 240, objectFit: 'cover', borderRadius: 10 }}
+                    >
+                        <Form.Item name='background' wrapperCol={{ span: 24 }} style={{ width: '100%' }}>
+                            <UploadBackground />
+                        </Form.Item>
+
+                    </div>
+                }>
+                    <div style={{ padding: 20 }}>
+
+                        <div className="avatar" style={{ marginTop: -60 }}>
+                            <Form.Item name='avatar'>
+                                <UploadAvatar />
+                            </Form.Item>
+                        </div>
+                    </div>
+
+                </Card>
+
+
+
                 <Form.Item label={<Trans>Name</Trans>} name='name'>
                     <Input />
                 </Form.Item>
-                <Form.Item label={<Trans>Avatar</Trans>}  name='avatar'>
-                    <UploadAvatar />
-                </Form.Item>
 
-                <Form.Item label={<Trans>Background</Trans>}  name='background'>
-                    <UploadAvatar listType='picture-card' />
-                </Form.Item>
+
+
 
             </Form>
 

@@ -19,6 +19,7 @@ import TopTool from './TopTool';
 import SelectLang from './SelectLang';
 import Trans from '@/Components/Trans';
 import { useKeepOutlets } from '@/hooks/useKeepAlive';
+import HeaderMenus from './HeaderMenus';
 
 
 const { useBreakpoint } = Grid
@@ -75,14 +76,18 @@ export default function ShowLayout({ children }: { children?: React.ReactNode })
                     }} className='header'>
                         <Row style={{ width: !showConf.showSliderMenu ? showConf.contentSize : '100%', maxWidth: "100%", }} gutter={[12, 12]}>
                             {
-                                !showConf?.showSliderMenu && <Col span={6} md={showConf?.showSliderMenu ? 0 : 4} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} >
-                                    <div className="logoWrap" onClick={() => history.push('/')}>
-                                        <img src={showConf?.logo} alt="" className="logo" />
-                                    </div>
+                                !showConf?.showSliderMenu && <Col span={6} md={showConf?.showSliderMenu ? 0 : 5} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: 8 }} >
+                                    {
+                                        md && <div className="logoWrap" onClick={() => history.push('/')}>
+                                            <img src={showConf?.logo} alt="" className="logo" />
+                                        </div>
+                                    }
+
+                                    <HeaderMenus />
                                 </Col>
                             }
 
-                            {md ? <Col span={24} md={showConf?.showSliderMenu ? 14 : 10}>
+                            {md ? <Col span={24} md={showConf?.showSliderMenu ? 14 : 9}>
 
                                 <div className="searchWrap" style={{ background: colorBgContainer }} onClick={() => { setShowPost(true) }}>
                                     <Input size="large" prefix={
@@ -100,16 +105,15 @@ export default function ShowLayout({ children }: { children?: React.ReactNode })
                                 <div className="userPanel" style={{ background: colorBgContainer }}>
                                     <div className="user" onClick={() => { history.push('/profile') }}>
                                         <UserAvatar src={user.avater} />
-                                        {
-                                            !md && !showConf?.showSliderMenu ? '' : <div className='desc'>
-                                                <Typography.Text className="name">
-                                                    {user.name || 'Unnamed'}
-                                                </Typography.Text>
-                                                <Typography.Text className="metaid" style={{ whiteSpace: 'nowrap' }}>
-                                                    MetaID:{user.metaid.slice(0, 8)}
-                                                </Typography.Text>
-                                            </div>
-                                        }
+                                        <div className='desc'>
+                                            <Typography.Text className="name">
+                                                {user.name || 'Unnamed'}
+                                            </Typography.Text>
+                                            <Typography.Text className="metaid" style={{ whiteSpace: 'nowrap' }}>
+                                                MetaID:{user.metaid.slice(0, 8)}
+                                            </Typography.Text>
+                                        </div>
+
                                     </div>
                                     <div className="actions">
 

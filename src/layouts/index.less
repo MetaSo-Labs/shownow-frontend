@@ -77,16 +77,21 @@
         width: 100%;
         height: 52px;
         border-radius: 40px;
-        padding: 6px 24px 6px 12px;
+        padding: 6px 12px 6px 12px;
         opacity: 1;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        overflow: hidden;
         .user {
+          flex-shrink: 1;
+          flex-grow: 0;
           display: flex;
           align-items: center;
           cursor: pointer;
           gap: 4px;
+          max-width: calc(100% - 220px);
+          overflow: hidden;
           .desc {
             display: flex;
             flex-direction: column;
@@ -95,11 +100,11 @@
               font-weight: bold;
               line-height: 22px;
               letter-spacing: 0px;
-              max-width: 100px;
+              max-width: 80px;
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
-              display: none;
+              // display: none;
             }
             .metaid {
               font-size: 12px;
@@ -107,7 +112,11 @@
               line-height: 130%;
               letter-spacing: 0px;
               font-variation-settings: "opsz" auto;
-              display: none;
+              max-width: 80px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              // display: none;
             }
           }
         }
@@ -117,6 +126,7 @@
           justify-content: flex-end;
           gap: 6px;
           flex-grow: 1;
+          min-width: 220px;
           .action {
             cursor: pointer;
           }
@@ -176,17 +186,19 @@
   padding: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  .langItem{
-      line-height: 36px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      &.left{
-          text-align: left;
-      }
-      &.right{
-          text-align: right;
-      }
-
+  .langItem {
+    line-height: 36px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    &.left {
+      text-align: left;
+    }
+    &.right {
+      text-align: right;
+    }
   }
+}
+.ant-menu-light {
+  // background: transparent;
 }
