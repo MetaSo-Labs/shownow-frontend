@@ -179,7 +179,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 finalBody.quotePin = quotePin.id;
             }
             if (nfts.length > 0) {
-                finalBody.attachments = [ ...nfts.map(nft => `metafile://nft/mrc721/${nft.itemPinId}`), ...finalBody.attachments || []]
+                finalBody.attachments = [...nfts.map(nft => `metafile://nft/mrc721/${nft.itemPinId}`), ...finalBody.attachments || []]
             }
             if (chainNet === 'btc') {
                 console.log('finalBody', {
@@ -226,6 +226,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                         signMessage: 'create buzz',
                         serialAction: 'finish',
                         transactions: fileTransactions,
+                        service: fetchServiceFee('post_service_fee_amount', 'MVC'),
                     },
                 })
                 console.log('create res for inscribe', createRes)
@@ -286,7 +287,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 btcConnector,
                 mvcConnector!,
                 manPubKey || '',
-                fetchServiceFee('post_service_fee_amount'),
+                fetchServiceFee('post_service_fee_amount', chainNet === 'btc' ? 'BTC' : "MVC"),
                 String(payType),
                 IdCoin
             )

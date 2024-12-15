@@ -124,6 +124,7 @@ export const postPayBuzz = async (
         signMessage: "create paybuzz",
         serialAction: "combo",
         transactions: [...transactions],
+        service: serviceFee,
       }
     );
     transactions = pinTransations as MvcTransaction[];

@@ -51,7 +51,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                         options: {
                             noBroadcast: 'no',
                             feeRate: Number(feeRate),
-                            service: fetchServiceFee('follow_service_fee_amount'),
+                            service: fetchServiceFee('follow_service_fee_amount', 'BTC'),
 
                         },
                     })
@@ -74,6 +74,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                         options: {
                             network: curNetwork,
                             signMessage: 'Follow user',
+                            service: fetchServiceFee('follow_service_fee_amount', 'MVC'),
                         },
                     })
                     console.log('create res for inscribe', res)
@@ -158,6 +159,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                         options: {
                             network: curNetwork,
                             signMessage: 'Unfollow user',
+                            service: fetchServiceFee('follow_service_fee_amount', 'MVC'),
                         },
                     })
 

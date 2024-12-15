@@ -108,7 +108,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                     options: {
                         noBroadcast: 'no',
                         feeRate: Number(feeRate),
-                        service: fetchServiceFee('like_service_fee_amount')
+                        service: fetchServiceFee('like_service_fee_amount', 'BTC')
                     },
                 });
                 if (!isNil(likeRes?.revealTxIds[0])) {
@@ -141,6 +141,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                     options: {
                         network: curNetwork,
                         signMessage: 'like buzz',
+                        service: fetchServiceFee('like_service_fee_amount', 'MVC')
                     },
                 })
                 console.log('likeRes', likeRes)

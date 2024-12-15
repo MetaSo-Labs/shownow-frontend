@@ -17,6 +17,9 @@ importers:
       '@bitcoin-js/tiny-secp256k1-asmjs':
         specifier: ^2.2.3
         version: 2.2.3
+      '@feiyangl1020/metaid':
+        specifier: ^0.0.1
+        version: 0.0.1(encoding@0.1.13)
       '@metaid/metaid':
         specifier: 1.5.9
         version: 1.5.9(encoding@0.1.13)
@@ -885,6 +888,9 @@ packages:
   '@eslint/js@8.57.1':
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@feiyangl1020/metaid@0.0.1':
+    resolution: {integrity: sha512-QZ8dxAbxrkoCg4p58ggK/VItMBBTHVWmbLuuZbxstmasaADJILmvaM0hLsP0JaI++nuXb76iv9xfmlOeZEW1Lw==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.1.tgz}
 
   '@floating-ui/core@0.6.2':
     resolution: {integrity: sha512-jktYRmZwmau63adUG3GKOAVCofBXkk55S/zQ94XOorAHhwqFIOFAy1rSp2N0Wp6/tGbe9V3u/ExlGZypyY17rg==, tarball: https://registry.npmjs.org/@floating-ui/core/-/core-0.6.2.tgz}
@@ -7128,6 +7134,27 @@ snapshots:
       - supports-color
 
   '@eslint/js@8.57.1': {}
+
+  '@feiyangl1020/metaid@0.0.1(encoding@0.1.13)':
+    dependencies:
+      '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
+      '@metaid/metaid': 1.5.9(encoding@0.1.13)
+      '@metaid/metaid-cli': 0.0.2
+      '@okxweb3/crypto-lib': 1.0.6
+      '@scure/bip39': 1.4.0
+      '@types/ramda': 0.29.12
+      axios: 1.7.7
+      bip32: 4.0.0
+      bip39: 3.1.0
+      bitcoinjs-lib: 6.1.6
+      chalk: 3.0.0
+      dayjs: 1.11.13
+      meta-contract: 0.3.42(encoding@0.1.13)
+      ramda: 0.29.1
+      uuid: 9.0.1
+    transitivePeerDependencies:
+      - debug
+      - encoding
 
   '@floating-ui/core@0.6.2': {}
 

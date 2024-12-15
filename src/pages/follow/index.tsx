@@ -2,16 +2,10 @@ import { fetchAllBuzzs, fetchBuzzs, fetchFollowingList, fetchMyFollowingBuzzs, f
 import { useCallback, useEffect, useMemo, useState } from "react"
 import './index.less'
 import { Grid, Col, Divider, List, Row, Skeleton } from "antd";
-import defaultImg from '@/assets/img 2@1x.png'
-import { GiftOutlined, HeartOutlined, MessageOutlined, UploadOutlined } from "@ant-design/icons";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useModel } from "umi";
-import { curNetwork } from "@/config";
 import Buzz from "@/Components/Buzz";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { IBtcConnector } from "@metaid/metaid";
-import { isEmpty, isNil } from "ramda";
-import Recommend from "@/Components/Recommend";
 import Trans from "@/Components/Trans";
 const { useBreakpoint } = Grid
 

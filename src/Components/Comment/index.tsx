@@ -19,7 +19,7 @@ type Props = {
     refetch?: () => Promise<any>
 }
 export default ({ show, onClose, tweetId, refetch }: Props) => {
-    const {formatMessage}=useIntl()
+    const { formatMessage } = useIntl()
     const { user, btcConnector, feeRate, chain, mvcConnector } = useModel('user')
     const { showConf, fetchServiceFee } = useModel('dashboard');
     const [content, setContent] = useState('');
@@ -50,7 +50,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
                     options: {
                         noBroadcast: 'no',
                         feeRate: Number(feeRate),
-                        service: fetchServiceFee('comment_service_fee_amount'),
+                        service: fetchServiceFee('comment_service_fee_amount', 'BTC'),
                         network: curNetwork,
                     },
                 });
@@ -71,6 +71,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
                     options: {
                         network: curNetwork,
                         signMessage: 'create comment',
+                        service: fetchServiceFee('comment_service_fee_amount', 'MVC'),
                     },
                 })
                 console.log('create res for inscribe', createRes)
@@ -101,14 +102,14 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
     return <Popup onClose={onClose} show={show} modalWidth={800} closable >
         <div>
             <UserInfo user={user} />
-            <TextArea rows={6} placeholder={formatMessage({id:'Post your reply'})} style={{ marginTop: 24 }} value={content} onChange={(e) => {
+            <TextArea rows={6} placeholder={formatMessage({ id: 'Post your reply' })} style={{ marginTop: 24 }} value={content} onChange={(e) => {
                 setContent(e.target.value)
             }} />
             <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Space>
                     <Button disabled icon={<FileImageOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
                 </Space>
-                <Button type='primary' shape='round' loading={isAdding}  onClick={handleAddComment}>
+                <Button type='primary' shape='round' loading={isAdding} onClick={handleAddComment}>
                     <Trans>Comment</Trans>
                 </Button>
             </div>

@@ -4,14 +4,11 @@ import {
   MetaletWalletForBtc,
   MetaletWalletForMvc,
   mvcConnect,
-} from "@metaid/metaid";
-import {
-  IMetaletWalletForBtc,
   IBtcConnector,
   btcConnect,
-} from "@metaid/metaid";
+} from "@feiyangl1020/metaid";
+
 import { curNetwork, getHostByNet } from "@/config";
-import { useQuery } from "@tanstack/react-query";
 import {
   fetchFeeRate,
   fetchFollowingList,

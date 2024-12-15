@@ -9,9 +9,6 @@ import { useModel } from "umi";
 import { curNetwork } from "@/config";
 import Buzz from "@/Components/Buzz";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { IBtcConnector } from "@metaid/metaid";
-import { isNil } from "ramda";
-import Recommend from "@/Components/Recommend";
 import Trans from "@/Components/Trans";
 const { useBreakpoint } = Grid
 
