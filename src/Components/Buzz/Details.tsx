@@ -59,6 +59,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
     const { btcConnector, user, isLogin, connect, feeRate, chain, mvcConnector } = useModel('user');
     const { showConf, fetchServiceFee, manPubKey } = useModel('dashboard');
     const [handleLikeLoading, setHandleLikeLoading] = useState(false);
+    const [likes, setLikes] = useState<string[]>([]);
     const currentUserInfoData = useQuery({
         queryKey: ['userInfo', buzzItem!.address],
         enabled: !isNil(buzzItem?.address),
@@ -66,6 +67,16 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
             return getUserInfo({ address: buzzItem!.address })
         },
     });
+
+    useEffect(() => {
+        if (!buzzItem) {
+            return
+        }
+        const _likes = buzzItem.like ?? [];
+        const _like = like ?? [];
+        setLikes([..._likes, ..._like.map(item => item.CreateMetaid)])
+
+    }, [buzzItem, like])
 
     const payBuzz = useMemo(() => {
         let _summary = buzzItem!.content;
@@ -78,10 +89,9 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
 
     const isLiked = useMemo(() => {
         if (!buzzItem || !user) return false
-        const likes = buzzItem.like ?? [];
-        const _like = like ?? [];
-        return likes.includes(user.metaid) || _like.some((item) => item.CreateMetaid === user.metaid)
-    }, [buzzItem, user, like])
+
+        return likes.includes(user.metaid)
+    }, [likes])
     const handleLike = async () => {
         const pinId = buzzItem!.id;
         if (!isLogin) {
@@ -112,9 +122,10 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                     },
                 });
                 if (!isNil(likeRes?.revealTxIds[0])) {
-                    await sleep(5000);
-                    queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
-                    queryClient.invalidateQueries({ queryKey: ['payLike', buzzItem!.id] });
+                    setLikes([...likes, user.metaid])
+                    // await sleep(5000);
+                    // queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
+                    // queryClient.invalidateQueries({ queryKey: ['payLike', buzzItem!.id] });
 
 
 
@@ -146,13 +157,14 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                 })
                 console.log('likeRes', likeRes)
                 if (!isNil(likeRes?.txid)) {
-                    await sleep(8000);
-                    refetch && refetch()
-                    queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] })
-                    queryClient.invalidateQueries({
-                        queryKey: ['payLike', buzzItem!.id],
-                    })
+                    // await sleep(8000);
+                    // refetch && refetch()
+                    // queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] })
+                    // queryClient.invalidateQueries({
+                    //     queryKey: ['payLike', buzzItem!.id],
+                    // })
                     // await sleep(5000);
+                    setLikes([...likes, user.metaid])
                     message.success('like buzz successfully')
                 }
             }
@@ -481,7 +493,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
 
 
                 <Button type='text' loading={handleLikeLoading} onClick={handleLike} icon={isLiked ? <HeartFilled style={{ color: 'red' }} /> : <HeartOutlined />}>
-                    {buzzItem?.likeCount}
+                    {likes.length}
                 </Button>
                 <div className="item">
                     <GiftOutlined />
