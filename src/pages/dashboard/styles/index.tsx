@@ -1,15 +1,15 @@
 import { ProCard, ProFormColorPicker } from '@ant-design/pro-components';
-import { Avatar, Button, ColorPicker, ConfigProvider, Divider, Input, message, notification, Segmented, Space, Switch, Tabs, theme, Upload } from 'antd';
+import { Avatar, Button, Card, Col, ColorPicker, ConfigProvider, Divider, Form, Input, message, Modal, notification, Row, Segmented, Space, Switch, Tabs, theme, Typography, Upload } from 'antd';
 import type { TabsProps } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, LeftCircleFilled, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { useModel, history } from 'umi';
-import { saveConf } from '@/request/dashboard';
+import { fetchShowConfList, saveAndApply, saveConf } from '@/request/dashboard';
 import RcResizeObserver from 'rc-resize-observer';
 import { InputNumber } from 'antd/lib';
 import ShowLayout from '@/layouts/showLayout';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import HomePage from '@/pages/home';
 import IndexPage from '@/pages/index';
 import './index.less'
@@ -33,8 +33,8 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
     reader.addEventListener('load', () => callback(reader.result as string));
     reader.readAsDataURL(img);
 };
-export default () => {
-    const { showConf, loading, fetchConfig, setShowConf } = useModel('dashboard');
+const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any }) => {
+    const { loading, fetchConfig, setShowConf } = useModel('dashboard');
     const [overView, setOverView] = useState('Home Page');
     const [themeTokens, setThemeTokens] = useState({});
     const [styles, setStyles] = useState<DB.ShowConfDto>();
@@ -157,8 +157,8 @@ export default () => {
             message: 'Save Success',
             btn,
             key,
-            onClose: ()=>{
-                api.destroy(key);   
+            onClose: () => {
+                api.destroy(key);
             },
         });
     };
@@ -167,7 +167,21 @@ export default () => {
         if (!styles) return;
         setSubmiting(true);
         try {
-            await saveConf({ ...styles, alias: 'default' });
+            await saveConf({ ...styles });
+            message.success('Save Success');
+        } catch (e: any) {
+            console.log(e);
+            message.error(e.message)
+        }
+        setSubmiting(false);
+
+    }
+
+    const handelSaveAndApply = async () => {
+        if (!styles) return;
+        setSubmiting(true);
+        try {
+            await saveAndApply({ ...styles });
             await fetchConfig();
             openNotification();
         } catch (e: any) {
@@ -175,7 +189,6 @@ export default () => {
             message.error(e.message)
         }
         setSubmiting(false);
-
     }
 
     const items: TabsProps['items'] = [
@@ -388,7 +401,7 @@ export default () => {
             const parent = parentRef.current.getBoundingClientRect();
             const child = childRef.current.getBoundingClientRect();
             const scaleX = (parent.width - 48) / document.body.clientWidth;
-            childRef.current.style.transform = `scale(${scaleX})`;
+            childRef.current.style.zoom = scaleX.toString();
             childRef.current.style.transformOrigin = 'top left'; // 可调整缩放基准
         }
     }, [styles]);
@@ -404,25 +417,23 @@ export default () => {
             onResize={(offset) => {
                 setResponsive(offset.width < 596);
             }}
-        >
-            <ProCard split={responsive ? 'horizontal' : 'vertical'}>
 
-                <ProCard title="Recommended Theme" colSpan={responsive ? 24 : 8} extra={
+        >
+            <ProCard split={responsive ? 'horizontal' : 'vertical'}
+                title={<Button variant='filled' type='text' icon={<LeftCircleFilled />} onClick={onClose} >Go Back</Button>}
+                extra={
                     <Space>
-                        <Button type='link'  onClick={() => setStyles({
-                            ...styles,
-                            ...showNowConf as DB.ShowConfDto
-                        })}>ShowNow</Button>
-                        <Button type='link'  onClick={() => setStyles({
-                            ...styles,
-                            ...bitBuzzConf as DB.ShowConfDto
-                        })}>BitBuzz</Button>
+                        <Button type="primary" onClick={handleSave} loading={submiting}>Save</Button>
+                        <Button type="primary" onClick={handelSaveAndApply} loading={submiting}>Save & Apply</Button>
                     </Space>
-                }>
+
+                }
+            >
+
+                <ProCard colSpan={responsive ? 24 : 8} >
                     <Tabs defaultActiveKey="1" items={items} />
                 </ProCard>
-                <ProCard colSpan={responsive ? 24 : 16} title="OverView" ref={parentRef} headerBordered extra={
-                    <Button type="primary" onClick={handleSave} loading={submiting}>Save</Button>}
+                <ProCard colSpan={responsive ? 24 : 16} title="OverView" ref={parentRef} headerBordered
                 >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
                         <Segmented<string> options={['Home Page', 'Login Page']} value={overView} onChange={(value) => {
@@ -457,3 +468,161 @@ export default () => {
         </RcResizeObserver>
     </div>
 }
+
+const ThemeCard = ({ item, handleEdit }: { item: DB.ShowConfDto, handleEdit: any }) => {
+
+    const styles = item as DB.ShowConfDto;
+    let themeTokens: any = {};
+    if (styles) {
+        const tokens: any = {
+            colorPrimary: styles.brandColor,
+            colorLink: styles.brandColor,
+        }
+        if (styles.colorBgLayout) {
+            tokens.colorBgLayout = styles.colorBgLayout
+        }
+        if (styles.colorBorderSecondary) {
+            tokens.colorBorderSecondary = styles.colorBorderSecondary
+        }
+        const components = {
+            "Avatar": {
+                "colorTextPlaceholder": styles.brandColor,
+            },
+            "Button": {
+                "defaultBorderColor": "rgba(217,217,217,0)",
+                "defaultShadow": "0 2px 0 rgba(0, 0, 0,0)"
+            }
+        }
+        if (styles.colorButton) {
+            components.Button.primaryColor = styles.colorButton
+        }
+        console.log(components, 'components')
+
+        themeTokens = {
+            token: tokens,
+            components
+        }
+    }
+    const parentRef = useRef<HTMLDivElement>(null);
+    const childRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (styles && parentRef.current && childRef.current) {
+            const parent = parentRef.current.getBoundingClientRect();
+            const child = childRef.current.getBoundingClientRect();
+            const scaleX = (parent.width - 2) / document.body.clientWidth;
+            childRef.current.style.zoom = scaleX.toString()
+        }
+    }, [styles]);
+    return <Col {...{ xs: 24, sm: 12, md: 12, lg: 8, xl: 6 }}>
+        <Card
+            actions={[
+                <EditOutlined onClick={handleEdit} />,
+                <DeleteOutlined />
+            ]}
+            ref={parentRef}
+
+            cover={
+                <div ref={childRef} className='previewerDemo' style={{ height: '100vh', width: '100vw', position: 'relative', pointerEvents: 'auto' }} onClick={() => { }}>
+                    <ConfigProvider
+                        theme={{
+                            algorithm: item?.theme !== 'dark' ? theme.defaultAlgorithm : theme.darkAlgorithm,
+                            ...themeTokens,
+                        }}
+                    >
+                        <div style={{ pointerEvents: 'none', }} onTouchMove={() => { }}>
+                            <ShowLayout children={<></>} _showConf={item} />
+                        </div>
+
+                    </ConfigProvider>
+                </div>
+            }
+
+        >
+            <Card.Meta
+                avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
+                title={item.name || item.alias}
+                description={item.updateTime}
+            />
+
+
+
+        </Card>
+    </Col >
+}
+
+const Page = () => {
+    const [showCreate, setShowCreate] = useState(false);
+    const { data: styleList, refetch } = useQuery({
+        queryKey: ['dashboardstyles'],
+        queryFn: async () => {
+            return await fetchShowConfList();
+        }
+    })
+
+    const [current, setCurrent] = useState<DB.ShowConfDto>();
+    const [form] = Form.useForm();
+    if (current) {
+        return <Content showConf={current} onClose={() => { setCurrent(undefined); refetch() }} />
+    }
+    return <Row
+        gutter={[16, 16]}
+
+    >
+        <Col span={24}>
+            <Button type='primary' icon={<PlusOutlined />} onClick={() => {
+                setShowCreate(true)
+            }}>Create Styles</Button>
+        </Col>
+        {
+            (styleList ?? []).map(item => {
+                return <ThemeCard item={item} key={item.id} handleEdit={() => { setCurrent(item) }} />
+            })
+        }
+
+        <Modal
+
+            open={showCreate}
+
+            title='Create Design Theme'
+            styles={{
+                body: {
+                    paddingTop: 20,
+                    paddingBottom: 20
+                }
+            }}
+            okText='Next'
+            onOk={async () => {
+                const { name } = await form.getFieldsValue()
+                console.log(name, 'name')
+                if (!name) return message.error('Name is required')
+                setShowCreate(false)
+                setCurrent({ ...showNowConf, name } as DB.ShowConfDto)
+            }}
+            onCancel={() => {
+                setShowCreate(false)
+            }}
+        >
+            <Form
+                layout="vertical"
+                autoComplete="off"
+                variant='filled'
+                form={form}
+            >
+                <Form.Item
+                    name="name"
+                    label="Design Theme Name"
+                    rules={[{ required: true }]}
+                >
+                    <Input placeholder="" />
+                </Form.Item>
+
+            </Form>
+
+
+
+
+        </Modal>
+    </Row>
+}
+export default Page;

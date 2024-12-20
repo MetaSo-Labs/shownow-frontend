@@ -37,6 +37,18 @@ export async function fetchShowConf() {
   });
 }
 
+export async function fetchShowConfList(options?: { [key: string]: any }) {
+  return request<DB.ShowConfDto[]>(`${DASHBOARD_API}/show-conf/styles`, {
+    method: "GET",
+    ...(options || {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}
+
 export async function fetchFees() {
   return request<DB.FeeDto[]>(`${DASHBOARD_API}/fees`, {
     method: "GET",
@@ -49,7 +61,7 @@ export async function saveFees(
   options?: { [key: string]: any }
 ) {
   return request<DB.FeeDto[]>(`${DASHBOARD_API}/fees/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     data: params,
     ...(options || {
       headers: {
@@ -64,7 +76,23 @@ export async function saveConf(
   params: DB.ShowConfDto,
   options?: { [key: string]: any }
 ) {
-  return request<any>(`${DASHBOARD_API}/show-conf`, {
+  return request<any>(`${DASHBOARD_API}/show-conf/save`, {
+    method: "POST",
+    data: params,
+    ...(options || {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}
+
+export async function saveAndApply(
+  params: DB.ShowConfDto,
+  options?: { [key: string]: any }
+) {
+  return request<any>(`${DASHBOARD_API}/show-conf/saveAndApply`, {
     method: "POST",
     data: params,
     ...(options || {

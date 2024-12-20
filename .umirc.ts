@@ -28,22 +28,22 @@ export default defineConfig({
         { path: "setting", component: "@/pages/setting" },
       ],
     },
-    // {
-    //   path: "/dashboardLogin",
-    //   component: "@/pages/dashboard/login",
-    //   layout: false,
-    // },
-    // {
-    //   path: "/dashboard",
-    //   component: "@/layouts/dashboard",
-    //   layout: false,
-    //   wrappers: ["@/wrappers/dashboardAuth"],
-    //   routes: [
-    //     { path: "/dashboard/styles", component: "@/pages/dashboard/styles" },
-    //     { path: "/dashboard/fees", component: "@/pages/dashboard/fees" },
-    //     { path: "/dashboard/rpc", component: "@/pages/dashboard/rpc" },
-    //   ],
-    // },
+    {
+      path: "/dashboardLogin",
+      component: "@/pages/dashboard/login",
+      layout: false,
+    },
+    {
+      path: "/dashboard",
+      component: "@/layouts/dashboard",
+      layout: false,
+      wrappers: ["@/wrappers/dashboardAuth"],
+      routes: [
+        { path: "/dashboard/styles", component: "@/pages/dashboard/styles" },
+        { path: "/dashboard/fees", component: "@/pages/dashboard/fees" },
+        { path: "/dashboard/rpc", component: "@/pages/dashboard/rpc" },
+      ],
+    },
   ],
 
   plugins: [

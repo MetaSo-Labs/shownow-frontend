@@ -1,12 +1,14 @@
 import { ChromeOutlined, DollarOutlined, SettingOutlined } from '@ant-design/icons';
 import { PageContainer, ProLayout } from '@ant-design/pro-components';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link, Outlet, useModel, history, useLocation } from 'umi';
+const queryClient = new QueryClient()
 export default () => {
     const location = useLocation();
     const path = location.pathname;
     const [pathname, setPathname] = useState(path);
-    return <div
+    return <QueryClientProvider client={queryClient}><div
         style={{
             height: '100vh',
         }}
@@ -22,12 +24,12 @@ export default () => {
                 routes: [
                     {
                         path: '/dashboard/styles',
-                        name: 'Styles',
+                        name: 'Style Configuration',
                         icon: <ChromeOutlined />,
                     },
                     {
                         path: '/dashboard/fees',
-                        name: 'Fees',
+                        name: 'Steeing',
                         icon: <DollarOutlined />,
                     },
                     {
@@ -53,4 +55,5 @@ export default () => {
             </PageContainer>
         </ProLayout>
     </div>
+    </QueryClientProvider>
 };

@@ -28,12 +28,12 @@ const { useBreakpoint } = Grid
 
 const { Header, Content, Footer, Sider } = Layout;
 
-export default function ShowLayout({ children }: { children?: React.ReactNode }) {
+export default function ShowLayout({ children, _showConf }: { children?: React.ReactNode, _showConf?: DB.ShowConfDto }) {
     const location = useLocation();
     const { formatMessage } = useIntl()
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
-    const { showConf } = useModel('dashboard')
+    const { showConf:__showConf } = useModel('dashboard')
     const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain } = useModel('user')
     const { md } = useBreakpoint();
     const { token: {
@@ -44,6 +44,7 @@ export default function ShowLayout({ children }: { children?: React.ReactNode })
         colorBgContainer,
     } } = theme.useToken()
     // const element = useKeepOutlets()
+    const showConf = _showConf || __showConf
 
     const [followMode, setFollowMode] = useState('hide')
 
