@@ -5,15 +5,15 @@
     "dev": "umi dev",
     "build": "umi build",
     "postinstall": "umi setup",
-    "setup": "umi setup",
+    "setup": "umi setup & npx patch-package",
     "start": "npm run dev"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
     "@ant-design/pro-components": "^2.8.1",
     "@bitcoin-js/tiny-secp256k1-asmjs": "^2.2.3",
-    "@feiyangl1020/metaid": "^0.0.1",
-    "@metaid/metaid": "1.5.9",
+    "@ivliu/react-offscreen": "^1.0.8",
+    "@metaid/metaid": "1.5.12",
     "@tanstack/react-query": "^5.59.16",
     "antd": "^5.21.4",
     "axios": "^1.7.7",
@@ -31,6 +31,7 @@
     "ramda": "^0.30.1",
     "rc-resize-observer": "^1.4.0",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-router-dom": "6.3.0",
     "umi": "^4.3.27",
     "vconsole": "^3.15.1"
   },

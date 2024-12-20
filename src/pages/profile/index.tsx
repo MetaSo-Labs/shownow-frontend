@@ -13,9 +13,10 @@ import { isNil } from "ramda";
 import ProfileCard from "@/Components/ProfileCard";
 import Recommend from "@/Components/Recommend";
 import Trans from "@/Components/Trans";
+import KeepAliveWrap from "@/Components/KeepAliveWrap";
 const { useBreakpoint } = Grid
 
-export default () => {
+const Home = () => {
     const { md } = useBreakpoint()
     const match = useMatch('/profile/:address');
 
@@ -103,4 +104,7 @@ export default () => {
     </div>
 
 
+}
+export default () => {
+    return <Home />
 }

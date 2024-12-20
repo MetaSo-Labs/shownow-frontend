@@ -8,6 +8,7 @@ import { FollowButtonComponent } from "../Follow";
 import UserAvatar from "../UserAvatar";
 import { EditOutlined } from "@ant-design/icons";
 import Trans from "../Trans";
+import './index.less'
 
 type Props = {
     address: string

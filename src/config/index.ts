@@ -19,7 +19,7 @@ export const DASHBOARD_TOKEN = "DASHBOARD_TOKEN";
 //   window.BUILD_ENV === "docker" ? "/man" : "https://www.show.now/man";
 export const BASE_MAN_URL = "http://127.0.0.1:3000/man";
 // export const BASE_MAN_URL = "https://man-test.metaid.io";
-// export const BASE_MAN_URL = "/man";
+// export const BASE_MAN_URL = window.location.origin+"/man";
 
 export const BASE_IDCOIN_URL = "https://api.metaid.market/api-market-testnet";
 export const FLAG = "metaid";

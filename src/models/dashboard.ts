@@ -1,3 +1,4 @@
+import { DASHBOARD_TOKEN } from "@/config";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
 import { getMetaidByAddress, getPubKey } from "@/request/api";
 import { fetchFees, fetchShowConf } from "@/request/dashboard";
@@ -38,6 +39,9 @@ export default () => {
   const [showConf, setShowConf] = useState<DB.ShowConfDto>();
   const [manPubKey, setManPubKey] = useState<string>();
   const [fees, setFees] = useState<DB.FeeDto[]>([]);
+  const [logined, setLogined] = useState(
+    Boolean(window.localStorage.getItem(DASHBOARD_TOKEN))
+  );
   const fetchConfig = useCallback(async () => {
     const ret = await fetchShowConf();
     // if (true) {
@@ -98,5 +102,7 @@ export default () => {
     setShowConf,
     updateFees,
     fees,
+    logined,
+    setLogined,
   };
 };

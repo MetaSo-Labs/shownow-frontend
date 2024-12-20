@@ -1,29 +1,22 @@
-import { fetchAllBuzzs, fetchBuzzs, getIndexTweet } from "@/request/api";
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { fetchAllBuzzs } from "@/request/api";
+import { useMemo, useState } from "react"
 import './index.less'
-import { Carousel, Col, Divider, List, Row, Skeleton, Grid } from "antd";
-import defaultImg from '@/assets/img 2@1x.png'
-import { GiftOutlined, HeartOutlined, MessageOutlined, UploadOutlined } from "@ant-design/icons";
+import { Divider, List, Row, Skeleton, Grid, Drawer } from "antd";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useModel } from "umi";
-import { curNetwork } from "@/config";
 import Buzz from "@/Components/Buzz";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Trans from "@/Components/Trans";
+
+import KeepAliveWrap from "@/Components/KeepAliveWrap";
+import Tweet, { TweetCard } from "../tweet";
+
 const { useBreakpoint } = Grid
 
-
-export default () => {
-    const { md } = useBreakpoint()
+const Home = () => {
     const { btcConnector, user } = useModel('user')
-    const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-    const [search, setSearch] = useState('');
-    const [total, setTotal] = useState<null | number>(null);
-
-
-
+    const [open, setOpen] = useState(false)
+    const [currentBuzzId, setCurrentBuzzId] = useState('')
     const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
         useInfiniteQuery({
             queryKey: ['homebuzzesnew', user.address],
@@ -65,13 +58,36 @@ export default () => {
             <List
                 dataSource={tweets}
                 renderItem={(item: API.Pin) => (
-                    <List.Item key={item.id}>
-                        <Buzz buzzItem={item} refetch={refetch} />
+                    <List.Item key={item.id} >
+                        <Buzz buzzItem={item} refetch={refetch}  />
                     </List.Item>
                 )}
             />
         </InfiniteScroll>
+        <Drawer
+            title=""
+            placement="right"
+            closable={true}
+            onClose={() => setOpen(false)}
+            open={open}
+            getContainer={false}
+            width='100%'
+            zIndex={99}
+            styles={{ header: { display: 'none' }, body: { padding: 0 }, content: { borderRadius: 8 }, mask: { backgroundColor: 'rgba(0,0,0,0)' } }}
+        >
+            {currentBuzzId && <TweetCard quotePinId={currentBuzzId} onClose={() => {
+                setOpen(false); history.pushState({}, '', '/home')
+
+            }} />}
+
+        </Drawer>
     </div>
 
+
+}
+
+
+export default () => {
+    return <Home />
 
 }

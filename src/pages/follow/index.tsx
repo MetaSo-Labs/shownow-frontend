@@ -7,9 +7,10 @@ import { useModel } from "umi";
 import Buzz from "@/Components/Buzz";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Trans from "@/Components/Trans";
+import KeepAliveWrap from "@/Components/KeepAliveWrap";
 const { useBreakpoint } = Grid
 
-export default () => {
+const Home = () => {
     const { md } = useBreakpoint()
     const { btcConnector, user } = useModel('user')
     const [loading, setLoading] = useState(false);
@@ -76,4 +77,7 @@ export default () => {
     </div>
 
 
+}
+export default () => {
+    return <KeepAliveWrap ><Home /></KeepAliveWrap>
 }

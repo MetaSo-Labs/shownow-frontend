@@ -72,11 +72,12 @@ const UploadAvatar = (props: any) => {
             listType={props.listType || "picture-circle"}
             className="avatar-uploader"
             showUploadList={false}
-            style={{ overflow: 'hidden' }}
+            style={{ overflow: 'hidden',background:'#fff' }}
             customRequest={handleUpload}
+
         >
             {imageUrl ? <div style={{ position: 'relative', width: 100, height: 100 }}>
-                <img src={imageUrl} alt="avatar" style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%', overflow: 'hidden' }} />
+                <img src={imageUrl} alt="avatar" style={{ width: 100, height: 100, objectFit: 'cover',  overflow: 'hidden' }} />
                 <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} shape='circle' type='link'  icon={<FileImageFilled />}></Button>
             </div> : uploadButton}
         </Upload>

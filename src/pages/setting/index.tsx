@@ -156,7 +156,7 @@ export default () => {
 
 
 
-                <Form.Item label={<Trans>Name</Trans>} name='name'>
+                <Form.Item style={{marginTop:20}} label={<Trans>Name</Trans>} name='name'>
                     <Input />
                 </Form.Item>
 

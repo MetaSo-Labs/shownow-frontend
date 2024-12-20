@@ -34,9 +34,10 @@ type Props = {
     refetch?: () => Promise<any>
     isForward?: boolean,
     loading?: boolean
+    handleClick?: () => void
 }
 
-export default ({ buzzItem, showActions = true, refetch, isForward = false, loading, like = [] }: Props) => {
+export default ({ buzzItem, showActions = true, refetch, isForward = false, loading, like = [], handleClick }: Props) => {
     const { token: {
         colorBorderSecondary,
         colorBorder,
@@ -84,6 +85,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
         return isSummaryJson ? parseSummary : undefined;
     }, [buzzItem])
+    
 
 
 
@@ -333,7 +335,8 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         }} >
 
             <div onClick={() => {
-                history.push(`/tweet/${buzzItem.id}`)
+                handleClick ? handleClick() : history.push(`/tweet/${buzzItem.id}`)
+
             }}>
                 {
                     textContent.length > 0 && <div className="text" ref={contentRef} style={{

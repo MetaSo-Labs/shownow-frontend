@@ -2,34 +2,27 @@ import { Link, Outlet, useModel } from 'umi';
 import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Input, InputNumber, Layout, Menu, Row, Space, theme } from 'antd';
 import { useEffect, useState } from 'react';
 import './index.less';
-import Menus from './Menus';
-import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined } from '@ant-design/icons';
+
 import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import NewPost from '@/Components/NewPost';
-import Mobilefooter from './Mobilefooter';
-import _btc from '@/assets/btc.png'
-import _mvc from '@/assets/mvc.png'
-import Recommend from '@/Components/Recommend';
-import UserAvatar from '@/Components/UserAvatar';
+
+
+
+
 import ShowLayout from './showLayout';
-import { bitBuzzConf, showNowConf } from '@/models/dashboard';
-const { useBreakpoint } = Grid
+import KeepAliveLayout from '@/hooks/useKeepAlive';
+
 
 const queryClient = new QueryClient()
-const { Header, Content, Footer, Sider } = Layout;
+
 
 export default function Lay() {
-  const [collapsed, setCollapsed] = useState(false);
-  const { showConf,setShowConf } = useModel('dashboard')
-  const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain } = useModel('user')
+  const { showConf } = useModel('dashboard')
+
   const [themeTokens, setThemeTokens] = useState({});
-  const { md } = useBreakpoint();
-  const { token: {
-    colorBgLayout
-  } } = theme.useToken()
+
 
   useEffect(() => {
     if (showConf) {
@@ -64,8 +57,6 @@ export default function Lay() {
 
   }, [showConf])
 
-  const [showPost, setShowPost] = useState(false)
-
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigProvider
@@ -74,24 +65,14 @@ export default function Lay() {
           ...themeTokens,
         }}
       >
-        <ShowLayout />
+         
 
-        {/* <FloatButton
-          shape="square"
-          type="primary"
-          style={{ insetInlineEnd: 94 }}
-          description='Show Now'
-          onClick={() => setShowConf(showNowConf)}
-        />
-        <FloatButton
-          shape="square"
-          type="primary"
-        
-          style={{ insetInlineEnd: 24 }}
-          description='Bit Buzz'
-          onClick={() => setShowConf(bitBuzzConf)}
-        /> */}
+          <ShowLayout />
+         
       </ConfigProvider>
     </QueryClientProvider>
+
+
+
   );
 }

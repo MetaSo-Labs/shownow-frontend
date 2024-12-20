@@ -1,4 +1,4 @@
-import { Link, Outlet, useModel, history, useIntl } from 'umi';
+import { Link, Outlet, useModel, history, useIntl, useLocation, useOutlet } from 'umi';
 import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Input, InputNumber, Layout, Menu, Radio, Row, Segmented, Space, Tag, theme, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import './index.less';
@@ -18,8 +18,10 @@ import UserAvatar from '@/Components/UserAvatar';
 import TopTool from './TopTool';
 import SelectLang from './SelectLang';
 import Trans from '@/Components/Trans';
-import { useKeepOutlets } from '@/hooks/useKeepAlive';
 import HeaderMenus from './HeaderMenus';
+
+import { Activity } from '@ivliu/react-offscreen';
+
 
 
 const { useBreakpoint } = Grid
@@ -27,6 +29,7 @@ const { useBreakpoint } = Grid
 const { Header, Content, Footer, Sider } = Layout;
 
 export default function ShowLayout({ children }: { children?: React.ReactNode }) {
+    const location = useLocation();
     const { formatMessage } = useIntl()
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
@@ -40,7 +43,23 @@ export default function ShowLayout({ children }: { children?: React.ReactNode })
         colorBgLayout,
         colorBgContainer,
     } } = theme.useToken()
-    const element = useKeepOutlets()
+    // const element = useKeepOutlets()
+
+    const [followMode, setFollowMode] = useState('hide')
+
+    useEffect(() => {
+        if (location.pathname === '/follow') {
+            setTimeout(() => {
+                setFollowMode('visible')
+            }, 1000)
+
+        } else {
+            setFollowMode('hide')
+        }
+    }, [location.pathname])
+
+
+
 
 
 
@@ -117,7 +136,7 @@ export default function ShowLayout({ children }: { children?: React.ReactNode })
                                     </div>
                                     <div className="actions">
 
-                                        <Dropdown placement='bottomCenter' dropdownRender={() => {
+                                        <Dropdown placement='bottom' dropdownRender={() => {
                                             return <div>
                                                 <Menu>
                                                     <Menu.Item key='1' disabled={chain === 'btc'} onClick={async () => {
@@ -204,7 +223,18 @@ export default function ShowLayout({ children }: { children?: React.ReactNode })
                     <Content style={{ flexGrow: 1, width: !showConf.showSliderMenu ? showConf.contentSize : '100%', maxWidth: "100%", padding: 12 }}>
                         <Row gutter={[12, 12]} style={{ height: '100%', position: 'relative', padding: 0, }}>
                             <Col span={24} md={showConf?.showRecommend ? 14 : 24} style={{ height: '100%', width: '100%', overflow: 'scroll' }} >
-                                {children ? children : element}
+                                {children ? children : <>
+                                    <Activity mode={location.pathname === '/follow' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                    <Activity mode={location.pathname === '/home' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                    <Activity mode={location.pathname === '/' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                    <Activity mode={location.pathname === '/profile' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                    {
+                                        !['/home', '/follow', '/', '/profile'].includes(location.pathname) && <Outlet />
+                                    }
+
+                                </>}
+
+
                             </Col>
                             {
                                 (md && showConf?.showRecommend) && <Col md={10} span={24}>

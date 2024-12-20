@@ -6,9 +6,9 @@ import {
   mvcConnect,
   IBtcConnector,
   btcConnect,
-} from "@feiyangl1020/metaid";
+} from "@metaid/metaid";
 
-import { curNetwork, getHostByNet } from "@/config";
+import { curNetwork, DASHBOARD_TOKEN, getHostByNet } from "@/config";
 import {
   fetchFeeRate,
   fetchFollowingList,
@@ -17,6 +17,7 @@ import {
 } from "@/request/api";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
 import { isEmpty } from "ramda";
+import { useModel } from "umi";
 const checkExtension = () => {
   if (!window.metaidwallet) {
     window.open(
@@ -45,6 +46,7 @@ const checkWallet = async () => {
   }
 };
 export default () => {
+  const { setLogined } = useModel("dashboard");
   const [isLogin, setIsLogin] = useState(false);
   const [chain, setChain] = useState<API.Chain>(
     (localStorage.getItem("show_chain") as API.Chain) || "mvc"
@@ -132,6 +134,8 @@ export default () => {
     setIsLogin(false);
     setBtcConnector(undefined);
     setMvcConnector(undefined);
+    localStorage.removeItem(DASHBOARD_TOKEN);
+    setLogined(false);
     setUser({
       avater: "",
       name: "",
@@ -241,7 +245,7 @@ export default () => {
   const fetchFeeRateData = useCallback(async () => {
     try {
       const feeRateData = await fetchFeeRate({ netWork: curNetwork });
-      setFeeRate(feeRateData?.fastestFee||1);
+      setFeeRate(feeRateData?.fastestFee || 1);
     } catch (e) {
       console.log(e);
     }
@@ -298,6 +302,6 @@ export default () => {
     setFollowList,
     fetchUserInfo,
     switchChain,
-    fetchUserFollowingList
+    fetchUserFollowingList,
   };
 };

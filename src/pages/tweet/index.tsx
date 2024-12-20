@@ -10,13 +10,16 @@ import { Avatar, Button, Card, Col, Divider, Input, Row } from "antd"
 import { isEmpty } from "ramda"
 import { useState } from "react"
 import { useIntl, useMatch, useModel } from "umi"
+type Props = {
+    quotePinId: string
+    onClose?: () => void
+}
 
-export default () => {
+export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props) => {
     const { formatMessage } = useIntl()
     const { user } = useModel('user')
     const { showConf } = useModel('dashboard')
-    const match = useMatch('/tweet/:id')
-    const quotePinId = match?.params.id
+
     const [refetchNum, setRefetchNum] = useState(0);
     const [reLoading, setReLoading] = useState(false)
     const [showComment, setShowComment] = useState(false)
@@ -28,8 +31,8 @@ export default () => {
 
     if (!buzzDetail) return null;
 
-    return (<Card loading={isQuoteLoading} title={
-        <Button type="text" size='small' icon={<LeftOutlined />} onClick={() => history.back()}>
+    return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none' }} title={
+        <Button type="text" size='small' icon={<LeftOutlined />} onClick={ onClose}>
 
         </Button>
     } styles={{
@@ -46,19 +49,27 @@ export default () => {
         <Divider />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <UserAvatar src={user?.avater} size={48} />
-            <Input value={''} placeholder={formatMessage({id:"What's happening?"})}  variant='borderless' style={{ flexGrow: 1 }} onClick={() => { setShowComment(true) }} />
+            <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => { setShowComment(true) }} />
             <Button type='primary' shape='round' style={{ background: showConf?.gradientColor }} onClick={() => { }}>
-                {formatMessage({id:"Comment"})}
+                {formatMessage({ id: "Comment" })}
             </Button>
         </div>
-        <Comment tweetId={match?.params.id ?? ''} refetch={refetch} onClose={() => {
+        <Comment tweetId={quotePinId ?? ''} refetch={refetch} onClose={() => {
             setShowComment(false);
             setRefetchNum(refetchNum + 1);
             setReLoading(!reLoading)
         }} show={showComment} />
         <Divider />
-        <CommentPanel tweetId={match?.params.id ?? ''} refetchNum={refetchNum} commentData={buzzDetail?.data.comments} />
+        <CommentPanel tweetId={quotePinId ?? ''} refetchNum={refetchNum} commentData={buzzDetail?.data.comments} />
 
     </Card>)
+}
+export default () => {
+    const match = useMatch('/tweet/:id')
+    const quotePinId = match?.params.id
+
+    return <TweetCard quotePinId={quotePinId!} />
+
+
 
 }
