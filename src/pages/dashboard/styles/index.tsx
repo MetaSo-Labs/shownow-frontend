@@ -313,20 +313,53 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span>Logo</span>
 
-                    <Upload {...props} listType="picture" maxCount={1} onChange={handleChange}>
-                        <Button icon={<UploadOutlined />}>Select Image</Button>
+                    <Upload {...props}  listType="picture-card"
+                        className="avatar-uploader" maxCount={1} showUploadList={false} onChange={handleChange} 
+                        >
+                    {styles?.logo ?
+                            <div style={{position:'relative'}}>
+                                <Button style={{
+                                    position: 'absolute',
+                                    right: '50%',
+                                    top: '50%',
+                                    transform: 'translate(50%,-50%)',
+                                    background: 'rgba(0,0,0,0.5)',
+                                    color: '#fff'
+                                }} icon={<DeleteOutlined />} onClick={(e)=>{
+                                    e.stopPropagation();
+                                    setStyles({ ...styles, logo: '' });
+                                }}></Button>
+                                <img src={styles?.logo} alt="avatar" style={{ width: '100%' }} />
+                            </div> : <Button icon={<UploadOutlined />}></Button>}
                     </Upload>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Home Background Image</span>
+                    <span>Home Background</span>
 
-                    <Upload {...bgprops} listType="picture" maxCount={1} onChange={handleBackImageChange}>
-                        <Button icon={<UploadOutlined />}>Select Image</Button>
+                    <Upload {...bgprops}
+                        listType="picture-card"
+                        className="avatar-uploader" maxCount={1} showUploadList={false} onChange={handleBackImageChange}>
+                        {styles?.homeBackgroundImage ?
+                            <div style={{position:'relative'}}>
+                                <Button style={{
+                                    position: 'absolute',
+                                    right: '50%',
+                                    top: '50%',
+                                    transform: 'translate(50%,-50%)',
+                                    background: 'rgba(0,0,0,0.5)',
+                                    color: '#fff'
+                                }} icon={<DeleteOutlined />} onClick={(e)=>{
+                                    e.stopPropagation();
+                                    setStyles({ ...styles, homeBackgroundImage: '' });
+                                }}></Button>
+                                <img src={styles?.homeBackgroundImage} alt="avatar" style={{ width: '100%' }} />
+                            </div> : <Button icon={<UploadOutlined />}></Button>}
+
                     </Upload>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
-                    <span>Twitter</span>
+                    <span style={{whiteSpace:'nowrap'}}>Twitter</span>
 
                     <Input value={styles?.twitterUrl} onChange={(e) => {
                         if (styles) {
@@ -336,17 +369,16 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                     }} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
-                    <span> Main Title</span>
+                    <span style={{whiteSpace:'nowrap'}}> Main Title</span>
 
                     <Input value={styles?.brandIntroMainTitle} onChange={(e) => {
                         if (styles) {
                             setStyles({ ...styles, brandIntroMainTitle: e.target.value });
                         }
-
                     }} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
-                    <span> Sub Title</span>
+                    <span style={{whiteSpace:'nowrap'}}> Sub Title</span>
 
                     <Input value={styles?.brandIntroSubTitle} onChange={(e) => {
                         if (styles) {
@@ -510,7 +542,7 @@ const ThemeCard = ({ item, handleEdit }: { item: DB.ShowConfDto, handleEdit: any
         if (styles && parentRef.current && childRef.current) {
             const parent = parentRef.current.getBoundingClientRect();
             const child = childRef.current.getBoundingClientRect();
-            const scaleX = (parent.width - 2) / document.body.clientWidth;
+            const scaleX = (parent.width) / document.body.clientWidth;
             childRef.current.style.zoom = scaleX.toString()
         }
     }, [styles]);
@@ -518,9 +550,13 @@ const ThemeCard = ({ item, handleEdit }: { item: DB.ShowConfDto, handleEdit: any
         <Card
             actions={[
                 <EditOutlined onClick={handleEdit} />,
-                <DeleteOutlined />
+                <DeleteOutlined onClick={() => {
+                    message.info('Coming soon')
+                }} />
             ]}
             ref={parentRef}
+            style={{ borderColor: item.apply ? '#1890ff' : '#f0f0f0', overflow: 'hidden' }}
+
 
             cover={
                 <div ref={childRef} className='previewerDemo' style={{ height: '100vh', width: '100vw', position: 'relative', pointerEvents: 'auto' }} onClick={() => { }}>
@@ -544,6 +580,7 @@ const ThemeCard = ({ item, handleEdit }: { item: DB.ShowConfDto, handleEdit: any
                 title={item.name || item.alias}
                 description={item.updateTime}
             />
+            <div style={{ position: 'absolute', top: 0, right: 0, padding: 4, background: item.apply ? '#1890ff' : '#f0f0f0', color: '#fff' }}>{item.apply ? 'Applied' : ''}</div>
 
 
 

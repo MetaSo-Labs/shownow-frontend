@@ -29,14 +29,14 @@ export default () => {
                     },
                     {
                         path: '/dashboard/fees',
-                        name: 'Steeing',
+                        name: 'Setting',
                         icon: <DollarOutlined />,
                     },
-                    {
-                        path: '/dashboard/rpc',
-                        name: 'RPC',
-                        icon: <SettingOutlined />,
-                    },
+                    // {
+                    //     path: '/dashboard/rpc',
+                    //     name: 'RPC',
+                    //     icon: <SettingOutlined />,
+                    // },
                 ],
             }}
             menuItemRender={(item, dom) => (
