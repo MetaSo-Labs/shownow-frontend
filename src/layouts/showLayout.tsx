@@ -21,6 +21,7 @@ import Trans from '@/Components/Trans';
 import HeaderMenus from './HeaderMenus';
 
 import { Activity } from '@ivliu/react-offscreen';
+import { DefaultLogo } from '@/config';
 
 
 
@@ -33,7 +34,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     const { formatMessage } = useIntl()
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
-    const { showConf:__showConf } = useModel('dashboard')
+    const { showConf: __showConf } = useModel('dashboard')
     const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain } = useModel('user')
     const { md } = useBreakpoint();
     const { token: {
@@ -76,7 +77,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                         <Sider style={{ background: colorBgContainer, height: '100vh' }} collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} className='sider'>
                             <div>
                                 <div className="logoWrap">
-                                    <img src={showConf?.logo} alt="" className="logo" />
+                                    <img src={showConf?.logo || DefaultLogo} alt="" className="logo" />
                                 </div>
                                 <Menus />
                             </div>
@@ -99,7 +100,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                 !showConf?.showSliderMenu && <Col span={6} md={showConf?.showSliderMenu ? 0 : 5} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: 8 }} >
                                     {
                                         md && <div className="logoWrap" onClick={() => history.push('/')}>
-                                            <img src={showConf?.logo} alt="" className="logo" />
+                                            <img src={showConf?.logo || DefaultLogo} alt="" className="logo" />
                                         </div>
                                     }
 

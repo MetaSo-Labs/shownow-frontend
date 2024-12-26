@@ -74,7 +74,7 @@ const Home = () => {
     }, [data])
     return <div
         className="profilePage"
-        id="scrollableDiv"
+        id="scrollableDiv3"
         style={{
             height: `100%`,
             overflow: 'auto',
@@ -90,7 +90,7 @@ const Home = () => {
             hasMore={hasNextPage}
             loader={<Skeleton avatar paragraph={{ rows: 2 }} active />}
             endMessage={<Divider plain><Trans>It is all, nothing more 🤐</Trans> </Divider>}
-            scrollableTarget="scrollableDiv"
+            scrollableTarget="scrollableDiv3"
         >
             <List
                 dataSource={tweets}

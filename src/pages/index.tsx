@@ -5,6 +5,7 @@ import './index.less';
 import { useModel, history } from 'umi';
 import styles from './dashboard/styles';
 import ConnectWallet from '@/Components/ConnectWallet';
+import { DefaultLogo } from '@/config';
 const { useBreakpoint } = Grid
 
 
@@ -65,7 +66,7 @@ export default function HomePage() {
       {md && <img src={showConf?.homeBackgroundImage || bg} alt="" className="bgImg" />}
       <div className="indexContent">
         <div className="header">
-          <img src={showConf?.logo} alt="" className="logo" />
+          <img src={showConf?.logo || DefaultLogo} alt="" className="logo" />
           <Button shape='round' onClick={() => {
             setShowConnect(true)
           }} style={{ color: showConf?.brandColor }}>Connect</Button>

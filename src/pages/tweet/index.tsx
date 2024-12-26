@@ -32,7 +32,7 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
     if (!buzzDetail) return null;
 
     return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none' }} title={
-        <Button type="text" size='small' icon={<LeftOutlined />} onClick={ onClose}>
+        <Button type="text" size='small' icon={<LeftOutlined />} onClick={onClose}>
 
         </Button>
     } styles={{
@@ -65,8 +65,9 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
     </Card>)
 }
 export default () => {
-    const match = useMatch('/tweet/:id')
-    const quotePinId = match?.params.id
+    const match = useMatch('/buzz/:id')
+    const match2 = useMatch('/tweet/:id')
+    const quotePinId = match?.params.id || match2?.params.id
 
     return <TweetCard quotePinId={quotePinId!} />
 

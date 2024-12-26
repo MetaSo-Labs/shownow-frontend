@@ -25,6 +25,7 @@ export default defineConfig({
         { path: "profile", component: "@/pages/profile" },
         { path: "profile/:address", component: "@/pages/profile" },
         { path: "tweet/:id", component: "@/pages/tweet" },
+        { path: "buzz/:id", component: "@/pages/tweet" },
         { path: "setting", component: "@/pages/setting" },
       ],
     },

@@ -335,7 +335,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         }} >
 
             <div onClick={() => {
-                handleClick ? handleClick() : history.push(`/tweet/${buzzItem.id}`)
+                handleClick ? handleClick() : history.push(`/buzz/${buzzItem.id}`)
 
             }}>
                 {
