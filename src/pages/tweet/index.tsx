@@ -17,7 +17,7 @@ type Props = {
 
 export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props) => {
     const { formatMessage } = useIntl()
-    const { user } = useModel('user')
+    const { user, checkUserSetting } = useModel('user')
     const { showConf } = useModel('dashboard')
 
     const [refetchNum, setRefetchNum] = useState(0);
@@ -49,8 +49,20 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
         <Divider />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <UserAvatar src={user?.avater} size={48} />
-            <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => { setShowComment(true) }} />
-            <Button type='primary' shape='round' style={{ background: showConf?.gradientColor }} onClick={() => { }}>
+            <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => {
+                const isPass = checkUserSetting();
+                if (!isPass) {
+                    return;
+                }
+                setShowComment(true)
+            }} />
+            <Button type='primary' shape='round'  onClick={() => { 
+                const isPass = checkUserSetting();
+                if (!isPass) {
+                    return;
+                }
+                setShowComment(true)
+            }}>
                 {formatMessage({ id: "Comment" })}
             </Button>
         </div>

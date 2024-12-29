@@ -1,6 +1,6 @@
 import { Link, Outlet, useModel, history, useIntl, useLocation, useOutlet } from 'umi';
 import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Input, InputNumber, Layout, Menu, Radio, Row, Segmented, Space, Tag, theme, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import './index.less';
 import Menus from './Menus';
 import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined } from '@ant-design/icons';
@@ -22,6 +22,7 @@ import HeaderMenus from './HeaderMenus';
 
 import { Activity } from '@ivliu/react-offscreen';
 import { DefaultLogo } from '@/config';
+import UserSetting from '@/Components/UserSetting';
 
 
 
@@ -35,7 +36,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
     const { showConf: __showConf } = useModel('dashboard')
-    const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain } = useModel('user')
+    const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain, checkUserSetting } = useModel('user')
     const { md } = useBreakpoint();
     const { token: {
         colorPrimary,
@@ -60,6 +61,10 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
         }
     }, [location.pathname])
 
+    useLayoutEffect(()=>{
+        checkUserSetting()
+    },[checkUserSetting])
+
 
 
 
@@ -81,7 +86,13 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                 </div>
                                 <Menus />
                             </div>
-                            <Button size='large' shape='round' type='primary' style={{ background: showConf?.gradientColor }} onClick={() => { setShowPost(true) }}>
+                            <Button size='large' shape='round' type='primary' onClick={() => {
+                                const isPass = checkUserSetting();
+                                if (!isPass) {
+                                    return;
+                                }
+                                setShowPost(true)
+                            }}>
                                 {formatMessage({ id: 'Post' })}
                             </Button>
                         </Sider> : ''
@@ -110,7 +121,11 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
                             {md ? <Col span={24} md={showConf?.showSliderMenu ? 14 : 9}>
 
-                                <div className="searchWrap" style={{ background: colorBgContainer }} onClick={() => { setShowPost(true) }}>
+                                <div className="searchWrap" style={{ background: colorBgContainer }} onClick={() => {
+                                    const isPass = checkUserSetting();
+                                    if (!isPass) return;
+                                    setShowPost(true)
+                                }}>
                                     <Input size="large" prefix={
                                         <EditOutlined style={{ color: showConf?.brandColor }} />
                                     } placeholder={formatMessage({
@@ -251,8 +266,13 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
                 <NewPost show={showPost} onClose={() => setShowPost(false)} />
                 {
-                    !md && <FloatButton style={{ bottom: 100 }} icon={<EditOutlined />} onClick={() => { setShowPost(true) }} />
+                    !md && <FloatButton style={{ bottom: 100 }} icon={<EditOutlined />} onClick={() => {
+                        const isPass = checkUserSetting();
+                        if (!isPass) return;
+                        setShowPost(true)
+                    }} />
                 }
+                <UserSetting />
             </Layout>
         </div>
 

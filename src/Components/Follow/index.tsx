@@ -21,7 +21,7 @@ type FollowProps = {
 const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
     return function FollowComponent(props: FollowProps) {
         const { metaid } = props;
-        const { followList, chain, btcConnector, mvcConnector, user, feeRate, setFollowList, fetchUserFollowingList } = useModel('user');
+        const { followList, chain, btcConnector, mvcConnector, user, feeRate, setFollowList, fetchUserFollowingList, checkUserSetting } = useModel('user');
         const { fetchServiceFee, showConf } = useModel('dashboard');
         const [loading, setLoading] = useState(false);
 
@@ -191,6 +191,10 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
             setLoading(false);
         }
         const handleFollowToggle = async () => {
+            const isPass = checkUserSetting();
+            if (!isPass) {
+                return;
+            }
             if (!isFollowing) {
                 //unfollow
                 await handelFollow();

@@ -57,7 +57,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
     const [isOverflowing, setIsOverflowing] = useState(false); // 是否溢出
     const [paying, setPaying] = useState(false);
     const queryClient = useQueryClient();
-    const { btcConnector, user, isLogin, connect, feeRate, chain, mvcConnector } = useModel('user');
+    const { btcConnector, user, isLogin, connect, feeRate, chain, mvcConnector, checkUserSetting } = useModel('user');
     const { showConf, fetchServiceFee, manPubKey } = useModel('dashboard');
     const [handleLikeLoading, setHandleLikeLoading] = useState(false);
     const [likes, setLikes] = useState<string[]>([]);
@@ -85,7 +85,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
         return isSummaryJson ? parseSummary : undefined;
     }, [buzzItem])
-    
+
 
 
 
@@ -95,6 +95,8 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         return likes.includes(user.metaid)
     }, [likes])
     const handleLike = async () => {
+        const isPass = checkUserSetting()
+        if (!isPass) return
         const pinId = buzzItem!.id;
         if (!isLogin) {
             await connect()
@@ -218,6 +220,8 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
     })
 
     const handlePay = async () => {
+        const isPass = checkUserSetting()
+        if (!isPass) return
         setPaying(true)
         try {
             if (accessControl && accessControl.data) {
@@ -403,11 +407,13 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                             <Button shape='round' size='small' type='primary'
                                 disabled={decryptContent?.status === 'purchased' || decryptContent?.status === 'mempool'} onClick={async (e) => {
                                     e.stopPropagation()
+                                    const isPass = checkUserSetting()
+                                    if (!isPass) return
                                     setShowUnlock(true)
                                 }}
                                 loading={decryptContent?.status === 'mempool'}
                             >
-                                <Trans>
+                                <Trans wrapper>
                                     {decryptContent.status === 'unpurchased' ? 'Unlock' : 'Unlocked'}
                                 </Trans>
                             </Button>
@@ -489,6 +495,9 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
             {showActions && <div className="actions">
 
                 <Button type='text' icon={<MessageOutlined />} onClick={() => {
+                    const isPass = checkUserSetting()
+                    if (!isPass) return;
+
                     showComment ? setShowComment(false) : setShowComment(true)
                 }}>
                     {buzzItem.commentCount}
@@ -503,6 +512,8 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                 </div>
                 <div className="item">
                     <Button type='text' icon={<UploadOutlined />} onClick={() => {
+                        const isPass = checkUserSetting()
+                        if (!isPass) return;
                         showNewPost ? setShowNewPost(false) : setShowNewPost(true)
                     }} />
                 </div>

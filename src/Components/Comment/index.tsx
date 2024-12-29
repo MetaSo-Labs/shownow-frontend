@@ -20,12 +20,16 @@ type Props = {
 }
 export default ({ show, onClose, tweetId, refetch }: Props) => {
     const { formatMessage } = useIntl()
-    const { user, btcConnector, feeRate, chain, mvcConnector } = useModel('user')
+    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting } = useModel('user')
     const { showConf, fetchServiceFee } = useModel('dashboard');
     const [content, setContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const queryClient = useQueryClient();
     const handleAddComment = async () => {
+        const isPass = checkUserSetting();
+        if (!isPass) {
+            return;
+        }
         setIsAdding(true);
 
         try {
@@ -110,7 +114,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
                     <Button disabled icon={<FileImageOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
                 </Space>
                 <Button type='primary' shape='round' loading={isAdding} onClick={handleAddComment}>
-                    <Trans>Comment</Trans>
+                    <Trans wrapper>Comment</Trans>
                 </Button>
             </div>
         </div>

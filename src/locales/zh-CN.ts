@@ -43,4 +43,8 @@ export default {
   "My NFT": "我的NFT",
   "You can only select 2 NFTs": "您只能选择2个NFT",
   "Image must smaller than 300k!": "图片必须小于300k！",
+  "Set up": "设置",
+  "Your avatar and name have not been set up, Please go to Settings to complete your profile.":
+    "您的头像和名称尚未设置，请转到设置以完成您的个人资料。",
+    'Go to Setting': '前往设置',
 };

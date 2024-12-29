@@ -40,7 +40,7 @@ export default ({ show, onClose, quotePin }: Props) => {
     const { formatMessage } = useIntl()
     const isQuoted = !isNil(quotePin);
 
-    const { user, btcConnector, feeRate, chain, mvcConnector } = useModel('user')
+    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting } = useModel('user')
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
     const { showConf, fetchServiceFee, manPubKey } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
@@ -69,8 +69,6 @@ export default ({ show, onClose, quotePin }: Props) => {
             message.error(msg)
             return Upload.LIST_IGNORE
         }
-
-
         const previewUrl = URL.createObjectURL(file);
         setImages((prevImages) => [...prevImages, { file, previewUrl }]);
         return false;
@@ -79,6 +77,10 @@ export default ({ show, onClose, quotePin }: Props) => {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
     const onCreateSubmit = async () => {
+        const isPass = checkUserSetting();
+        if (!isPass) {
+            return;
+        }
         const _images =
             images.length !== 0 ? await image2Attach(convertToFileList(images)) : [];
         if (lock) {

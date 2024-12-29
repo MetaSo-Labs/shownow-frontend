@@ -16,7 +16,7 @@ import {
   getUserInfo,
 } from "@/request/api";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
-import { isEmpty } from "ramda";
+import { isEmpty, set } from "ramda";
 import { useModel } from "umi";
 const checkExtension = () => {
   if (!window.metaidwallet) {
@@ -66,6 +66,7 @@ export default () => {
   const [network, setNetwork] = useState<API.Network>(curNetwork);
   const [initializing, setInitializing] = useState<boolean>(true);
   const [feeRate, setFeeRate] = useState<number>(1);
+  const [showSetting, setShowSetting] = useState(false);
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
   const connectWallet = useCallback(async () => {
     const [isConnected, errMsg] = await checkWallet();
@@ -280,6 +281,16 @@ export default () => {
     setChain(chain);
   };
 
+  const checkUserSetting = useCallback(() => {
+    if (!isLogin) return true;
+    if (!user.metaid) return true;
+    if (!user.name) {
+      setShowSetting(true);
+      return false;
+    }
+    return true;
+  }, [isLogin, chain, user]);
+
   useEffect(() => {
     fetchUserFollowingList();
   }, [fetchUserFollowingList]);
@@ -303,5 +314,8 @@ export default () => {
     fetchUserInfo,
     switchChain,
     fetchUserFollowingList,
+    showSetting,
+    setShowSetting,
+    checkUserSetting,
   };
 };

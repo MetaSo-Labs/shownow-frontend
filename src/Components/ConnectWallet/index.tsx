@@ -4,13 +4,14 @@ import { useModel, history } from "umi"
 
 
 export default () => {
-    const { showConnect, setShowConnect, connect } = useModel('user');
+    const { showConnect, setShowConnect, connect, checkUserSetting } = useModel('user');
     const { showConf } = useModel('dashboard');
     const handleConnect = async (chain: API.Chain) => {
         try {
             await connect(chain);
             setTimeout(() => {
                 history.push('/')
+                
             }, 100);
         } catch (e: any) {
             message.error(e.message)
