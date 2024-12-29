@@ -46,5 +46,6 @@ export default {
   "Set up": "设置",
   "Your avatar and name have not been set up, Please go to Settings to complete your profile.":
     "您的头像和名称尚未设置，请转到设置以完成您的个人资料。",
-    'Go to Setting': '前往设置',
+  "Go to Setting": "前往设置",
+  Connect: "连接钱包",
 };

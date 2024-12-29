@@ -1,5 +1,5 @@
 import { Link, Outlet, useModel, history, useIntl, useLocation, useOutlet } from 'umi';
-import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Input, InputNumber, Layout, Menu, Radio, Row, Segmented, Space, Tag, theme, Typography } from 'antd';
+import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Input, InputNumber, Layout, Menu, message, notification, Radio, Row, Segmented, Space, Tag, theme, Typography } from 'antd';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import './index.less';
 import Menus from './Menus';
@@ -23,6 +23,7 @@ import HeaderMenus from './HeaderMenus';
 import { Activity } from '@ivliu/react-offscreen';
 import { DefaultLogo } from '@/config';
 import UserSetting from '@/Components/UserSetting';
+import ConnectWallet from '@/Components/ConnectWallet';
 
 
 
@@ -36,7 +37,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
     const { showConf: __showConf } = useModel('dashboard')
-    const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain, checkUserSetting } = useModel('user')
+    const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain, checkUserSetting, isLogin } = useModel('user')
     const { md } = useBreakpoint();
     const { token: {
         colorPrimary,
@@ -45,7 +46,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
         colorBgLayout,
         colorBgContainer,
     } } = theme.useToken()
-    // const element = useKeepOutlets()
+    const [api, contextHolder] = notification.useNotification();
     const showConf = _showConf || __showConf
 
     const [followMode, setFollowMode] = useState('hide')
@@ -61,9 +62,47 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
         }
     }, [location.pathname])
 
-    useLayoutEffect(()=>{
+    useLayoutEffect(() => {
         checkUserSetting()
-    },[checkUserSetting])
+    }, [checkUserSetting])
+
+    const openNotification = () => {
+        const key = `open${Date.now()}`;
+        const btn = (
+            <Space>
+                <Button type="primary" style={{ background: showConf?.brandColor }} size="small" onClick={() => {
+                    window.open(
+                        "https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao"
+                    );
+                    api.destroy()
+                }}>
+                    Install Wallet Now
+                </Button>
+            </Space>
+        );
+        api.open({
+            message: 'Metalat Wallet',
+            description:
+                "It looks like you don't have a wallet installed yet. Please install the Metalat wallet.",
+            btn,
+        });
+    }
+
+    const setShowConnect = async (_show: boolean) => {
+        if (_show && !window.metaidwallet) {
+            openNotification();
+            return
+        }
+        try {
+            await connect()
+            setTimeout(() => {
+                history.push('/')
+            }, 100);
+        } catch (err: any) {
+            message.error(err.message)
+        }
+
+    }
 
 
 
@@ -139,18 +178,25 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             </Col> : ''}
                             <Col span={showConf?.showSliderMenu ? 24 : 18} md={10}>
                                 <div className="userPanel" style={{ background: colorBgContainer }}>
-                                    <div className="user" onClick={() => { history.push('/profile') }}>
-                                        <UserAvatar src={user.avater} />
-                                        <div className='desc'>
-                                            <Typography.Text className="name">
-                                                {user.name || 'Unnamed'}
-                                            </Typography.Text>
-                                            <Typography.Text className="metaid" style={{ whiteSpace: 'nowrap' }}>
-                                                MetaID:{user.metaid.slice(0, 8)}
-                                            </Typography.Text>
-                                        </div>
+                                    {
+                                        isLogin ? <div className="user" onClick={() => { history.push('/profile') }}>
+                                            <UserAvatar src={user.avater} />
+                                            <div className='desc'>
+                                                <Typography.Text className="name">
+                                                    {user.name || 'Unnamed'}
+                                                </Typography.Text>
+                                                <Typography.Text className="metaid" style={{ whiteSpace: 'nowrap' }}>
+                                                    MetaID:{user.metaid.slice(0, 8)}
+                                                </Typography.Text>
+                                            </div>
 
-                                    </div>
+                                        </div> : <Button type="primary" shape='round' onClick={() => {
+                                            setShowConnect(true)
+                                        }} >
+                                            <Trans wrapper>Connect</Trans>
+                                        </Button  >
+                                    }
+
                                     <div className="actions">
 
                                         <Dropdown placement='bottom' dropdownRender={() => {
@@ -274,6 +320,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                 }
                 <UserSetting />
             </Layout>
+            {contextHolder}
         </div>
 
     );

@@ -7,7 +7,7 @@ export const getHostByNet = (network: API.Network) => {
   return MAINNET_CONTENT_HOST;
 };
 
-export const curNetwork: API.Network = "mainnet";
+export const curNetwork: API.Network = "testnet";
 // window.METAID_MARKET_NETWORK || "mainnet";
 
 // export const DASHBOARD_API = "https://www.show.now/api";

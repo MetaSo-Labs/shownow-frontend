@@ -245,7 +245,6 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                             if (styles) {
                                 setStyles({ ...styles, gradientColor: color.toCssString() });
                             }
-
                         }}
                     />
                 </div>
@@ -385,6 +384,15 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                             setStyles({ ...styles, brandIntroSubTitle: e.target.value });
                         }
 
+                    }} />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',gap: 24 }}>
+                    <span>Need Login</span>
+                    <Switch value={styles?.checkLogin} onChange={(value) => {
+                        if (styles) {
+                            setStyles({ ...styles, checkLogin: value })
+                        }
                     }} />
                 </div>
             </Space>,

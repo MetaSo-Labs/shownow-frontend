@@ -20,7 +20,6 @@ const Home = () => {
     const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
         useInfiniteQuery({
             queryKey: ['homebuzzesnew', user.address],
-            enabled: Boolean(btcConnector),
             queryFn: ({ pageParam }) =>
                 fetchAllBuzzs({
                     size: 5,

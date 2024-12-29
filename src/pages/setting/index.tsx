@@ -123,7 +123,7 @@ export default () => {
         </Button>
         <Card title={<Trans>Personal data</Trans>} style={{ marginTop: 12 }} bordered={false} extra={
             <Button shape='round' type="primary" style={{ color: showConf?.colorButton, background: showConf?.gradientColor }} loading={submitting} onClick={updateUser}>
-                <Trans>Save</Trans>
+                <Trans wrapper>Save</Trans>
             </Button>
         }>
             <Form
