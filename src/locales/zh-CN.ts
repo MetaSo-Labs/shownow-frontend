@@ -40,6 +40,7 @@ export default {
   "Show original content": "显示原始内容",
   Unlock: "解锁",
   Unlocked: "已解锁",
-  'My NFT': '我的NFT',
-  'You can only select 2 NFTs': '您只能选择2个NFT',
+  "My NFT": "我的NFT",
+  "You can only select 2 NFTs": "您只能选择2个NFT",
+  "Image must smaller than 300k!": "图片必须小于300k！",
 };

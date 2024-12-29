@@ -5,6 +5,8 @@ import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
 import * as crypto from "crypto";
 
 import { ec as EC } from "elliptic";
+import { IMAGESIZE } from "@/config";
+import { getIntl, getLocale } from "umi";
 
 const ec = new EC("secp256k1");
 export function generateAESKey() {
@@ -104,4 +106,20 @@ export const openWindowTarget = () => {
 
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export const formatMessage = (children: string) => {
+  const intl = getIntl(getLocale());
+  return intl.formatMessage({
+    id: children,
+    defaultMessage: children,
+  });
+};
+
+export function checkImageSize(file: File) {
+  if (file.size > 1024 * IMAGESIZE) {
+    return [false, formatMessage("Image must smaller than 300k!")];
+  } else {
+    return [true, ""];
+  }
 }

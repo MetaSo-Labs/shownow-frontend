@@ -16,7 +16,7 @@ import _btc from '@/assets/btc.png'
 import _mvc from '@/assets/mvc.png'
 import { InscribeData } from "node_modules/@metaid/metaid/dist/core/entity/btc";
 import * as crypto from 'crypto'
-import { encryptPayloadAES, generateAESKey, openWindowTarget } from "@/utils/utils";
+import { checkImageSize, encryptPayloadAES, generateAESKey, openWindowTarget } from "@/utils/utils";
 import { postPayBuzz } from "@/utils/buzz";
 import { IBtcConnector } from "metaid/dist";
 import { getDeployList, getIDCoinInfo, getMRC20Info, getUserInfo } from "@/request/api";
@@ -63,6 +63,11 @@ export default ({ show, onClose, quotePin }: Props) => {
         if (!isImage) {
             message.error('You can only upload image file!');
             return Upload.LIST_IGNORE;
+        }
+        const [check, msg] = checkImageSize(file)
+        if (!check) {
+            message.error(msg)
+            return Upload.LIST_IGNORE
         }
 
 
