@@ -77,7 +77,7 @@ const UploadBackground = (props: any) => {
         >
             {imageUrl ? <div style={{ position: 'relative', width: '100%', height: 240, overflow: 'hidden',borderRadius: 8 }}>
                 <img src={imageUrl} alt="avatar" style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 8, overflow: 'hidden' }} />
-                <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} shape='circle' type='text' icon={<FileImageFilled />}></Button>
+                <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} shape='circle' type='link' variant='link' icon={<FileImageFilled />}></Button>
             </div> : uploadButton}
         </Upload.Dragger>
     );

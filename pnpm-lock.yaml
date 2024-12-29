@@ -29,6 +29,9 @@ importers:
       antd:
         specifier: ^5.21.4
         version: 5.21.4(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      antd-img-crop:
+        specifier: ^4.24.0
+        version: 4.24.0(antd@5.21.4(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       antd-style:
         specifier: ^3.7.1
         version: 3.7.1(@types/react@18.3.11)(antd@5.21.4(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1966,6 +1969,13 @@ packages:
     resolution: {integrity: sha512-UlK3BfA0iE2c5+Zz/Bd2iPAkT6cICtrKG4/swSik5MZweBHtgmu1aUQCHvICdiv39EAShdZy/edfP6mlkS/xXg==, tarball: https://registry.npmjs.org/antd-dayjs-webpack-plugin/-/antd-dayjs-webpack-plugin-1.0.6.tgz}
     peerDependencies:
       dayjs: '*'
+
+  antd-img-crop@4.24.0:
+    resolution: {integrity: sha512-RqY/XqvmUnHlj7oLV2kN/ytdZdHUFAZyM3TN+QlTlLrze1Q74isAePgG+QTkLAbrkR9L/IgVRpjsuH/nevpU7Q==, tarball: https://registry.npmjs.org/antd-img-crop/-/antd-img-crop-4.24.0.tgz}
+    peerDependencies:
+      antd: '>=4.0.0'
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   antd-style@3.7.1:
     resolution: {integrity: sha512-CQOfddVp4aOvBfCepa+Kj2e7ap+2XBINg1Kn2osdE3oQvrD7KJu/K0sfnLcFLkgCJygbxmuazYdWLKb+drPDYA==, tarball: https://registry.npmjs.org/antd-style/-/antd-style-3.7.1.tgz}
@@ -4290,6 +4300,9 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==, tarball: https://registry.npmjs.org/normalize-range/-/normalize-range-0.1.2.tgz}
     engines: {node: '>=0.10.0'}
 
+  normalize-wheel@1.0.1:
+    resolution: {integrity: sha512-1OnlAPZ3zgrk8B91HyRj+eVv+kS5u+Z0SCsak6Xil/kmgEia50ga7zfkumayonZrImffAxPU/5WcyGhzetHNPA==, tarball: https://registry.npmjs.org/normalize-wheel/-/normalize-wheel-1.0.1.tgz}
+
   npm-run-path@4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==, tarball: https://registry.npmjs.org/npm-run-path/-/npm-run-path-4.0.1.tgz}
     engines: {node: '>=8'}
@@ -5188,6 +5201,12 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
+  react-easy-crop@5.2.0:
+    resolution: {integrity: sha512-gjb7jN+WnwfgpbNUI2jSwyoIxF1sJ0PVSNVgEysAgF1rj8AqR75fqmdvqZ6PFVgEX3rT1G4HJELesiQXr2ZvAg==, tarball: https://registry.npmjs.org/react-easy-crop/-/react-easy-crop-5.2.0.tgz}
+    peerDependencies:
+      react: '>=16.4.0'
+      react-dom: '>=16.4.0'
+
   react-error-overlay@6.0.9:
     resolution: {integrity: sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==, tarball: https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.0.9.tgz}
 
@@ -5946,6 +5965,9 @@ packages:
 
   tslib@2.8.0:
     resolution: {integrity: sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==, tarball: https://registry.npmjs.org/tslib/-/tslib-2.8.0.tgz}
+
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==, tarball: https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz}
 
   tsutils@3.21.0:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==, tarball: https://registry.npmjs.org/tsutils/-/tsutils-3.21.0.tgz}
@@ -8644,6 +8666,14 @@ snapshots:
   antd-dayjs-webpack-plugin@1.0.6(dayjs@1.11.13):
     dependencies:
       dayjs: 1.11.13
+
+  antd-img-crop@4.24.0(antd@5.21.4(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      antd: 5.21.4(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-easy-crop: 5.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      tslib: 2.8.1
 
   antd-style@3.7.1(@types/react@18.3.11)(antd@5.21.4(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -11487,6 +11517,8 @@ snapshots:
 
   normalize-range@0.1.2: {}
 
+  normalize-wheel@1.0.1: {}
+
   npm-run-path@4.0.1:
     dependencies:
       path-key: 3.1.1
@@ -12500,6 +12532,13 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
+  react-easy-crop@5.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      normalize-wheel: 1.0.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      tslib: 2.8.1
+
   react-error-overlay@6.0.9: {}
 
   react-fast-compare@3.2.2: {}
@@ -13373,6 +13412,8 @@ snapshots:
   tslib@1.14.1: {}
 
   tslib@2.8.0: {}
+
+  tslib@2.8.1: {}
 
   tsutils@3.21.0(typescript@5.6.3):
     dependencies:

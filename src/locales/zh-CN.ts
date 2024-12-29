@@ -48,4 +48,7 @@ export default {
     "您的头像和名称尚未设置，请转到设置以完成您的个人资料。",
   "Go to Setting": "前往设置",
   Connect: "连接钱包",
+  Cancel: "取消",
+  Settings: "设置",
+  'Log out': "退出",
 };

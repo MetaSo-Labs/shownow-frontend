@@ -24,6 +24,7 @@ import defaultAvatar from '@/assets/avatar.svg'
 import UserAvatar from "../UserAvatar";
 import Trans from "../Trans";
 import NFTModal from "../NFTModal";
+import SelectChain from "./SelectChain";
 const { TextArea } = Input;
 type Props = {
     show: boolean,
@@ -361,42 +362,7 @@ export default ({ show, onClose, quotePin }: Props) => {
         }
         <div>
             <Row gutter={[12, 12]} >
-                <Col span={24}><Typography.Text strong> <Trans>Select Network</Trans></Typography.Text></Col>
-                <Col span={24}>
-                    <Row gutter={[12, 12]}>
-                        <Col md={12} xs={24}>
-                            <Button onClick={() => {
-                                setChainNet('btc')
-                            }} style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} block>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                                    <img src={_btc} style={{ height: 40, width: 40 }}></img>
-                                    <Typography.Text >BTC Network</Typography.Text>
-                                </div>
-                                <Radio checked={chainNet === 'btc'} />
-                            </Button>
-                        </Col>
-                        <Col md={12} xs={24}>
-                            <Button onClick={() => {
-                                setChainNet('mvc')
-                            }} style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} block>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                                    <img src={_mvc} style={{ height: 40, width: 40 }}></img>
-                                    <div style={{ display: "flex", flexDirection: 'column', gap: 4 }}>
-                                        <Typography.Text >MicrovisonChain</Typography.Text>
-                                        <Tag style={{
-                                            fontSize: 8,
-                                            width: 80,
-                                            lineHeight: 1.2,
-                                            textAlign: 'center'
-                                        }} color='orange' bordered={false}><Trans>Bitcoin Sidechain</Trans></Tag>
-                                    </div>
-
-                                </div>
-                                <Radio checked={chainNet === 'mvc'} />
-                            </Button>
-                        </Col>
-                    </Row>
-                </Col>
+                <SelectChain chainNet={chainNet} setChainNet={setChainNet} />
                 <Col span={24}><Typography.Text strong><Trans>Public</Trans></Typography.Text></Col>
                 <Col span={24}>
                     <TextArea rows={4} placeholder={isQuoted ? formatMessage({ id: "Add a comment" }) : formatMessage({

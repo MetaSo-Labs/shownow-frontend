@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 
 
 import { Form, Input, Upload, Button, message, Avatar, UploadProps, theme } from "antd";
-import { FileImageFilled, LoadingOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { CameraOutlined, FileImageFilled, LoadingOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { useModel } from "umi";
 import Trans from "../Trans";
+import { DEFAULT_AVATAR } from "@/config";
+import ImgCrop from 'antd-img-crop';
+import { formatMessage } from "@/utils/utils";
 
 const getBase64 = (img: FileType, callback: (url: string) => void) => {
     const reader = new FileReader();
@@ -32,8 +35,13 @@ const UploadAvatar = (props: any) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        console.log(props.value)
         if (props.value && typeof props.value === 'string' && props.value.indexOf('http') === 0) {
             setImageUrl(props.value)
+        } else {
+            if(props.value===''){
+                setImageUrl('')
+            }
         }
     }, [props.value])
 
@@ -64,23 +72,26 @@ const UploadAvatar = (props: any) => {
         onSuccess()
     }
 
-    return (
-        <Upload
-            beforeUpload={beforeUpload}
-            onChange={handleChange}
-            name="avatar"
-            listType={props.listType || "picture-circle"}
-            className="avatar-uploader"
-            showUploadList={false}
-            style={{ overflow: 'hidden',background:'#fff' }}
-            customRequest={handleUpload}
+    return (<div style={{ overflow: 'hidden',  display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-        >
-            {imageUrl ? <div style={{ position: 'relative', width: 100, height: 100 }}>
-                <img src={imageUrl} alt="avatar" style={{ width: 100, height: 100, objectFit: 'cover',  overflow: 'hidden' }} />
-                <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} shape='circle' type='link'  icon={<FileImageFilled />}></Button>
-            </div> : uploadButton}
-        </Upload>
+        <ImgCrop rotationSlider cropShape='round' modalTitle={formatMessage('Avatar')}>
+            <Upload
+                beforeUpload={beforeUpload}
+                onChange={handleChange}
+                name="avatar"
+                listType={"picture-circle"}
+                className="avatar-uploader"
+                showUploadList={false}
+                style={{ overflow: 'hidden', background: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                customRequest={handleUpload}
+            >
+                <div style={{ position: 'relative', width: 100, height: 100 }}>
+                    <img src={imageUrl || DEFAULT_AVATAR} alt="avatar" style={{ width: 100, height: 100, objectFit: 'cover', overflow: 'hidden', borderRadius: "50%" }} />
+                    <Button style={{ position: 'absolute', bottom: 0, right: 0 }} size='small' shape='circle' type='primary' icon={<CameraOutlined />} />
+                </div>
+            </Upload>
+        </ImgCrop>
+    </div>
     );
 };
 

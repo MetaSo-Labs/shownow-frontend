@@ -3,7 +3,7 @@ import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Inpu
 import { useEffect, useLayoutEffect, useState } from 'react';
 import './index.less';
 import Menus from './Menus';
-import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import {
     QueryClient,
     QueryClientProvider,
@@ -24,6 +24,7 @@ import { Activity } from '@ivliu/react-offscreen';
 import { DefaultLogo } from '@/config';
 import UserSetting from '@/Components/UserSetting';
 import ConnectWallet from '@/Components/ConnectWallet';
+import ProfileSetting from '@/Components/ProfileSetting';
 
 
 
@@ -179,18 +180,46 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             <Col span={showConf?.showSliderMenu ? 24 : 18} md={10}>
                                 <div className="userPanel" style={{ background: colorBgContainer }}>
                                     {
-                                        isLogin ? <div className="user" onClick={() => { history.push('/profile') }}>
-                                            <UserAvatar src={user.avater} />
-                                            <div className='desc'>
-                                                <Typography.Text className="name">
-                                                    {user.name || 'Unnamed'}
-                                                </Typography.Text>
-                                                <Typography.Text className="metaid" style={{ whiteSpace: 'nowrap' }}>
-                                                    MetaID:{user.metaid.slice(0, 8)}
-                                                </Typography.Text>
-                                            </div>
+                                        isLogin ? <Dropdown placement='bottom' menu={
+                                            {
+                                                items: [{
+                                                    key: 'profile',
+                                                    label: formatMessage({ id: 'Profile' }),
+                                                    icon: <UserOutlined />,
+                                                    onClick: () => {
+                                                        history.push('/profile')
+                                                    }
+                                                },
 
-                                        </div> : <Button type="primary" shape='round' onClick={() => {
+                                                {
+                                                    key: 'setting',
+                                                    label: formatMessage({ id: 'Settings' }),
+                                                    icon: <SettingOutlined />,
+                                                    onClick: () => {
+                                                        history.push('/setting')
+                                                    }
+                                                },
+                                                {
+                                                    key: 'logout',
+                                                    label: formatMessage({ id: 'Log out' }),
+                                                    icon: <PoweroffOutlined />,
+                                                    onClick: disConnect
+                                                }
+                                                ]
+                                            }
+                                        }  >
+                                            <div className="user" >
+                                                <UserAvatar src={user.avater} />
+                                                <div className='desc'>
+                                                    <Typography.Text className="name">
+                                                        {user.name || 'Unnamed'}
+                                                    </Typography.Text>
+                                                    <Typography.Text className="metaid" style={{ whiteSpace: 'nowrap' }}>
+                                                        MetaID:{user.metaid.slice(0, 8)}
+                                                    </Typography.Text>
+                                                </div>
+                                            </div>
+                                        </Dropdown> : <Button type="primary" shape='round' onClick={() => {
                                             setShowConnect(true)
                                         }} >
                                             <Trans wrapper>Connect</Trans>
@@ -270,9 +299,9 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
                                         </Dropdown>
 
-                                        <Button shape='circle' type='text' color='default' onClick={disConnect}>
+                                        {/* <Button shape='circle' type='text' color='default' onClick={disConnect}>
                                             <PoweroffOutlined />
-                                        </Button>
+                                        </Button> */}
                                         <SelectLang />
                                     </div>
 
@@ -319,6 +348,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                     }} />
                 }
                 <UserSetting />
+                <ProfileSetting />
             </Layout>
             {contextHolder}
         </div>

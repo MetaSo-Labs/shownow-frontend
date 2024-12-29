@@ -1,59 +1,65 @@
-import UploadAvatar from "@/Components/ProfileCard/UploadAvatar";
-import UploadBackground from "@/Components/ProfileCard/UploadBackground";
-import Trans from "@/Components/Trans";
-import { BASE_MAN_URL, curNetwork } from "@/config";
-import { getUserInfo } from "@/request/api";
-import { image2Attach } from "@/utils/file";
-import { PlusOutlined } from "@ant-design/icons"
-import { useQuery } from "@tanstack/react-query";
-import { Avatar, Button, Card, Form, Input, message, Upload } from "antd"
-import { useEffect, useState } from "react";
 import { useModel } from "umi"
-const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-        return e;
-    }
-    return e?.fileList;
-};
+import Popup from "../ResponPopup"
+import Trans from "../Trans"
+import { Button, Form, Input, message, Row } from "antd"
+import SelectChain from "../NewPost/SelectChain"
+import { useEffect, useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { getUserInfo } from "@/request/api"
+import { BASE_MAN_URL, curNetwork } from "@/config"
+import { image2Attach } from "@/utils/file"
+import UploadAvatar from "../ProfileCard/UploadAvatar"
 
+type Props = {
+    show: boolean
+    onClose: () => void
+
+}
 export default () => {
-    const { showConf } = useModel('dashboard');
-    const { user, btcConnector, mvcConnector, chain, feeRate, fetchUserInfo } = useModel('user');
+    const { showProfileEdit, setShowProfileEdit, chain, btcConnector, mvcConnector, feeRate, fetchUserInfo } = useModel('user')
+    const [chainNet, setChainNet] = useState<API.Chain>(chain);
     const [submitting, setSubmitting] = useState(false);
     const [form] = Form.useForm();
-    const connector = chain === 'btc' ? btcConnector : mvcConnector;
+
+    useEffect(() => {
+        setChainNet(chain)
+    }, [chain])
+
+    const connector = useMemo(() => {
+        return chainNet === 'btc' ? btcConnector : mvcConnector
+    }, [chainNet, btcConnector, mvcConnector])
+
     const profileUserData = useQuery({
-        queryKey: ['userInfo', user.address],
-        enabled: Boolean(user.address && connector),
-        queryFn: () => getUserInfo({ address: user.address }),
+        queryKey: ['userInfo', 'edit', connector?.user.address],
+        enabled: Boolean(connector && showProfileEdit),
+        queryFn: () => getUserInfo({ address: connector!.user.address }),
     });
 
     useEffect(() => {
         form.setFieldsValue({
             name: profileUserData.data?.name,
             avatar: profileUserData.data?.avatar ? `${BASE_MAN_URL}${profileUserData.data?.avatar}` : '',
-            background: profileUserData.data?.background ? `${BASE_MAN_URL}${profileUserData.data?.background}` : '',
         })
     }, [profileUserData.data])
 
     const updateUser = async () => {
+        if (!profileUserData.data) return
         const values = form.getFieldsValue();
         setSubmitting(true);
-        if (typeof values.avatar !== 'string') {
+        if (values.avatar && typeof values.avatar !== 'string') {
             const [image] = await image2Attach([values.avatar] as FileList);
             values.avatar = Buffer.from(image.data, "hex").toString("base64")
         } else {
             delete values.avatar
         }
-        if (typeof values.background !== 'string') {
+        if (values.background && typeof values.background !== 'string') {
             const [image] = await image2Attach([values.background] as FileList);
             values.background = Buffer.from(image.data, "hex").toString("base64")
         } else {
             delete values.background
         }
-        const connector = chain === 'btc' ? btcConnector : mvcConnector;
         try {
-            if (user.name) {
+            if (profileUserData.data.name) {
                 const res = await connector!.updateUserInfo({
                     userData: {
                         ...values
@@ -111,77 +117,45 @@ export default () => {
                 }
             }
             fetchUserInfo()
-        } catch (e) {
+            setShowProfileEdit(false)
+        } catch (e: any) {
             console.log(e, 'error');
             message.error(e.message)
         }
         setSubmitting(false);
     }
-    return <div>
-        <Button shape='round' style={{ color: showConf?.colorButton, background: showConf?.gradientColor }}>
-            <Trans>Account</Trans>
-        </Button>
-        <Card title={<Trans>Personal data</Trans>} style={{ marginTop: 12 }} bordered={false} extra={
-            <Button shape='round' type="primary" style={{ color: showConf?.colorButton, background: showConf?.gradientColor }} loading={submitting} onClick={updateUser}>
+    if (!connector) return null
+    return <Popup onClose={() => {
+        setShowProfileEdit(false)
+    }} show={showProfileEdit} modalWidth={480} closable title={<Trans>Profile</Trans>}>
+        <Row gutter={[12, 12]}>
+            <SelectChain chainNet={chainNet} setChainNet={setChainNet} />
+        </Row>
+        <Form
+            layout='vertical'
+            form={form}
+        >
+            <Form.Item name='avatar' label={<Trans>Avatar</Trans>}>
+                <UploadAvatar />
+            </Form.Item>
+            <Form.Item label={<Trans>Name</Trans>} name='name'>
+                <Input size='large' />
+            </Form.Item>
+        </Form>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 12
+        }}>
+            <Button onClick={() => {
+                setShowProfileEdit(false)
+            }} block size='large' shape='round' variant='filled' color='primary'>
+                <Trans wrapper>Cancel</Trans>
+            </Button>
+            <Button onClick={updateUser} block loading={submitting} size='large' type='primary' shape='round'>
                 <Trans wrapper>Save</Trans>
             </Button>
-        }>
-            <Form
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 14 }}
-                layout="horizontal"
-              
-                form={form}
-            >
-                <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} bordered={false} cover={
-                    <div
-                        style={{ height: 240, objectFit: 'cover', borderRadius: 10 }}
-                    >
-                        <Form.Item name='background' wrapperCol={{ span: 24 }} style={{ width: '100%' }}>
-                            <UploadBackground />
-                        </Form.Item>
-
-                    </div>
-                }>
-                    <div style={{ padding: 20 }}>
-
-                        <div className="avatar" style={{ marginTop: -60 }}>
-                            <Form.Item name='avatar' labelCol={{
-                                span:0
-                            }}
-                            wrapperCol={{
-                                span:24
-                            }}
-                            style={{
-                                padding:0,
-                                width:100,
-                                background:'rgba(255,255,255,0)',
-                            }}
-                            >
-                                <UploadAvatar />
-                            </Form.Item>
-                        </div>
-                    </div>
-
-                </Card>
-
-
-
-                <Form.Item style={{marginTop:20}} label={<Trans>Name</Trans>} name='name'>
-                    <Input />
-                </Form.Item>
-
-
-
-
-            </Form>
-
-
-
-
-
-
-        </Card>
-
-    </div>
+        </div>
+    </Popup>
 }

@@ -9,7 +9,7 @@ type Props = {
 
 }
 export default () => {
-    const { showSetting, setShowSetting } = useModel('user')
+    const { showSetting, setShowSetting, setShowProfileEdit } = useModel('user')
     return <Popup onClose={() => {
         setShowSetting(false)
     }} show={showSetting} modalWidth={380} closable title={<Trans>Set up</Trans>}>
@@ -18,7 +18,12 @@ export default () => {
         </Trans>
         <Button size='large' block type='primary' shape='round' style={{
             marginTop: 20
-        }}>
+        }}
+            onClick={() => {
+                setShowSetting(false);
+                setShowProfileEdit(true);
+            }}
+        >
             <span>
                 <Trans>Go to Setting</Trans>
             </span>

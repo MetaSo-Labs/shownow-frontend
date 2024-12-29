@@ -67,6 +67,7 @@ export default () => {
   const [initializing, setInitializing] = useState<boolean>(true);
   const [feeRate, setFeeRate] = useState<number>(1);
   const [showSetting, setShowSetting] = useState(false);
+  const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
   const connectWallet = useCallback(async () => {
     const [isConnected, errMsg] = await checkWallet();
@@ -317,5 +318,7 @@ export default () => {
     showSetting,
     setShowSetting,
     checkUserSetting,
+    showProfileEdit,
+    setShowProfileEdit,
   };
 };

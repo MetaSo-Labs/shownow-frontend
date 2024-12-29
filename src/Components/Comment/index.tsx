@@ -103,7 +103,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
         }
         setIsAdding(false);
     };
-    return <Popup onClose={onClose} show={show} modalWidth={800} closable >
+    return <Popup onClose={onClose} show={show} modalWidth={600} closable >
         <div>
             <UserInfo user={user} />
             <TextArea rows={6} placeholder={formatMessage({ id: 'Post your reply' })} style={{ marginTop: 24 }} value={content} onChange={(e) => {
