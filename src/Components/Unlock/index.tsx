@@ -6,7 +6,7 @@ type Props = {
     children?: React.ReactNode
 }
 export default ({ show, onClose, children }: Props) => {
-    return <Popup onClose={onClose} show={show} modalWidth={480} closable title='Unlock'>
+    return <Popup onClose={onClose} show={show} modalWidth={400} closable title='Unlock'>
         {children}
     </Popup>
 }

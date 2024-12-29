@@ -17,7 +17,7 @@ import { buildAccessPass, decodePayBuzz } from "@/utils/buzz";
 const { Paragraph, Text } = Typography;
 import _btc from '@/assets/btc.png'
 import Unlock from "../Unlock";
-import { detectUrl, handleSpecial, openWindowTarget, sleep } from "@/utils/utils";
+import { detectUrl, formatMessage, handleSpecial, openWindowTarget, sleep } from "@/utils/utils";
 
 import UserAvatar from "../UserAvatar";
 import ImageGallery from "./ImageGallery";
@@ -44,7 +44,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         colorBgBlur,
         colorBgContainer
     } } = theme.useToken();
-    const { formatMessage, locale } = useIntl()
+    const {  locale } = useIntl()
     const [isTranslated, setIsTranslated] = useState(false);
     const [isTranslating, setIsTranslating] = useState(false);
     const [showTrans, setShowTrans] = useState(false);
@@ -95,13 +95,13 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
         return likes.includes(user.metaid)
     }, [likes])
     const handleLike = async () => {
+        if(!isLogin){
+            message.error(formatMessage('Please connect your wallet first'))
+            return
+        }
         const isPass = checkUserSetting()
         if (!isPass) return
         const pinId = buzzItem!.id;
-        if (!isLogin) {
-            await connect()
-            return
-        }
         if (isLiked) {
             message.error('You have already liked that buzz...');
             return;
@@ -214,12 +214,16 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
 
 
     const { data: decryptContent, refetch: refetchDecrypt } = useQuery({
-        enabled: Boolean(user.address),
+
         queryKey: ['buzzdecryptContent', buzzItem!.id, chain, user.address],
-        queryFn: () => decodePayBuzz(buzzItem, manPubKey!, chain),
+        queryFn: () => decodePayBuzz(buzzItem, manPubKey!, isLogin),
     })
 
     const handlePay = async () => {
+        if(!isLogin){
+            message.error(formatMessage('Please connect your wallet first'))
+            return
+        }
         const isPass = checkUserSetting()
         if (!isPass) return
         setPaying(true)
@@ -361,7 +365,7 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                         ))}
 
                         <Button type='link' style={{ padding: 0 }} loading={isTranslating} onClick={(e) => { e.stopPropagation(); handleTranslate() }}>
-                            {showTrans ? formatMessage({ id: 'Show original content' }) : formatMessage({ id: 'Translate' })}
+                            {showTrans ? formatMessage('Show original content') : formatMessage('Translate')}
                         </Button>
 
                         {
@@ -406,7 +410,11 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                             </div>
                             <Button shape='round' size='small' type='primary'
                                 disabled={decryptContent?.status === 'purchased' || decryptContent?.status === 'mempool'} onClick={async (e) => {
-                                    e.stopPropagation()
+                                    e.stopPropagation();
+                                    if(!isLogin){
+                                        message.error(formatMessage('Please connect your wallet first'))
+                                        return
+                                    }
                                     const isPass = checkUserSetting()
                                     if (!isPass) return
                                     setShowUnlock(true)
@@ -494,7 +502,11 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
 
             {showActions && <div className="actions">
 
-                <Button type='text' icon={<MessageOutlined />} onClick={() => {
+                <Button type='text' icon={<MessageOutlined />} onClick={async () => {
+                    if(!isLogin){
+                        message.error(formatMessage('Please connect your wallet first'))
+                        return
+                    }
                     const isPass = checkUserSetting()
                     if (!isPass) return;
 
@@ -512,6 +524,10 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                 </div>
                 <div className="item">
                     <Button type='text' icon={<UploadOutlined />} onClick={() => {
+                        if(!isLogin){
+                            message.error(formatMessage('Please connect your wallet first'))
+                            return
+                        }
                         const isPass = checkUserSetting()
                         if (!isPass) return;
                         showNewPost ? setShowNewPost(false) : setShowNewPost(true)
@@ -534,26 +550,29 @@ export default ({ buzzItem, showActions = true, refetch, isForward = false, load
                 flexDirection: 'column'
             }}>
                 <img src={_btc} alt="" width={60} height={60} />
-                {accessControl?.data?.payCheck?.amount} BTC
+                <Typography.Title level={4}>{accessControl?.data?.payCheck?.amount} BTC</Typography.Title>
+                
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 20,
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    width: '100%'
 
                 }}>
-                    <Button shape='round' type='primary' block onClick={() => {
+                    <Button shape='round' variant='filled' size='large' color='primary' block onClick={() => {
                         setShowUnlock(false)
                     }} >
-                        Cancel
+                        <Trans wrapper>Cancel</Trans>
                     </Button>
-                    <Button shape='round' block loading={paying} type='primary'
+                    <Button shape='round' size='large' block loading={paying} type='primary'
                         onClick={async (e) => {
                             e.stopPropagation()
                             handlePay()
                         }
                         } >
-                        Unlock
+                        <Trans wrapper>Unlock</Trans>
+
                     </Button>
 
                 </div>

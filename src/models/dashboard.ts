@@ -1,7 +1,7 @@
 import { DASHBOARD_TOKEN } from "@/config";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
 import { getMetaidByAddress, getPubKey } from "@/request/api";
-import { fetchFees, fetchShowConf } from "@/request/dashboard";
+import { fetchAdmin, fetchFees, fetchShowConf } from "@/request/dashboard";
 import { useCallback, useEffect, useState } from "react";
 export const showNowConf = {
   alias: "default",
@@ -39,21 +39,15 @@ export default () => {
   const [showConf, setShowConf] = useState<DB.ShowConfDto>();
   const [manPubKey, setManPubKey] = useState<string>();
   const [fees, setFees] = useState<DB.FeeDto[]>([]);
+  const [admin, setAdmin] = useState<DB.LoginWithWallerDto>();
   const [logined, setLogined] = useState(
     Boolean(window.localStorage.getItem(DASHBOARD_TOKEN))
   );
   const fetchConfig = useCallback(async () => {
     const ret = await fetchShowConf();
-    // if (true) {
-    //   const userInfo = await getMetaidByAddress({
-    //     address: "n18EnQDAEh47fYQbLJdzt6xdw8TvUs7haL", //ret.service_fee_address,
-    //   });
-    //   console.log(userInfo, "n18EnQDAEh47fYQbLJdzt6xdw8TvUs7haL");
-    //   ret.host = userInfo!.metaid.slice(0, 16) + ":";
-    //   console.log(ret.host, "ret.host");
-    // }
-
-    ret.host = "";
+    const admin = await fetchAdmin();
+    setAdmin(admin);
+    // ret.host = admin.mvcAddress ? admin.mvcAddress + ":" : "";
     setShowConf({
       ...showNowConf,
       ...ret,
@@ -104,5 +98,6 @@ export default () => {
     fees,
     logined,
     setLogined,
+    admin,
   };
 };

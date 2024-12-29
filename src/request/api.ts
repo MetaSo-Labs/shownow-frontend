@@ -354,15 +354,19 @@ export const getControlByContentPin = async (params: { pinId: string }) => {
   );
 };
 
-export const getDecryptContent = async (params: {
-  publickey: string;
-  address: string;
-  sign: string;
-  timestamp: number;
-  pinId: string;
-  controlPath: string;
-  controlPinId: string;
-}) => {
+export const getDecryptContent = async (
+  params: {
+    publickey: string;
+    address: string;
+    sign: string;
+    timestamp: number;
+    pinId: string;
+    controlPath: string;
+    controlPinId: string;
+  },
+  manDomain: string
+) => {
+  const Host = manDomain ? `https://${manDomain}/man` : BASE_MAN_URL;
   return request<{
     code: number;
     data: {
@@ -370,7 +374,7 @@ export const getDecryptContent = async (params: {
       filesResult: string[];
       status: API.PayStatus;
     };
-  }>(`${BASE_MAN_URL + "/api/access/decrypt"}`, {
+  }>(`${Host + "/api/access/decrypt"}`, {
     method: "POST",
     data: params,
   });

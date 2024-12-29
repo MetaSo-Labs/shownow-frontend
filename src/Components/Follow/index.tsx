@@ -1,7 +1,7 @@
 import { curNetwork, FLAG } from '@/config';
 import followEntitySchema, { getFollowEntitySchemaWithCustomHost } from '@/entities/follow';
 import { fetchFollowDetailPin } from '@/request/api';
-import { sleep } from '@/utils/utils';
+import { formatMessage, sleep } from '@/utils/utils';
 import { CheckCircleFilled, LoadingOutlined, PlusCircleFilled } from '@ant-design/icons';
 import { Button, message, theme } from 'antd';
 import { MvcEntity } from 'node_modules/@metaid/metaid/dist/core/entity/mvc';
@@ -21,7 +21,7 @@ type FollowProps = {
 const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
     return function FollowComponent(props: FollowProps) {
         const { metaid } = props;
-        const { followList, chain, btcConnector, mvcConnector, user, feeRate, setFollowList, fetchUserFollowingList, checkUserSetting } = useModel('user');
+        const { followList, chain, btcConnector, mvcConnector, user, feeRate, setFollowList, fetchUserFollowingList, checkUserSetting,isLogin } = useModel('user');
         const { fetchServiceFee, showConf } = useModel('dashboard');
         const [loading, setLoading] = useState(false);
 
@@ -191,6 +191,10 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
             setLoading(false);
         }
         const handleFollowToggle = async () => {
+            if(!isLogin){
+                message.error(formatMessage('Please connect your wallet first'))
+                return
+            }
             const isPass = checkUserSetting();
             if (!isPass) {
                 return;

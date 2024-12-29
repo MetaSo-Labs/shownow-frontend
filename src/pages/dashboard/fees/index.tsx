@@ -1,4 +1,4 @@
-import { saveConf, saveFees } from "@/request/dashboard";
+import { saveConf, saveDomain, saveFees } from "@/request/dashboard";
 import { FooterToolbar, ProCard, ProForm, ProFormDigit, ProFormText } from "@ant-design/pro-components"
 import { Col, Divider, message, Row, Space } from "antd"
 import { useModel } from "umi";
@@ -8,7 +8,7 @@ import Rpc from "../rpc";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
-    const { fees, updateFees } = useModel('dashboard')
+    const { fees, updateFees, admin } = useModel('dashboard')
     const [tab, setTab] = useState('BTC');
     const [form] = ProForm.useForm();
     const onFinish = async (chain: 'BTC' | 'MVC', values: any) => {
@@ -31,7 +31,7 @@ export default () => {
             background: 'rgba(255,255,255,0)',
         }}
         tabs={{
-           
+
             activeKey,
             items: [
                 {
@@ -42,7 +42,8 @@ export default () => {
                         style={{
                             background: 'rgba(255,255,255,0)',
                         }}
-                        tabs={{ type: 'card',
+                        tabs={{
+                            type: 'card',
                             activeKey: tab,
                             items: [
                                 {
@@ -189,6 +190,37 @@ export default () => {
                     key: '2',
                     label: 'RPC',
                     children: <Rpc />
+                },
+                {
+                    key: '3',
+                    label: 'Domain Name',
+                    children: <ProCard title="Domain Name Configuration" ghost gutter={8} >
+                        <ProForm<{
+                            domainName: string;
+                        }>
+                            onFinish={async (values) => {
+                                await saveDomain(values);
+                                await updateFees();
+                                message.success('Save successfully');
+                            }}
+                            submitter={{
+                                searchConfig: {
+                                    submitText: 'Save',
+                                    resetText: 'Reset'
+                                },
+                            }}
+                            initialValues={admin}
+                            autoFocusFirstInput
+                        >
+                            <ProFormText
+                                width='lg'
+                                name="domainName"
+                                label="Domain Name"
+                                placeholder="Please enter the domain name of the RPC service"
+
+                            />
+                        </ProForm>
+                    </ProCard>
                 }
             ],
             onChange: (key) => {

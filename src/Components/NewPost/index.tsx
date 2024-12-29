@@ -16,7 +16,7 @@ import _btc from '@/assets/btc.png'
 import _mvc from '@/assets/mvc.png'
 import { InscribeData } from "node_modules/@metaid/metaid/dist/core/entity/btc";
 import * as crypto from 'crypto'
-import { checkImageSize, encryptPayloadAES, generateAESKey, openWindowTarget } from "@/utils/utils";
+import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, openWindowTarget } from "@/utils/utils";
 import { postPayBuzz } from "@/utils/buzz";
 import { IBtcConnector } from "metaid/dist";
 import { getDeployList, getIDCoinInfo, getMRC20Info, getUserInfo } from "@/request/api";
@@ -38,12 +38,12 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
     reader.readAsDataURL(img);
 };
 export default ({ show, onClose, quotePin }: Props) => {
-    const { formatMessage } = useIntl()
+   
     const isQuoted = !isNil(quotePin);
 
-    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting } = useModel('user')
+    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting,isLogin } = useModel('user')
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
-    const { showConf, fetchServiceFee, manPubKey } = useModel('dashboard')
+    const { showConf, fetchServiceFee, manPubKey, admin } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
     const [content, setContent] = useState('');
     const [encryptContent, setEncryptContent] = useState('');
@@ -78,6 +78,10 @@ export default ({ show, onClose, quotePin }: Props) => {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
     const onCreateSubmit = async () => {
+        if(!isLogin){
+            message.error(formatMessage('Please connect your wallet first'))
+            return
+        }
         const isPass = checkUserSetting();
         if (!isPass) {
             return;
@@ -286,6 +290,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 publicImages: await image2Attach(convertToFileList(publicImages)),
                 encryptContent: encryptContent,
                 nfts: nfts.map(nft => `metafile://nft/mrc721/${nft.itemPinId}`),
+                manDomain: admin?.domainName || '',
             },
                 String(payAmount),
                 user.address,
@@ -365,9 +370,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 <SelectChain chainNet={chainNet} setChainNet={setChainNet} />
                 <Col span={24}><Typography.Text strong><Trans>Public</Trans></Typography.Text></Col>
                 <Col span={24}>
-                    <TextArea rows={4} placeholder={isQuoted ? formatMessage({ id: "Add a comment" }) : formatMessage({
-                        id: 'post_placeholder',
-                    })} value={content} onChange={(e) => setContent(e.target.value)} />
+                    <TextArea rows={4} placeholder={isQuoted ? formatMessage("Add a comment") : formatMessage("post_placeholder")} value={content} onChange={(e) => setContent(e.target.value)} />
                 </Col>
 
                 {

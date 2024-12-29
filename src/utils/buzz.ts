@@ -34,9 +34,17 @@ type PostParams = {
   publicImages: AttachmentItem[];
   encryptContent: string;
   nfts: string[];
+  manDomain?: string;
 };
 export const postPayBuzz = async (
-  { content, encryptImages, publicImages, encryptContent, nfts }: PostParams,
+  {
+    content,
+    encryptImages,
+    publicImages,
+    encryptContent,
+    nfts,
+    manDomain = "",
+  }: PostParams,
   price: string,
   address: string,
   feeRate: number,
@@ -137,7 +145,7 @@ export const postPayBuzz = async (
 
   const contorlPayload: any = {
     controlPins: [pid],
-    manDomain: "",
+    manDomain: manDomain || "",
     manPubkey: manPubKey,
     creatorPubkey: ecdhPubKey,
     encryptedKey: encryptPayloadAES(sharedSecret, randomKey),
@@ -382,7 +390,7 @@ function sha256ToHex(input: string): string {
 export const decodePayBuzz = async (
   buzzItem: API.Buzz,
   manPubKey: string,
-  chain: API.Chain
+  isLogin: boolean
 ): Promise<{
   publicContent: string;
   encryptContent: string;
@@ -488,11 +496,18 @@ export const decodePayBuzz = async (
         status: "unpurchased",
       };
     }
+    if (!isLogin) {
+      return {
+        publicContent: parseSummary.publicContent,
+        encryptContent: "",
+        publicFiles: _publicFiles,
+        encryptFiles: parseSummary.encryptFiles,
+        nfts: _nfts,
+        buzzType: "pay",
+        status: "unpurchased",
+      };
+    }
     // const { creatorPubkey, encryptedKey, manPubkey } = controlPin;
-    const address =
-      chain === "btc"
-        ? await window.metaidwallet.btc.getAddress()
-        : await window.metaidwallet.getAddress();
     const btcAddress = await window.metaidwallet.btc.getAddress();
     const mvcAddress = await window.metaidwallet.getAddress();
     if (buzzItem.creator === btcAddress || buzzItem.creator === mvcAddress) {
@@ -540,15 +555,18 @@ export const decodePayBuzz = async (
     const timestamp = Math.floor(Date.now() / 1000);
     const _signStr = `${sharedSecret}${timestamp}${btcAddress}`;
     const sign = sha256ToHex(_signStr);
-    const decryptRet = await getDecryptContent({
-      publickey: ecdhPubKey,
-      address: btcAddress,
-      sign: sign,
-      timestamp,
-      pinId: buzzItem!.id,
-      controlPath: "",
-      controlPinId: controlPin.pinId,
-    });
+    const decryptRet = await getDecryptContent(
+      {
+        publickey: ecdhPubKey,
+        address: btcAddress,
+        sign: sign,
+        timestamp,
+        pinId: buzzItem!.id,
+        controlPath: "",
+        controlPinId: controlPin.pinId,
+      },
+      controlPin.manDomain
+    );
     const { data } = decryptRet;
     if (!data) {
       return {

@@ -30,6 +30,7 @@ declare namespace DB {
     signature: string;
     mvcAddress: string;
     publicKey: string;
+    domainName: string;
   };
   type FeeDto = {
     id: number;

@@ -72,6 +72,24 @@ export async function saveFees(
   });
 }
 
+export async function saveDomain(
+  params: Pick<DB.LoginWithWallerDto, "domainName">,
+  options?: { [key: string]: any }
+) {
+  return request<{
+    success: boolean;
+  }>(`${DASHBOARD_API}/users/admin`, {
+    method: "POST",
+    data: params,
+    ...(options || {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}
+
 export async function saveConf(
   params: DB.ShowConfDto,
   options?: { [key: string]: any }

@@ -9,7 +9,7 @@ import { curNetwork, FLAG } from "@/config";
 import { isNil } from "ramda";
 import { useQueryClient } from "@tanstack/react-query";
 import commentEntitySchema, { getCommentEntitySchemaWithCustomHost } from "@/entities/comment";
-import { sleep } from "@/utils/utils";
+import { formatMessage, sleep } from "@/utils/utils";
 import Trans from "../Trans";
 const { TextArea } = Input;
 type Props = {
@@ -19,13 +19,17 @@ type Props = {
     refetch?: () => Promise<any>
 }
 export default ({ show, onClose, tweetId, refetch }: Props) => {
-    const { formatMessage } = useIntl()
-    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting } = useModel('user')
+   
+    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting,isLogin } = useModel('user')
     const { showConf, fetchServiceFee } = useModel('dashboard');
     const [content, setContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const queryClient = useQueryClient();
     const handleAddComment = async () => {
+        if(!isLogin){
+            message.error(formatMessage('Please connect your wallet first'))
+            return
+        }
         const isPass = checkUserSetting();
         if (!isPass) {
             return;
@@ -106,7 +110,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
     return <Popup onClose={onClose} show={show} modalWidth={600} closable >
         <div>
             <UserInfo user={user} />
-            <TextArea rows={6} placeholder={formatMessage({ id: 'Post your reply' })} style={{ marginTop: 24 }} value={content} onChange={(e) => {
+            <TextArea rows={6} placeholder={formatMessage('Post your reply')} style={{ marginTop: 24 }} value={content} onChange={(e) => {
                 setContent(e.target.value)
             }} />
             <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

@@ -6,7 +6,7 @@ import UserAvatar from "@/Components/UserAvatar"
 import { fetchBuzzDetail, getPinDetailByPid } from "@/request/api"
 import { ArrowLeftOutlined, LeftOutlined } from "@ant-design/icons"
 import { useQuery } from "@tanstack/react-query"
-import { Avatar, Button, Card, Col, Divider, Input, Row } from "antd"
+import { Avatar, Button, Card, Col, Divider, Input, message, Row } from "antd"
 import { isEmpty } from "ramda"
 import { useState } from "react"
 import { useIntl, useMatch, useModel } from "umi"
@@ -17,7 +17,7 @@ type Props = {
 
 export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props) => {
     const { formatMessage } = useIntl()
-    const { user, checkUserSetting } = useModel('user')
+    const { user, checkUserSetting,isLogin} = useModel('user')
     const { showConf } = useModel('dashboard')
 
     const [refetchNum, setRefetchNum] = useState(0);
@@ -50,6 +50,10 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <UserAvatar src={user?.avater} size={48} />
             <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => {
+                if(!isLogin){
+                    message.error(formatMessage({id:'Please connect your wallet first'}))
+                    return
+                }
                 const isPass = checkUserSetting();
                 if (!isPass) {
                     return;
@@ -57,6 +61,10 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
                 setShowComment(true)
             }} />
             <Button type='primary' shape='round'  onClick={() => { 
+                 if(!isLogin){
+                    message.error(formatMessage({id:'Please connect your wallet first'}))
+                    return
+                }
                 const isPass = checkUserSetting();
                 if (!isPass) {
                     return;

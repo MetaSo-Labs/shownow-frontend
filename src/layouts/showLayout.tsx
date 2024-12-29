@@ -127,6 +127,10 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                 <Menus />
                             </div>
                             <Button size='large' shape='round' type='primary' onClick={() => {
+                                if(!isLogin){
+                                    setShowConnect(true)
+                                    return
+                                }
                                 const isPass = checkUserSetting();
                                 if (!isPass) {
                                     return;
@@ -162,6 +166,10 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             {md ? <Col span={24} md={showConf?.showSliderMenu ? 14 : 9}>
 
                                 <div className="searchWrap" style={{ background: colorBgContainer }} onClick={() => {
+                                    if(!isLogin){
+                                        setShowConnect(true)
+                                        return
+                                    }
                                     const isPass = checkUserSetting();
                                     if (!isPass) return;
                                     setShowPost(true)
@@ -342,6 +350,10 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                 <NewPost show={showPost} onClose={() => setShowPost(false)} />
                 {
                     !md && <FloatButton style={{ bottom: 100 }} icon={<EditOutlined />} onClick={() => {
+                        if(!isLogin){
+                            setShowConnect(true)
+                            return
+                        }
                         const isPass = checkUserSetting();
                         if (!isPass) return;
                         setShowPost(true)
