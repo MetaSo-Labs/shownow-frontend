@@ -17,6 +17,7 @@ export const menus = [
     { key: 'follow', icon: _follow, activeIcon: _followActive, label: <Trans>Follow</Trans> },
     { key: 'profile', icon: _profile, activeIcon: _profileActive, label: <Trans>Profile</Trans> },
     { key: 'setting', icon: _setting, activeIcon: _settingActive, label: <Trans>Setting</Trans> },
+    { key: 'about', icon: _setting, activeIcon: _settingActive, label: <Trans>About</Trans> },
 ]
 
 export default () => {

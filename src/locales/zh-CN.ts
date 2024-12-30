@@ -1,3 +1,5 @@
+import about from "@/pages/about";
+
 export default {
   Post: "发帖",
   post_placeholder: "发生了什么",
@@ -50,7 +52,13 @@ export default {
   Connect: "连接钱包",
   Cancel: "取消",
   Settings: "设置",
-  'Log out': "退出",
-  'Please connect your wallet first': "请先连接您的钱包",
-  'The administrator has not set a domain. Please ask the administrator to configure a domain to proceed.':'管理员尚未设置域名。请要求管理员配置域名以继续。',
+  "Log out": "退出",
+  "Please connect your wallet first": "请先连接您的钱包",
+  "The administrator has not set a domain. Please ask the administrator to configure a domain to proceed.":
+    "管理员尚未设置域名。请要求管理员配置域名以继续。",
+  About: "关于",
+  'Follow Serivice Fee': '关注服务费',
+  'Post Serivice Fee': '发帖服务费',
+  'Commet Serivice Fee': '评论服务费',
+  'Like Serivice Fee': '点赞服务费',
 };
