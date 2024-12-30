@@ -47,7 +47,7 @@ export default () => {
     const ret = await fetchShowConf();
     const admin = await fetchAdmin();
     setAdmin(admin);
-    // ret.host = admin.mvcAddress ? admin.mvcAddress + ":" : "";
+    ret.host = admin.host ? admin.host + ":" : "";
     setShowConf({
       ...showNowConf,
       ...ret,

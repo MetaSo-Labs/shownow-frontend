@@ -24,12 +24,12 @@ export default () => {
                 routes: [
                     {
                         path: '/dashboard/styles',
-                        name: 'Style Configuration',
+                        name: 'Style',
                         icon: <ChromeOutlined />,
                     },
                     {
                         path: '/dashboard/fees',
-                        name: 'Setting',
+                        name: 'Settings',
                         icon: <DollarOutlined />,
                     },
                     // {

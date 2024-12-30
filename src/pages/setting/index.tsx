@@ -4,6 +4,7 @@ import Trans from "@/Components/Trans";
 import { BASE_MAN_URL, curNetwork } from "@/config";
 import { getUserInfo } from "@/request/api";
 import { image2Attach } from "@/utils/file";
+import { formatMessage } from "@/utils/utils";
 import { PlusOutlined } from "@ant-design/icons"
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, Button, Card, Form, Input, message, Upload } from "antd"
@@ -18,7 +19,7 @@ const normFile = (e: any) => {
 
 export default () => {
     const { showConf } = useModel('dashboard');
-    const { user, btcConnector, mvcConnector, chain, feeRate, fetchUserInfo } = useModel('user');
+    const { user, btcConnector, mvcConnector, chain, feeRate, fetchUserInfo, isLogin } = useModel('user');
     const [submitting, setSubmitting] = useState(false);
     const [form] = Form.useForm();
     const connector = chain === 'btc' ? btcConnector : mvcConnector;
@@ -37,6 +38,10 @@ export default () => {
     }, [profileUserData.data])
 
     const updateUser = async () => {
+        if (!isLogin) {
+            message.error(formatMessage('Please connect your wallet first'))
+            return
+        }
         const values = form.getFieldsValue();
         setSubmitting(true);
         if (typeof values.avatar !== 'string') {
@@ -130,7 +135,7 @@ export default () => {
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 14 }}
                 layout="horizontal"
-              
+
                 form={form}
             >
                 <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} bordered={false} cover={
@@ -147,16 +152,16 @@ export default () => {
 
                         <div className="avatar" style={{ marginTop: -60 }}>
                             <Form.Item name='avatar' labelCol={{
-                                span:0
+                                span: 0
                             }}
-                            wrapperCol={{
-                                span:24
-                            }}
-                            style={{
-                                padding:0,
-                                width:100,
-                                background:'rgba(255,255,255,0)',
-                            }}
+                                wrapperCol={{
+                                    span: 24
+                                }}
+                                style={{
+                                    padding: 0,
+                                    width: 100,
+                                    background: 'rgba(255,255,255,0)',
+                                }}
                             >
                                 <UploadAvatar />
                             </Form.Item>
@@ -167,7 +172,7 @@ export default () => {
 
 
 
-                <Form.Item style={{marginTop:20}} label={<Trans>Name</Trans>} name='name'>
+                <Form.Item style={{ marginTop: 20 }} label={<Trans>Name</Trans>} name='name'>
                     <Input />
                 </Form.Item>
 

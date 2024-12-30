@@ -31,6 +31,7 @@ declare namespace DB {
     mvcAddress: string;
     publicKey: string;
     domainName: string;
+    host: string;
   };
   type FeeDto = {
     id: number;

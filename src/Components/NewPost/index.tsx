@@ -270,6 +270,9 @@ export default ({ show, onClose, quotePin }: Props) => {
     const handleAddBuzzWhthLock = async () => {
         setIsAdding(true);
         try {
+            if(!admin?.domainName){
+                throw new Error('The administrator has not set a domain. Please ask the administrator to configure a domain to proceed.')
+            }
             const encryptImages = images.filter((image) => encryptFiles.includes(image.previewUrl));
             const publicImages = images.filter((image) => !encryptFiles.includes(image.previewUrl));
             if (encryptImages.length === 0 && !encryptContent) {

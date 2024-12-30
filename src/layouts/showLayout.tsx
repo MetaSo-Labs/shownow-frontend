@@ -64,8 +64,14 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     }, [location.pathname])
 
     useLayoutEffect(() => {
-        checkUserSetting()
-    }, [checkUserSetting])
+        if(location.pathname.indexOf('dashboard')>-1){
+            return
+        }else{
+            console.log('checkUserSetting',location.pathname)
+            checkUserSetting()
+        }
+        
+    }, [checkUserSetting,location.pathname])
 
     const openNotification = () => {
         const key = `open${Date.now()}`;

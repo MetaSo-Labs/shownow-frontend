@@ -193,8 +193,8 @@ export default () => {
                 },
                 {
                     key: '3',
-                    label: 'Domain Name',
-                    children: <ProCard title="Domain Name Configuration" ghost gutter={8} >
+                    label: 'Domain Name & Host',
+                    children: <ProCard  ghost gutter={8} >
                         <ProForm<{
                             domainName: string;
                         }>
@@ -216,7 +216,14 @@ export default () => {
                                 width='lg'
                                 name="domainName"
                                 label="Domain Name"
-                                placeholder="Please enter the domain name of the RPC service"
+                                placeholder="Please enter the domain name of the MetaAccess "
+
+                            />
+                            <ProFormText
+                                width='lg'
+                                name="host"
+                                label="Host"
+                                placeholder=""
 
                             />
                         </ProForm>

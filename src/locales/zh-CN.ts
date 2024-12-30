@@ -51,4 +51,6 @@ export default {
   Cancel: "取消",
   Settings: "设置",
   'Log out': "退出",
+  'Please connect your wallet first': "请先连接您的钱包",
+  'The administrator has not set a domain. Please ask the administrator to configure a domain to proceed.':'管理员尚未设置域名。请要求管理员配置域名以继续。',
 };
