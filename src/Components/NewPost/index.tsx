@@ -25,6 +25,7 @@ import UserAvatar from "../UserAvatar";
 import Trans from "../Trans";
 import NFTModal from "../NFTModal";
 import SelectChain from "./SelectChain";
+import { getBuzzSchemaWithCustomHost } from "@/entities/buzz";
 const { TextArea } = Input;
 type Props = {
     show: boolean,
@@ -38,10 +39,10 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
     reader.readAsDataURL(img);
 };
 export default ({ show, onClose, quotePin }: Props) => {
-   
+
     const isQuoted = !isNil(quotePin);
 
-    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting,isLogin } = useModel('user')
+    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting, isLogin } = useModel('user')
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
     const { showConf, fetchServiceFee, manPubKey, admin } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
@@ -78,7 +79,7 @@ export default ({ show, onClose, quotePin }: Props) => {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
     const onCreateSubmit = async () => {
-        if(!isLogin){
+        if (!isLogin) {
             message.error(formatMessage('Please connect your wallet first'))
             return
         }
@@ -230,7 +231,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     onClose();
                 }
             } else {
-                const buzzEntity = (await mvcConnector!.use('buzz')) as IMvcEntity
+                const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity
                 const createRes = await buzzEntity!.create({
                     data: { body: JSON.stringify({ ...finalBody }) },
                     options: {
@@ -241,7 +242,6 @@ export default ({ show, onClose, quotePin }: Props) => {
                         service: fetchServiceFee('post_service_fee_amount', 'MVC'),
                     },
                 })
-                console.log('create res for inscribe', createRes)
                 if (!isNil(createRes?.txid)) {
                     // await sleep(5000);
                     queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] })
@@ -270,7 +270,7 @@ export default ({ show, onClose, quotePin }: Props) => {
     const handleAddBuzzWhthLock = async () => {
         setIsAdding(true);
         try {
-            if(!admin?.domainName){
+            if (!admin?.domainName) {
                 throw new Error('The administrator has not set a domain. Please ask the administrator to configure a domain to proceed.')
             }
             const encryptImages = images.filter((image) => encryptFiles.includes(image.previewUrl));
@@ -385,7 +385,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                             } onClick={() => setLock(!lock)} />
                         </Col>
                         {
-                            lock && <Col span={24}><TextArea rows={4} placeholder={formatMessage({ id: "encrypt content" })} value={encryptContent} onChange={(e) => setEncryptContent(e.target.value)} /></Col>
+                            lock && <Col span={24}><TextArea rows={4} placeholder={formatMessage("encrypt content")} value={encryptContent} onChange={(e) => setEncryptContent(e.target.value)} /></Col>
                         }
                     </>
                 }

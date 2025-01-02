@@ -194,7 +194,7 @@ export default () => {
                 {
                     key: '3',
                     label: 'Domain Name & Host',
-                    children: <ProCard  ghost gutter={8} >
+                    children: <ProCard ghost gutter={8} >
                         <ProForm<{
                             domainName: string;
                         }>
@@ -217,6 +217,20 @@ export default () => {
                                 name="domainName"
                                 label="Domain Name"
                                 placeholder="Please enter the domain name of the MetaAccess "
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please enter the domain name of the MetaAccess',
+                                    },
+                                    {
+                                        pattern: /^(?!\-)(?:[A-Za-z0-9-]{1,63}\.?)+(?<=\.[A-Za-z]{2,})$/,
+                                        message: 'Please enter a valid domain name'
+                                    }
+                                ]}
+                                fieldProps={{
+                                    addonBefore: 'https://'
+                                }}
+
 
                             />
                             <ProFormText
