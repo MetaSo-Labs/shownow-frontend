@@ -17,7 +17,7 @@ type Props = {
 
 export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props) => {
     const { formatMessage } = useIntl()
-    const { user, checkUserSetting,isLogin} = useModel('user')
+    const { user, checkUserSetting, isLogin } = useModel('user')
     const { showConf } = useModel('dashboard')
 
     const [refetchNum, setRefetchNum] = useState(0);
@@ -31,10 +31,14 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
 
     if (!buzzDetail) return null;
 
-    return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none' }} title={
-        <Button type="text" size='small' icon={<LeftOutlined />} onClick={onClose}>
+    return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none' }} title={<>
+        {
+            showConf?.showSliderMenu && <Button type="text" size='small' icon={<LeftOutlined />} onClick={onClose}>
 
-        </Button>
+            </Button>
+        }
+    </>
+
     } styles={{
         header: {
             borderBottom: 'none',
@@ -50,8 +54,8 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <UserAvatar src={user?.avater} size={48} />
             <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => {
-                if(!isLogin){
-                    message.error(formatMessage({id:'Please connect your wallet first'}))
+                if (!isLogin) {
+                    message.error(formatMessage({ id: 'Please connect your wallet first' }))
                     return
                 }
                 const isPass = checkUserSetting();
@@ -60,9 +64,9 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
                 }
                 setShowComment(true)
             }} />
-            <Button type='primary' shape='round'  onClick={() => { 
-                 if(!isLogin){
-                    message.error(formatMessage({id:'Please connect your wallet first'}))
+            <Button type='primary' shape='round' onClick={() => {
+                if (!isLogin) {
+                    message.error(formatMessage({ id: 'Please connect your wallet first' }))
                     return
                 }
                 const isPass = checkUserSetting();
