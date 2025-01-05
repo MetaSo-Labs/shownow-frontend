@@ -1,6 +1,8 @@
+import NumberFormat from "@/Components/NumberFormat";
 import { fetchMetaBlockList } from "@/request/metaso";
 import { useQuery } from "@tanstack/react-query";
 import { ConfigProvider, Table, TableProps, Typography } from "antd";
+import dayjs from "dayjs";
 import { useState } from "react";
 
 export default () => {
@@ -12,14 +14,17 @@ export default () => {
         title: 'Timestamp (utc)',
         dataIndex: 'metaBlockTime',
         key: 'metaBlockTime',
-    },{
+        render: (text) => dayjs(text * 1000).format('YYYY-MM-DD HH:mm:ss')
+    }, {
         title: 'Age',
         dataIndex: 'metaBlockTime',
-        key: 'metaBlockTime',
+        key: 'metaBlockTimeAge',
+        render: (text) => dayjs().to(dayjs(text * 1000))
     }, {
         title: 'MDV',
         dataIndex: 'mdvValue',
         key: 'mdvValue',
+        render: (text) => <NumberFormat value={text} />
     }]
     const [page, setPage] = useState(0);
     const { isLoading, isError, error, data, isFetching, isPreviousData } =

@@ -44,3 +44,39 @@ export async function fetchMetaBlockAreaInfo(params: { host: string }) {
     }
   );
 }
+
+export async function claimPre(
+  params: {
+    claimAmount: string;
+    networkFeeRate: number;
+    receiveAddress: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<MS.IRet<MS.ClaimPreRes>>(
+    `${METASO_BASE_API}/v1/metaso/coin/claim/pre`,
+    {
+      method: "POST",
+      data: params,
+      ...(options || {}),
+    }
+  );
+}
+
+export async function claimCommit(
+  params: {
+    commitTxOutIndex: number;
+    commitTxRaw: string;
+    orderId: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<MS.IRet<MS.ClaimPreRes>>(
+    `${METASO_BASE_API}/v1/metaso/coin/claim/commit`,
+    {
+      method: "POST",
+      data: params,
+      ...(options || {}),
+    }
+  );
+}

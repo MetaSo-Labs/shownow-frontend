@@ -13,6 +13,7 @@
     "@ant-design/pro-components": "^2.8.1",
     "@bitcoin-js/tiny-secp256k1-asmjs": "^2.2.3",
     "@ivliu/react-offscreen": "^1.0.8",
+    "@mempool/mempool.js": "^3.0.0",
     "@metaid/metaid": "1.5.12",
     "@tanstack/react-query": "^5.59.16",
     "antd": "^5.21.4",

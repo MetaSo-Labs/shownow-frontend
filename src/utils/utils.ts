@@ -123,3 +123,31 @@ export function checkImageSize(file: File) {
     return [true, ""];
   }
 }
+
+export function determineAddressInfo(address: string): string {
+  if (address.startsWith('bc1q')) {
+    return 'p2wpkh'
+  }
+  if (address.startsWith('tb1q')) {
+    return 'p2wpkh'
+  }
+
+  if (address.startsWith('bc1p')) {
+    return 'p2tr'
+  }
+
+  if (address.startsWith('tb1p')) {
+    return 'p2tr'
+  }
+
+  if (address.startsWith('1')) {
+    return 'p2pkh'
+  }
+  if (address.startsWith('3') || address.startsWith('2')) {
+    return 'p2sh'
+  }
+  if (address.startsWith('m') || address.startsWith('n')) {
+    return 'p2pkh'
+  }
+  return 'unknown'
+}

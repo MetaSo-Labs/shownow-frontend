@@ -1,4 +1,5 @@
 import _logo from "@/assets/dashboard/logo.svg";
+import { networks, type Network } from "bitcoinjs-lib";
 import defaultAvatar from "@/assets/defaultAvatar.svg";
 const TESTNET_CONTENT_HOST = "https://man-test.metaid.io";
 const MAINNET_CONTENT_HOST = "https://man.metaid.io";
@@ -10,6 +11,9 @@ export const getHostByNet = (network: API.Network) => {
 
 export const curNetwork: API.Network = "testnet";
 // window.METAID_MARKET_NETWORK || "mainnet";
+
+export const TYPED_NETWORK: Network =
+  curNetwork === "testnet" ? networks.testnet : networks.bitcoin;
 
 export const METASO_BASE_API =
   curNetwork === "testnet"

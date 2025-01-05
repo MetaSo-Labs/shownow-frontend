@@ -42,4 +42,21 @@ declare namespace MS {
     progressBlockCount: number;
     progressBlockTotal: number;
   };
+  type ClaimPreRes = {
+    claimAmount: string;
+    minerFee: number;
+    minerGas: number;
+    minerOutValue: number;
+    orderId: string;
+    receiveAddress: string;
+    serviceFee: number;
+    totalFee: number;
+  };
+  type ClaimCommitRes = {
+    commitTxId: string;
+    orderId: string;
+    revealTxId: string;
+    tickId: string;
+    txId: string;
+  };
 }

@@ -279,4 +279,24 @@ declare namespace API {
     mempool: number;
     unfollow: number;
   };
+
+  type UTXO = {
+    txId: string
+    vout: number
+    outputIndex: number
+    satoshis: number
+    satoshi: number
+    confirmed: boolean
+    rawTx?: string
+    inscriptions?:
+      | {
+          id: string
+          num: number
+        }[]
+      | null
+  }
+  type Tx = {
+    address: string
+    value: number
+  }
 }
