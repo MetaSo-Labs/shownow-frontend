@@ -9,7 +9,7 @@ export const getHostByNet = (network: API.Network) => {
   return MAINNET_CONTENT_HOST;
 };
 
-export const curNetwork: API.Network = "testnet";
+export const curNetwork: API.Network = "mainnet";
 // window.METAID_MARKET_NETWORK || "mainnet";
 
 export const TYPED_NETWORK: Network =
@@ -21,16 +21,19 @@ export const METASO_BASE_API =
     : "https://www.metaso.network/api-base";
 
 // export const DASHBOARD_API = "https://www.show.now/api";
-export const DASHBOARD_API = "http://127.0.0.1:3000/api";
+// export const DASHBOARD_API = "http://127.0.0.1:3000/api";
 // export const DASHBOARD_API =
 //   window.BUILD_ENV === "docker" ? "/api" : "https://www.show.now/api";
-// export const DASHBOARD_API = "/api";
+export const DASHBOARD_API = "/api";
 export const DASHBOARD_TOKEN = "DASHBOARD_TOKEN";
+
+export const DASHBOARD_SIGNATURE = "DASHBOARD_SIGNATURE";
+export const DASHBOARD_ADMIN_PUBKEY = "DASHBOARD_ADMIN_PUBKEY";
 // export const BASE_MAN_URL =
 //   window.BUILD_ENV === "docker" ? "/man" : "https://www.show.now/man";
-export const BASE_MAN_URL = "http://127.0.0.1:3000/man";
+// export const BASE_MAN_URL = "http://127.0.0.1:3000/man";
 // export const BASE_MAN_URL = "https://man-test.metaid.io";
-// export const BASE_MAN_URL = window.location.origin + "/man";
+export const BASE_MAN_URL = window.location.origin + "/man";
 
 export const BASE_IDCOIN_URL = "https://api.metaid.market/api-market-testnet";
 export const FLAG = "metaid";

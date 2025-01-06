@@ -6,6 +6,10 @@ declare namespace MS {
   }
   type AreaInfo = {
     currentReward: string;
+    currentExpectedMetaBlockReward: string;
+    totalAcquisitionReward: string;
+    lastMetaBlockShare: string;
+    lastMetaBlockReward: string;
     lastReward: string;
     pendingReward: string;
     scale: string;
@@ -21,11 +25,15 @@ declare namespace MS {
     priceUsd: string;
     marketCap: string;
     marketCapUsd: string;
+    priceChange24h: string;
+    marketCapChange24h:string
   };
 
   type MetaBlock = {
     mdvDeltaValue: number;
+    mdvDeltaValueStr: string;
     mdvValue: number;
+    mdvValueStr: string;
     metaBlockHash: string;
     metaBlockHeight: number;
     metaBlockTime: number;
@@ -38,7 +46,9 @@ declare namespace MS {
     currentTxCount: number;
     currentPins: number;
     currentMdvDeltaValue: number;
+    currentMdvDeltaValueStr: string;
     ownMdvDeltaValue: number;
+    ownMdvDeltaValueStr: string;
     progressBlockCount: number;
     progressBlockTotal: number;
   };

@@ -51,7 +51,7 @@ export default () => {
                 false,
                 false,
             )
-            console.log(fee)
+           
 
             const confirmed = await modal.confirm({
                 title: 'Trade Confirm',
@@ -72,11 +72,11 @@ export default () => {
                     },
                     {
                         label: 'Gas Fee',
-                        children: <NumberFormat value={new Decimal(fee).add(order.minerGas).toFixed(8)} suffix=' $METASO'></NumberFormat>,
+                        children: <NumberFormat value={new Decimal(fee).add(order.minerGas).toFixed(8)} suffix=' SAT'></NumberFormat>,
                     },
                     {
                         label: 'Fee Rate',
-                        children: <NumberFormat value={feeRate} suffix=''></NumberFormat>,
+                        children: <NumberFormat value={feeRate} suffix=' sat/vB'></NumberFormat>,
                     }]} />
                 </div>
             });
@@ -112,7 +112,7 @@ export default () => {
             children: <NumberFormat wrapper style={{
                 fontSize: 24,
                 fontWeight: 'bold'
-            }} value={areaInfo?.totalReward} suffix=' $METASO'></NumberFormat>
+            }} value={areaInfo?.totalAcquisitionReward} suffix=' $METASO'></NumberFormat>
         },
         {
             key: '2',
@@ -120,12 +120,13 @@ export default () => {
             children: <NumberFormat wrapper style={{
                 fontSize: 24,
                 fontWeight: 'bold'
-            }} value={areaInfo?.currentReward} suffix=' $METASO'></NumberFormat>,
+            }} value={areaInfo?.currentExpectedMetaBlockReward} suffix=' $METASO'></NumberFormat>,
         },
         {
             key: '3',
             label: 'Pending Rewards',
-            children: <Space>
+            rowSpan: 2,
+            children: <Space direction='vertical'>
                 <NumberFormat wrapper style={{
                     fontSize: 24,
                     fontWeight: 'bold',
@@ -140,7 +141,7 @@ export default () => {
             children: <NumberFormat wrapper style={{
                 fontSize: 24,
                 fontWeight: 'bold'
-            }} value={areaInfo?.lastReward} suffix=' $METASO'></NumberFormat>,
+            }} value={areaInfo?.lastMetaBlockReward} suffix=' $METASO'></NumberFormat>,
         },
         {
             key: '5',
@@ -148,7 +149,7 @@ export default () => {
             children: <NumberFormat wrapper style={{
                 fontSize: 24,
                 fontWeight: 'bold'
-            }} value={areaInfo?.scale} suffix=' %'></NumberFormat>,
+            }} value={areaInfo?.lastMetaBlockShare} suffix=' %'></NumberFormat>,
         },
     ];
     return <div>

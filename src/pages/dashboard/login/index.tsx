@@ -1,4 +1,4 @@
-import { curNetwork, DASHBOARD_TOKEN } from '@/config';
+import { curNetwork, DASHBOARD_ADMIN_PUBKEY, DASHBOARD_SIGNATURE, DASHBOARD_TOKEN } from '@/config';
 import { fetchAdmin, login, loginWithWallet } from '@/request/dashboard';
 import {
   AlipayOutlined,
@@ -102,7 +102,7 @@ const Page = () => {
       const btcAddress = await window.metaidwallet.btc.getAddress();
       const publicKey = await window.metaidwallet.btc.getPublicKey();
       const mvcAddress = await window.metaidwallet.getAddress();
-      const signature: any = await window.metaidwallet.btc.signMessage('show.now');
+      const signature: any = await window.metaidwallet.btc.signMessage('metaso.network');
       if (signature.status) {
         throw new Error(signature.status);
       }
@@ -112,7 +112,7 @@ const Page = () => {
         const confirmed = await modal.confirm({
           icon: null,
           title: <Badge status="success" text="Already connected" />,
-         
+
           content: <div style={{
             display: 'flex',
             flexDirection: 'column',
@@ -144,7 +144,9 @@ const Page = () => {
       });
       if (ret.access_token) {
         message.success('Login successful')
-        localStorage.setItem(DASHBOARD_TOKEN, ret.access_token)
+        localStorage.setItem(DASHBOARD_TOKEN, ret.access_token);
+        localStorage.setItem(DASHBOARD_SIGNATURE, signature);
+        localStorage.setItem(DASHBOARD_ADMIN_PUBKEY, publicKey);
         setLogined(true)
         setTimeout(() => {
           history.push('/dashboard/styles')

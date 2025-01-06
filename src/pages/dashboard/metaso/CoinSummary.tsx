@@ -11,7 +11,7 @@ import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons"
 
 
 export default () => {
-    
+
     const { data, isFetching } = useQuery({
         queryKey: ['coinSummary'],
         queryFn: () => {
@@ -23,7 +23,7 @@ export default () => {
     }, [data])
     return <div>
 
-        <Row gutter={[24,24]}>
+        <Row gutter={[24, 24]}>
             <Col {...{ xs: 24, sm: 24, md: 8, lg: 8, xl: 8 }}>
                 <Card
                     loading={isFetching}
@@ -41,10 +41,12 @@ export default () => {
                         color: '#fff',
 
                     }}><NumberFormat prefix={
-                        <>
-                            <ArrowUpOutlined size={16} style={{ color: '#86EFAC' }}></ArrowUpOutlined>
+                        <>{
+                            Number(coinSummary?.priceChange24h) >= 0 ? <ArrowUpOutlined size={16} style={{ color: '#86EFAC' }}></ArrowUpOutlined> : <ArrowDownOutlined size={16} style={{ color: '#DF7348' }}></ArrowDownOutlined>
+                        }
+
                         </>
-                    } suffix='%' value={'--'}></NumberFormat></Typography.Text>
+                    } suffix='%' value={coinSummary?.priceChange24h} precision={2}></NumberFormat></Typography.Text>
                 </Card>
             </Col>
             <Col {...{ xs: 24, sm: 24, md: 8, lg: 8, xl: 8 }}>
@@ -65,9 +67,12 @@ export default () => {
 
                     }}><NumberFormat prefix={
                         <>
-                            <ArrowDownOutlined size={16} style={{ color: '#DF7348' }}></ArrowDownOutlined>
+                            {
+                                Number(coinSummary?.marketCapChange24h) >= 0 ? <ArrowUpOutlined size={16} style={{ color: '#86EFAC' }}></ArrowUpOutlined> : <ArrowDownOutlined size={16} style={{ color: '#DF7348' }}></ArrowDownOutlined>
+                            }
+
                         </>
-                    } suffix='%' value={'--'}></NumberFormat></Typography.Text>
+                    } suffix='%' value={coinSummary?.marketCapChange24h}></NumberFormat></Typography.Text>
                 </Card>
             </Col>
 
@@ -83,11 +88,11 @@ export default () => {
                         color: '#fff',
                         opacity: 0.8
                     }}>Circulating Supply</Typography.Text>
-                    <Typography.Title level={4} style={{ color: "#fff", marginTop: 10 }}><NumberFormat  value={coinSummary?.circulatingSupply} /></Typography.Title>
+                    <Typography.Title level={4} style={{ color: "#fff", marginTop: 10 }}><NumberFormat value={coinSummary?.circulatingSupply} /></Typography.Title>
                     <Typography.Text style={{
                         color: '#fff',
 
-                    }}><NumberFormat value={coinSummary?.circulatingSupply/coinSummary?.totalSupply} precision={0} suffix='%' /> Percent of the Total Supply</Typography.Text>
+                    }}><NumberFormat value={coinSummary?.circulatingSupply / coinSummary?.totalSupply * 100} precision={2} suffix='%' /> Percent of the Total Supply</Typography.Text>
                 </Card>
             </Col>
         </Row>

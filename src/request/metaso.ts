@@ -1,4 +1,8 @@
-import { METASO_BASE_API } from "@/config";
+import {
+  DASHBOARD_ADMIN_PUBKEY,
+  DASHBOARD_SIGNATURE,
+  METASO_BASE_API,
+} from "@/config";
 import { request } from "umi";
 
 export async function fetchCoinSummary() {
@@ -16,6 +20,10 @@ export async function fetchAreaInfo(params: { host: string }) {
     {
       method: "GET",
       params,
+      headers: {
+        "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+        "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+      },
     }
   );
 }
@@ -41,6 +49,10 @@ export async function fetchMetaBlockAreaInfo(params: { host: string }) {
     {
       method: "GET",
       params,
+      headers: {
+        "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+        "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+      },
     }
   );
 }
@@ -59,6 +71,10 @@ export async function claimPre(
       method: "POST",
       data: params,
       ...(options || {}),
+      headers: {
+        "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+        "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+      },
     }
   );
 }
@@ -77,6 +93,10 @@ export async function claimCommit(
       method: "POST",
       data: params,
       ...(options || {}),
+      headers: {
+        "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+        "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+      },
     }
   );
 }

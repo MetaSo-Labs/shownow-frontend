@@ -27,7 +27,7 @@ export default () => {
             children: <NumberFormat wrapper style={{
                 fontSize: 24,
                 fontWeight: 'bold',
-                
+
             }} value={areaInfo?.currentTxCount} suffix=''></NumberFormat>
         },
         {
@@ -41,7 +41,7 @@ export default () => {
                         fontSize: 24,
                         fontWeight: 'bold'
                     }}
-                    value={areaInfo?.ownMdvDeltaValue}
+                    value={areaInfo?.ownMdvDeltaValueStr}
                 />
                 <Typography.Text type='secondary'>
                     <NumberFormat
@@ -52,7 +52,7 @@ export default () => {
 
                         }}
                         prefix='/'
-                        value={areaInfo?.currentMdvDeltaValue}
+                        value={areaInfo?.currentMdvDeltaValueStr}
                     />
                 </Typography.Text>
 
@@ -63,8 +63,8 @@ export default () => {
             label: 'Block Progress Bar ',
             span: 3,
             children: <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                <Progress percent={areaInfo?.progressBlockTotal ? areaInfo.progressBlockCount / areaInfo.progressBlockTotal : 0} showInfo={false} />
-                <div style={{whiteSpace:'nowrap'}}>
+                <Progress percent={areaInfo?.progressBlockTotal ? areaInfo.progressBlockCount / areaInfo.progressBlockTotal * 100 : 0} showInfo={false} />
+                <div style={{ whiteSpace: 'nowrap' }}>
                     <NumberFormat
                         wrapper
                         style={{
