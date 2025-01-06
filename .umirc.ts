@@ -67,4 +67,7 @@ export default defineConfig({
   esbuildMinifyIIFE: true,
   jsMinifier: "none",
   favicons: ["/favicon.ico"],
+  define: {
+    "process.env.BUILD_ENV": process.env.BUILD_ENV,
+  },
 });

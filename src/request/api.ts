@@ -400,19 +400,19 @@ export const getMRC20Info = async (params: { id?: string; tick?: string }) => {
   });
 };
 
-export const getIDCoinInfo = async (params: {
-  issuerAddress?: string;
-  tick?: string;
-}) => {
-  return request<{
-    code: number;
-    data: API.IdCoin;
-    message: string;
-  }>(`${BASE_IDCOIN_URL}/api/v1/id-coins/coins-info`, {
-    method: "GET",
-    params,
-  });
-};
+// export const getIDCoinInfo = async (params: {
+//   issuerAddress?: string;
+//   tick?: string;
+// }) => {
+//   return request<{
+//     code: number;
+//     data: API.IdCoin;
+//     message: string;
+//   }>(`${BASE_IDCOIN_URL}/api/v1/id-coins/coins-info`, {
+//     method: "GET",
+//     params,
+//   });
+// };
 
 export const getDeployList = async (params: {
   address?: string;

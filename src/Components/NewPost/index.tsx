@@ -19,7 +19,7 @@ import * as crypto from 'crypto'
 import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, openWindowTarget } from "@/utils/utils";
 import { postPayBuzz } from "@/utils/buzz";
 import { IBtcConnector } from "metaid/dist";
-import { getDeployList, getIDCoinInfo, getMRC20Info, getUserInfo } from "@/request/api";
+import { getDeployList, getMRC20Info, getUserInfo } from "@/request/api";
 import defaultAvatar from '@/assets/avatar.svg'
 import UserAvatar from "../UserAvatar";
 import Trans from "../Trans";

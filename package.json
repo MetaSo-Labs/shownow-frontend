@@ -3,7 +3,10 @@
   "author": "feiyang1020 <feiyangl1020@163.com>",
   "scripts": {
     "dev": "umi dev",
-    "build": "umi build",
+    "dev:local": "BUILD_ENV=testnetDev umi dev",
+    "dev:localMainnet": "BUILD_ENV=mainnetDev umi dev",
+    "build:testnet": "BUILD_ENV=testnetProd umi build",
+    "build:mainnet": "BUILD_ENV=mainnetProd umi build",
     "postinstall": "umi setup",
     "setup": "umi setup & npx patch-package",
     "start": "npm run dev"

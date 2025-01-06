@@ -91,5 +91,5 @@ declare interface Window {
     }) => Promise<TransferResponse>;
   };
   METAID_MARKET_NETWORK: API.Network;
-  BUILD_ENV: string;
+  BUILD_ENV: "testnetDev" | "mainnetDev" | "testnetProd" | "mainnetProd";
 }

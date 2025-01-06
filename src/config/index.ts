@@ -9,7 +9,12 @@ export const getHostByNet = (network: API.Network) => {
   return MAINNET_CONTENT_HOST;
 };
 
-export const curNetwork: API.Network = "mainnet";
+const BUILD_ENV = window.BUILD_ENV || "";
+
+export const curNetwork: API.Network =
+  BUILD_ENV === "testnetDev" || BUILD_ENV === "testnetProd"
+    ? "testnet"
+    : "mainnet";
 // window.METAID_MARKET_NETWORK || "mainnet";
 
 export const TYPED_NETWORK: Network =
@@ -24,7 +29,10 @@ export const METASO_BASE_API =
 // export const DASHBOARD_API = "http://127.0.0.1:3000/api";
 // export const DASHBOARD_API =
 //   window.BUILD_ENV === "docker" ? "/api" : "https://www.show.now/api";
-export const DASHBOARD_API = "/api";
+export const DASHBOARD_API =
+  BUILD_ENV === "testnetDev" || BUILD_ENV === "mainnetDev"
+    ? "http://127.0.0.1:3000/api"
+    : "/api";
 export const DASHBOARD_TOKEN = "DASHBOARD_TOKEN";
 
 export const DASHBOARD_SIGNATURE = "DASHBOARD_SIGNATURE";
@@ -33,9 +41,12 @@ export const DASHBOARD_ADMIN_PUBKEY = "DASHBOARD_ADMIN_PUBKEY";
 //   window.BUILD_ENV === "docker" ? "/man" : "https://www.show.now/man";
 // export const BASE_MAN_URL = "http://127.0.0.1:3000/man";
 // export const BASE_MAN_URL = "https://man-test.metaid.io";
-export const BASE_MAN_URL = window.location.origin + "/man";
+export const BASE_MAN_URL =
+  BUILD_ENV === "testnetDev" || BUILD_ENV === "mainnetDev"
+    ? "http://127.0.0.1:3000/man"
+    : window.location.origin + "/man";
 
-export const BASE_IDCOIN_URL = "https://api.metaid.market/api-market-testnet";
+// export const BASE_IDCOIN_URL = "https://api.metaid.market/api-market-testnet";
 export const FLAG = "metaid";
 
 export const IMAGESIZE = 300;
