@@ -1,8 +1,9 @@
 /* eslint-disable no-async-promise-executor */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import Compressor from 'compressorjs';
-import CryptoJs from 'crypto-js';
-import encHex from 'crypto-js/enc-hex';
+import Compressor from "compressorjs";
+import imageCompression from "browser-image-compression";
+import CryptoJs from "crypto-js";
+import encHex from "crypto-js/enc-hex";
 
 export enum IsEncrypt {
   Yes = 1,
@@ -22,14 +23,14 @@ export interface AttachmentItem {
 export function parseMetaFile(rawUri: string): string {
   // console.log("url", rawUri);
   // remove prefix: metafile://, then replace .jpeg with .jpg
-  const METAFILE_API_HOST = 'https://api.show3.io/metafile';
-  const METACONTRACT_API_HOST = 'https://api.show3.io/metafile/metacontract';
+  const METAFILE_API_HOST = "https://api.show3.io/metafile";
+  const METACONTRACT_API_HOST = "https://api.show3.io/metafile/metacontract";
 
   const uri = rawUri.split(/metafile:\/\/|metacontract:\/\//)[1];
   // if there is no extension name in metaFile, add .png
-  if (rawUri.includes('metafile')) {
+  if (rawUri.includes("metafile")) {
     return `${METAFILE_API_HOST}/${uri}`;
-  } else if (rawUri.includes('metacontract')) {
+  } else if (rawUri.includes("metacontract")) {
     return `${METACONTRACT_API_HOST}/${uri}`;
   } else {
     return rawUri;
@@ -37,23 +38,23 @@ export function parseMetaFile(rawUri: string): string {
 }
 
 export function parseAvatarWithMetaid(metaid: string): string {
-  const METAFILE_API_HOST = 'https://api.show3.io/metafile';
+  const METAFILE_API_HOST = "https://api.show3.io/metafile";
 
   return `${METAFILE_API_HOST}/avatar/compress/${metaid}`;
 }
 export function parseAvatarWithUri(originUri: string, txid: string) {
-  const METAFILE_API_HOST = 'https://api.show3.io/metafile';
-  if (originUri.includes('metafile')) {
+  const METAFILE_API_HOST = "https://api.show3.io/metafile";
+  if (originUri.includes("metafile")) {
     return `${METAFILE_API_HOST}/compress/${txid}`;
   }
-  if (originUri.includes('sensibile')) {
+  if (originUri.includes("sensibile")) {
     return `${METAFILE_API_HOST}/sensible/${
-      originUri.split('sensibile://')[1]
+      originUri.split("sensibile://")[1]
     }`;
   }
-  if (originUri.includes('metacontract')) {
+  if (originUri.includes("metacontract")) {
     return `${METAFILE_API_HOST}/metacontract/${
-      originUri.split('metacontract://')[1]
+      originUri.split("metacontract://")[1]
     }`;
   }
 }
@@ -61,28 +62,38 @@ export function parseAvatarWithUri(originUri: string, txid: string) {
 // https://api.show3.io/metafile/sensible/0d0fc08db6e27dc0263b594d6b203f55fb5282e2/204dafb6ee543796b4da6f1d4134c1df2609bdf1/6
 // https://api.show3.io/metafile/avatar/compress/2df27132058cd24ff9ef2939315c9ca0d8ec88733f5bda0df130b7798efea972
 
+// export async function compressImage(image: File) {
+//   const compress = (quality: number): Promise<File> =>
+//     new Promise((resolve, reject) => {
+//       new Compressor(image, {
+//         quality,
+//         convertSize: 100_000, // 100KB
+//         success: resolve as () => File,
+//         error: reject,
+//       });
+//     });
+
+//   // Use 0.6 compression ratio first; If the result is still larger than 1MB, use half of the compression ratio; Repeat 5 times until the result is less than 1MB, otherwise raise an error
+//   let useQuality = 0.6;
+//   for (let i = 0; i < 5; i++) {
+//     const compressed = await compress(useQuality);
+//     if (compressed.size < 1_000_000) {
+//       return compressed;
+//     }
+//     useQuality /= 2;
+//   }
+
+//   throw new Error('Image is too large');
+// }
+
 export async function compressImage(image: File) {
-  const compress = (quality: number): Promise<File> =>
-    new Promise((resolve, reject) => {
-      new Compressor(image, {
-        quality,
-        convertSize: 100_000, // 100KB
-        success: resolve as () => File,
-        error: reject,
-      });
-    });
-
-  // Use 0.6 compression ratio first; If the result is still larger than 1MB, use half of the compression ratio; Repeat 5 times until the result is less than 1MB, otherwise raise an error
-  let useQuality = 0.6;
-  for (let i = 0; i < 5; i++) {
-    const compressed = await compress(useQuality);
-    if (compressed.size < 1_000_000) {
-      return compressed;
-    }
-    useQuality /= 2;
-  }
-
-  throw new Error('Image is too large');
+  const options = {
+    maxSizeMB: 0.3,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  const compressedFile = await imageCompression(image, options);
+  return compressedFile;
 }
 
 // 降文件转为 AttachmentItem， 便于操作/上链
@@ -100,7 +111,7 @@ export function FileToAttachmentItem(
           // @ts-ignore
           const buffer = Buffer.from(reader.result);
           // console.log("buffer", buffer, reader.result);
-          hex += buffer.toString('hex'); // 更新hex
+          hex += buffer.toString("hex"); // 更新hex
           // 增量更新计算结果
           sha256Algo.update(wordArray); // 更新hash
           resolve();
@@ -111,7 +122,7 @@ export function FileToAttachmentItem(
     // 分块读取，防止内存溢出，这里设置为20MB,可以根据实际情况进行配置
     const chunkSize = 20 * 1024 * 1024;
 
-    let hex = ''; // 二进制
+    let hex = ""; // 二进制
     const sha256Algo = CryptoJs.algo.SHA256.create();
 
     for (let index = 0; index < file.size; index += chunkSize) {
@@ -147,7 +158,7 @@ export function FileToBinaryData(
           // console.log("buffer", buffer, reader.result);
           // hex += buffer.toString("hex"); // 更新hex
 
-          binaryData = reader.result?.toString('UTF-8');
+          binaryData = reader.result?.toString("UTF-8");
           // String.fromCharCode.apply(null, reader.result)
           resolve();
         };
@@ -155,7 +166,7 @@ export function FileToBinaryData(
     }
 
     const sha256Algo = CryptoJs.algo.SHA256.create();
-    let binaryData = '';
+    let binaryData = "";
     await readResult(file);
 
     resolve({
@@ -179,7 +190,7 @@ export const image2Attach = async (images: FileList) => {
 
     const compressed = await compressImage(current);
     const result = await FileToAttachmentItem(
-      current.type === 'image/gif' ? current : compressed
+      current.type === "image/gif" ? current : compressed
     );
     if (result) attachments.push(result);
 
@@ -224,9 +235,9 @@ export function removeFileFromList(fileList: FileList, index: number) {
   return newFileList.files;
 }
 
-export const convertToFileList = (images:any) => {
+export const convertToFileList = (images: any) => {
   const dataTransfer = new DataTransfer();
-  
+
   images.forEach((image) => {
     dataTransfer.items.add(image.file); // 添加每个 File 对象
   });

@@ -87,6 +87,7 @@ export default ({ show, onClose, quotePin }: Props) => {
         if (!isPass) {
             return;
         }
+        setIsAdding(true);
         const _images =
             images.length !== 0 ? await image2Attach(convertToFileList(images)) : [];
         if (lock) {

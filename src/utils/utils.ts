@@ -117,11 +117,12 @@ export const formatMessage = (children: string) => {
 };
 
 export function checkImageSize(file: File) {
-  if (file.size > 1024 * IMAGESIZE) {
-    return [false, formatMessage("Image must smaller than 300k!")];
-  } else {
-    return [true, ""];
-  }
+  return [true, ""];
+  // if (file.size > 1024 * IMAGESIZE) {
+  //   return [false, formatMessage("Image must smaller than 300k!")];
+  // } else {
+  //   return [true, ""];
+  // }
 }
 
 export function determineAddressInfo(address: string): string {
