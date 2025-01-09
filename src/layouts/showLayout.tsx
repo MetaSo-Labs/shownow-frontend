@@ -3,7 +3,7 @@ import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Inpu
 import { useEffect, useLayoutEffect, useState } from 'react';
 import './index.less';
 import Menus from './Menus';
-import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined, ProjectOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import {
     QueryClient,
     QueryClientProvider,
@@ -64,14 +64,14 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     }, [location.pathname])
 
     useLayoutEffect(() => {
-        if(location.pathname.indexOf('dashboard')>-1){
+        if (location.pathname.indexOf('dashboard') > -1) {
             return
-        }else{
-            console.log('checkUserSetting',location.pathname)
+        } else {
+            console.log('checkUserSetting', location.pathname)
             checkUserSetting()
         }
-        
-    }, [checkUserSetting,location.pathname])
+
+    }, [checkUserSetting, location.pathname])
 
     const openNotification = () => {
         const key = `open${Date.now()}`;
@@ -133,7 +133,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                 <Menus />
                             </div>
                             <Button size='large' shape='round' type='primary' onClick={() => {
-                                if(!isLogin){
+                                if (!isLogin) {
                                     setShowConnect(true)
                                     return
                                 }
@@ -172,7 +172,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             {md ? <Col span={24} md={showConf?.showSliderMenu ? 14 : 9}>
 
                                 <div className="searchWrap" style={{ background: colorBgContainer }} onClick={() => {
-                                    if(!isLogin){
+                                    if (!isLogin) {
                                         setShowConnect(true)
                                         return
                                     }
@@ -196,29 +196,37 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                     {
                                         isLogin ? <Dropdown placement='bottom' menu={
                                             {
-                                                items: [{
-                                                    key: 'profile',
-                                                    label: formatMessage({ id: 'Profile' }),
-                                                    icon: <UserOutlined />,
-                                                    onClick: () => {
-                                                        history.push('/profile')
-                                                    }
-                                                },
+                                                items: [
+                                                    {
+                                                        key: 'rank',
+                                                        label: formatMessage({ id: 'Rank' }),
+                                                        icon: <ProjectOutlined />,
+                                                        onClick: () => {
+                                                            history.push('/rank')
+                                                        }
+                                                    }, {
+                                                        key: 'profile',
+                                                        label: formatMessage({ id: 'Profile' }),
+                                                        icon: <UserOutlined />,
+                                                        onClick: () => {
+                                                            history.push('/profile')
+                                                        }
+                                                    },
 
-                                                {
-                                                    key: 'setting',
-                                                    label: formatMessage({ id: 'Settings' }),
-                                                    icon: <SettingOutlined />,
-                                                    onClick: () => {
-                                                        history.push('/setting')
+                                                    {
+                                                        key: 'setting',
+                                                        label: formatMessage({ id: 'Settings' }),
+                                                        icon: <SettingOutlined />,
+                                                        onClick: () => {
+                                                            history.push('/setting')
+                                                        }
+                                                    },
+                                                    {
+                                                        key: 'logout',
+                                                        label: formatMessage({ id: 'Log out' }),
+                                                        icon: <PoweroffOutlined />,
+                                                        onClick: disConnect
                                                     }
-                                                },
-                                                {
-                                                    key: 'logout',
-                                                    label: formatMessage({ id: 'Log out' }),
-                                                    icon: <PoweroffOutlined />,
-                                                    onClick: disConnect
-                                                }
                                                 ]
                                             }
                                         }  >
@@ -356,7 +364,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                 <NewPost show={showPost} onClose={() => setShowPost(false)} />
                 {
                     !md && <FloatButton style={{ bottom: 100 }} icon={<EditOutlined />} onClick={() => {
-                        if(!isLogin){
+                        if (!isLogin) {
                             setShowConnect(true)
                             return
                         }

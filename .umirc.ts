@@ -28,6 +28,7 @@ export default defineConfig({
         { path: "buzz/:id", component: "@/pages/tweet" },
         { path: "setting", component: "@/pages/setting" },
         { path: "about", component: "@/pages/about" },
+        { path: "rank", component: "@/pages/rank" },
       ],
     },
     {

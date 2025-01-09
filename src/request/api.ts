@@ -486,3 +486,63 @@ export const getNFTItem = async (params: { pinId: string }) => {
     params,
   });
 };
+
+export const getMetaBlockHostValue = async (params: {
+  size: number;
+  cursor: number;
+  host: string;
+  timeBegin: number;
+  timeEnd: number;
+}) => {
+  return request<{
+    code: number;
+    data: {
+      list: API.MetaBlockValueItem[];
+      total: number;
+    };
+    message: string;
+  }>(`${BASE_MAN_URL}/statistics/metablock/host/value`, {
+    method: "GET",
+    params,
+  });
+};
+
+export const getMetaBlockHostUserValue = async (params: {
+  size: number;
+  cursor: number;
+  host: string;
+  address: string;
+  timeBegin: number;
+  timeEnd: number;
+}) => {
+  return request<{
+    code: number;
+    data: {
+      list: API.MetaBlockUserValueItem[];
+      total: number;
+    };
+    message: string;
+  }>(`${BASE_MAN_URL}/statistics/metablock/host/address/value`, {
+    method: "GET",
+    params,
+  });
+};
+export const getMetaBlockHostUserList = async (params: {
+  size: number;
+  cursor: number;
+  host: string;
+  timeBegin: number;
+  timeEnd: number;
+}) => {
+  return request<{
+    code: number;
+    data: {
+      list: API.MetaBlockValueListItem[];
+      total: number;
+    };
+    message: string;
+  }>(`${BASE_MAN_URL}/statistics/metablock/host/address/list`, {
+    method: "GET",
+    params,
+  });
+};

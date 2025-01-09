@@ -18,6 +18,7 @@ export const menus = [
     { key: 'profile', icon: _profile, activeIcon: _profileActive, label: <Trans>Profile</Trans> },
     { key: 'setting', icon: _setting, activeIcon: _settingActive, label: <Trans>Setting</Trans> },
     { key: 'about', icon: _setting, activeIcon: _settingActive, label: <Trans>About</Trans> },
+    { key: 'rank', icon: _setting, activeIcon: _settingActive, label: <Trans>Rank</Trans> },
 ]
 
 export default () => {

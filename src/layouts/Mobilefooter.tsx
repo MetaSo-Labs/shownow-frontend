@@ -8,9 +8,11 @@ import _setting from '@/assets/nav/gear.svg'
 import _settingActive from "@/assets/nav/gear-active.svg"
 import { useLocation, history } from 'umi'
 import { useEffect, useState } from 'react'
-import { theme } from 'antd'
+import { Dropdown, theme } from 'antd'
 import LinearIcon from '@/Components/Icon'
 import { menus } from './Menus'
+import { EllipsisOutlined } from '@ant-design/icons'
+import Trans from '@/Components/Trans'
 
 
 
@@ -31,7 +33,7 @@ export default () => {
     }, [path])
 
     return <div className='tabFooter'>
-        {menus.map((item) => {
+        {menus.slice(0, 4).map((item) => {
             return <div key={item.key} className={`item ${curMenu === item.key ? 'active' : ''}`} style={{
                 color: curMenu === item.key ? colorPrimary : '#333'
             }} onClick={() => {
@@ -46,5 +48,33 @@ export default () => {
             </div>
         })
         }
+        <Dropdown menu={{
+            items: menus.slice(4).map(item => ({
+                key: item.key,
+                label: <span style={{
+                    color: curMenu === item.key ? colorPrimary : '#333',
+                    paddingLeft:12
+                }}>{item.label}</span>,
+                icon: <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : '#333'} />,
+            })),
+            onClick: (item) => {
+                setCurMenu(item.key)
+                history.push(`/${item.key}`)
+            }
+        }} placement="topRight">
+            <div className={`item `} style={{
+                color: '#333'
+            }}  >
+
+
+                <EllipsisOutlined style={{
+                    fontSize: 24,
+                    verticalAlign: 'middle',
+                    color: '#333'
+                }} />
+
+                <span className='text'><Trans>More</Trans></span>
+            </div>
+        </Dropdown>
     </div>
 }

@@ -281,22 +281,45 @@ declare namespace API {
   };
 
   type UTXO = {
-    txId: string
-    vout: number
-    outputIndex: number
-    satoshis: number
-    satoshi: number
-    confirmed: boolean
-    rawTx?: string
+    txId: string;
+    vout: number;
+    outputIndex: number;
+    satoshis: number;
+    satoshi: number;
+    confirmed: boolean;
+    rawTx?: string;
     inscriptions?:
       | {
-          id: string
-          num: number
+          id: string;
+          num: number;
         }[]
-      | null
-  }
+      | null;
+  };
   type Tx = {
-    address: string
-    value: number
-  }
+    address: string;
+    value: number;
+  };
+  type MetaBlockValueItem = {
+    host: string;
+    pins: number;
+    mdvValue: string;
+    mdvDeltaValue: string;
+    blockHeight: number;
+    blockTime: number;
+  };
+  type MetaBlockUserValueItem = {
+    host: string;
+    metaId: string;
+    address: string;
+    block: number;
+    historyValue: string;
+    dataValue: string;
+    pinNumber: number;
+    pinNumberHasHost: number;
+    blockTime: number;
+  };
+  type MetaBlockValueListItem = {
+    address: string;
+    dataValue: string;
+  };
 }

@@ -206,18 +206,21 @@ export default () => {
       });
       setMvcConnector(mvcConnector);
       const connector = chain === "btc" ? btcConnector : mvcConnector;
-      setUser({
-        avater: connector.user.avatar
-          ? `${getHostByNet(network)}${connector.user.avatar}`
-          : "",
-        background: connector.user.background
-          ? `${getHostByNet(network)}${connector.user.background}`
-          : "",
-        name: connector.user.name,
-        metaid: connector.user.metaid,
-        notice: 0,
-        address: connector.wallet.address,
-      });
+      if(connector.user){
+        setUser({
+          avater: connector.user.avatar
+            ? `${getHostByNet(network)}${connector.user.avatar}`
+            : "",
+          background: connector.user.background
+            ? `${getHostByNet(network)}${connector.user.background}`
+            : "",
+          name: connector.user.name,
+          metaid: connector.user.metaid,
+          notice: 0,
+          address: connector.wallet.address,
+        });
+      }
+      
       setIsLogin(true);
     }
     setInitializing(false);
