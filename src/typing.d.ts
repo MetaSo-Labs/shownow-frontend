@@ -24,6 +24,16 @@ declare interface Window {
       encoding?: string;
     }): { signature: any } | PromiseLike<{ signature: any }>;
     getAddress(): any;
+    getUtxos: (address: string) => Promise<
+      {
+        flag: string;
+        address: string;
+        txid: string;
+        outIndex: number;
+        value: number;
+        height: number;
+      }[]
+    >;
     getMvcBalance: () => Promise<{
       address: string;
       confirmed: number;

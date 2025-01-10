@@ -393,6 +393,17 @@ export const getUtxoBalance = async (address?: string) => {
   return utxos.reduce((acc, cur) => acc + cur.satoshis, 0);
 };
 
+export const getMvcBalance = async (address?: string) => {
+  if (!address) {
+    address = await window.metaidwallet.getAddress();
+  }
+  if (!address) {
+    return 0;
+  }
+  const utxos = await window.metaidwallet.getUtxos(address);
+  return utxos.reduce((acc, cur) => acc + cur.value, 0);
+};
+
 export const checkWalletAddress = async (address: string) => {
   const _address = await window.metaidwallet.btc.getAddress();
   if (address !== _address) {

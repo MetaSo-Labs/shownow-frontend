@@ -1,13 +1,20 @@
 import React from "react"
 import { useIntl } from "umi"
 
-export default ({ children, wrapper = false }: { children: React.ReactNode, wrapper?: boolean }) => {
+type TransProps = {
+    children: React.ReactNode;
+    wrapper?: boolean;
+    className?: string;
+    style?: React.CSSProperties;
+}
+
+export default ({ children, wrapper = false, className, style }: TransProps) => {
     const { formatMessage } = useIntl();
     if (!children) return null;
-    if (wrapper) return <>
-        <span>{formatMessage({ id: children as string })}</span>
-    </>
-    return <>
-        {formatMessage({ id: children as string })}
-    </>
+    if (wrapper) return (
+        <span className={className} style={style}>
+            {formatMessage({ id: children as string })}
+        </span>
+    );
+    return formatMessage({ id: children as string });
 }

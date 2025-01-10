@@ -17,6 +17,7 @@ export default (
         minWidth: size,
         maxHeight: size,
         maxWidth: size,
+        border: "1px solid rgba(0, 0, 0, 0.06)"
     }} src={<img style={{
 
         objectFit: 'cover',

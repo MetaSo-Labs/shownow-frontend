@@ -9,7 +9,7 @@ export const getHostByNet = (network: API.Network) => {
   return MAINNET_CONTENT_HOST;
 };
 
-const BUILD_ENV = window.BUILD_ENV || "";
+const BUILD_ENV = window.BUILD_ENV || "testnetDev";
 
 export const curNetwork: API.Network =
   BUILD_ENV === "testnetDev" || BUILD_ENV === "testnetProd"
