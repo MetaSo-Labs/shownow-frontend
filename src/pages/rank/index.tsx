@@ -196,7 +196,7 @@ export default () => {
         >
             <Row gutter={[12, 12]}>
                 <Col span={12}>
-                    <Card loading={_hostValueFetching}>
+                    <Card loading={_ndvFetching}>
                         <Typography.Title level={4} style={{ padding: 0, margin: 0 }}><NumberFormat value={totalNDV} precision={2}></NumberFormat></Typography.Title>
                         <Typography.Text type='secondary'>
                             <Trans>total NDV</Trans>
