@@ -562,3 +562,18 @@ export const getMetaBlockNewest = async () => {
     method: "GET",
   });
 };
+
+export const getHostNDV = async (params: {
+  host: string;
+  size: number;
+  cursor: number;
+}) => {
+  return request<{
+    code: number;
+    data: API.MetaBlockValueListItem[]  
+    message: string;
+  }>(`${BASE_MAN_URL}/statistics/ndv`, {
+    method: "GET",
+    params,
+  });
+};

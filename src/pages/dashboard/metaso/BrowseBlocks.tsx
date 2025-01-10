@@ -24,13 +24,13 @@ export default () => {
         key: 'metaBlockTimeAge',
         render: (text) => dayjs().to(dayjs(text * 1000))
     }, {
-        title: 'MDV',
+        title: 'tMDV',
         dataIndex: 'mdvValueStr',
         key: 'mdvValue',
         render: (text) => <NumberFormat value={text} />
     },
     {
-        title: 'ΔMDV',
+        title: 'ΔtMDV',
         dataIndex: 'mdvDeltaValueStr',
         key: 'mdvDeltaValue',
         render: (text) => <NumberFormat value={text} />

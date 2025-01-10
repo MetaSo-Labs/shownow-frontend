@@ -1,14 +1,14 @@
 import { saveConf, saveDomain, saveFees } from "@/request/dashboard";
 import { FooterToolbar, ProCard, ProForm, ProFormDigit, ProFormText } from "@ant-design/pro-components"
 import { Col, Divider, message, Row, Space } from "antd"
-import { useModel } from "umi";
+import { useModel, history } from "umi";
 import '../index.less'
 import { useEffect, useState } from "react";
 import Rpc from "../rpc";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
-    const { fees, updateFees, admin } = useModel('dashboard')
+    const { fees, updateFees, admin, setLogined } = useModel('dashboard')
     const [tab, setTab] = useState('BTC');
     const [form] = ProForm.useForm();
     const onFinish = async (chain: 'BTC' | 'MVC', values: any) => {
@@ -199,9 +199,20 @@ export default () => {
                             domainName: string;
                         }>
                             onFinish={async (values) => {
-                                await saveDomain(values);
-                                await updateFees();
-                                message.success('Save successfully');
+                                try {
+                                    await saveDomain(values);
+                                    await updateFees();
+                                    message.success('Save successfully');
+                                } catch (e: any) {
+                                    if (e.response && e.response.status === 401) {
+                                        message.error('Unauthorized')
+                                        setLogined(false)
+                                        return;
+                                    }
+                                    console.log(e)
+                                    message.error(e.message)
+                                }
+
                             }}
                             submitter={{
                                 searchConfig: {

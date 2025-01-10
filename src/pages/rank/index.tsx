@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import type { SelectProps, TableProps } from 'antd';
 import { useQuery } from "@tanstack/react-query";
 import { useModel } from "umi";
-import { getMetaBlockHostUserList, getMetaBlockHostUserValue, getMetaBlockHostValue, getMetaBlockNewest } from "@/request/api";
+import { getHostNDV, getMetaBlockHostUserList, getMetaBlockHostUserValue, getMetaBlockHostValue, getMetaBlockNewest } from "@/request/api";
 import NumberFormat from "@/Components/NumberFormat";
 import PendingUser from "@/Components/UserInfo/PendingUser";
 import _1 from '@/assets/rank/1.svg'
@@ -40,6 +40,18 @@ export default () => {
         queryKey: ['getMetaBlockNewest',],
         queryFn: () => {
             return getMetaBlockNewest()
+        }
+    })
+
+    const { data: _ndv, isFetching: _ndvFetching } = useQuery({
+        queryKey: ['statisticsndv', admin?.host],
+        enabled: Boolean(admin?.host),
+        queryFn: () => {
+            return getHostNDV({
+                host: admin!.host,
+                cursor: 0,
+                size: 1
+            })
         }
     })
 
@@ -111,9 +123,9 @@ export default () => {
     }, [_hostValue])
 
     const totalNDV = useMemo(() => {
-        if (!_hostValue || !_hostValue.data.list) return 0;
-        return _hostValue.data.list[0].mdvValue
-    }, [_hostValue])
+        if (!_ndv || !_ndv.data) return 0;
+        return _ndv.data[0].dataValue
+    }, [_ndv])
 
     const userValue = useMemo(() => {
         if (!_userValue || !_userValue.data.list) return 0;
