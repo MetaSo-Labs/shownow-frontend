@@ -8,9 +8,9 @@ $ pnpm install
 
 ```bash
 # development
-$ pnpm run dev
+$ pnpm run dev:local
 
 
 # build
-$ pnpm run build
+$ pnpm run build:testnet
 ```
