@@ -63,7 +63,7 @@ export default defineConfig({
   model: {},
   request: {},
   npmClient: "pnpm",
-  outputPath: "../server-shownow/public",
+  outputPath: "../shownow-backend/public",
   // process.env.BUILD_ENV === "docker" ? "../server-shownow/public" : "dist",
   esbuildMinifyIIFE: true,
   jsMinifier: "none",
