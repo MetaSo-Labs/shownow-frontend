@@ -48,6 +48,9 @@ export default () => {
     const admin = await fetchAdmin();
     setAdmin(admin);
     ret.host = admin.host ? admin.host + ":" : "";
+    if (ret?.brandIntroMainTitle) {
+      document.title = ret.brandIntroMainTitle;
+    }
     setShowConf({
       ...showNowConf,
       ...ret,
