@@ -322,4 +322,13 @@ declare namespace API {
     address: string;
     dataValue: string;
   };
+
+  type MetaBlockNewest = {
+    currentBlockHeight: number;
+    currentMetaBlockHeight: number;
+    initBlockHeight: number;
+    progressEndBlock: number;
+    progressStartBlock: number;
+    syncMetaBlockHeight: number;
+  };
 }

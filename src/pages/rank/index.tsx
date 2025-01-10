@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import type { SelectProps, TableProps } from 'antd';
 import { useQuery } from "@tanstack/react-query";
 import { useModel } from "umi";
-import { getMetaBlockHostUserList, getMetaBlockHostUserValue, getMetaBlockHostValue } from "@/request/api";
+import { getMetaBlockHostUserList, getMetaBlockHostUserValue, getMetaBlockHostValue, getMetaBlockNewest } from "@/request/api";
 import NumberFormat from "@/Components/NumberFormat";
 import PendingUser from "@/Components/UserInfo/PendingUser";
 import _1 from '@/assets/rank/1.svg'
@@ -36,50 +36,77 @@ export default () => {
         ])
     }, [])
 
+    const { data: _newest, } = useQuery({
+        queryKey: ['getMetaBlockNewest',],
+        queryFn: () => {
+            return getMetaBlockNewest()
+        }
+    })
+
+    const startAndEndHeight = useMemo(() => {
+        if (value === 1) return {
+            heightBegin: -1,
+            heightEnd: -1
+        };
+        if (!_newest) return null;
+        const heightEnd = _newest.data.syncMetaBlockHeight;
+        const heightBegin = heightEnd - Number(value);
+        return {
+            heightBegin,
+            heightEnd
+        }
+    }, [value, _newest])
+
     const { data: _hostValue, isFetching: _hostValueFetching } = useQuery({
-        queryKey: ['_hostValue', value, admin?.host],
-        enabled: Boolean(admin?.host && value),
+        queryKey: ['_hostValue', startAndEndHeight, admin?.host],
+        enabled: Boolean(admin?.host && startAndEndHeight),
         queryFn: () => {
             return getMetaBlockHostValue({
                 size: 100,
                 cursor: 0,
                 host: admin!.host,
-                timeBegin: Math.floor(new Date().getTime() / 1000) - 60 * 60 * 24 * 7 * Number(value),
-                timeEnd: Math.floor(new Date().getTime() / 1000)
+                // timeBegin: Math.floor(new Date().getTime() / 1000) - 60 * 60 * 24 * 7 * Number(value),
+                // timeEnd: Math.floor(new Date().getTime() / 1000)
+                heightBegin: startAndEndHeight!.heightBegin,
+                heightEnd: startAndEndHeight!.heightEnd
             })
         }
     })
 
     const { data: _userValue, isFetching: _userValueFetching } = useQuery({
-        queryKey: ['_userhostValue', value, admin?.host, isLogin, user?.address],
-        enabled: Boolean(admin?.host && value && isLogin && user?.address),
+        queryKey: ['_userhostValue', startAndEndHeight, admin?.host, isLogin, user?.address],
+        enabled: Boolean(admin?.host && startAndEndHeight && isLogin && user?.address),
         queryFn: () => {
             return getMetaBlockHostUserValue({
                 size: 100,
                 cursor: 0,
                 host: admin!.host,
                 address: user!.address,
-                timeBegin: Math.floor(new Date().getTime() / 1000) - 60 * 60 * 24 * 7 * Number(value),
-                timeEnd: Math.floor(new Date().getTime() / 1000)
+                // timeBegin: Math.floor(new Date().getTime() / 1000) - 60 * 60 * 24 * 7 * Number(value),
+                // timeEnd: Math.floor(new Date().getTime() / 1000)
+                heightBegin: startAndEndHeight!.heightBegin,
+                heightEnd: startAndEndHeight!.heightEnd
             })
         }
     })
 
     const { data: _listValue, isFetching: _listValueFetching } = useQuery({
-        queryKey: ['_listhostValue', value, admin?.host],
-        enabled: Boolean(admin?.host && value),
+        queryKey: ['_listhostValue', startAndEndHeight, admin?.host],
+        enabled: Boolean(admin?.host && startAndEndHeight),
         queryFn: () => {
             return getMetaBlockHostUserList({
                 size: 10,
                 cursor: 0,
                 host: admin!.host,
-                timeBegin: Math.floor(new Date().getTime() / 1000) - 60 * 60 * 24 * 7 * Number(value),
-                timeEnd: Math.floor(new Date().getTime() / 1000)
+                // timeBegin: Math.floor(new Date().getTime() / 1000) - 60 * 60 * 24 * 7 * Number(value),
+                // timeEnd: Math.floor(new Date().getTime() / 1000)
+                heightBegin: startAndEndHeight!.heightBegin,
+                heightEnd: startAndEndHeight!.heightEnd
             })
         }
     })
     const hostValue = useMemo(() => {
-        if (!_hostValue|| !_hostValue.data.list) return 0;
+        if (!_hostValue || !_hostValue.data.list) return 0;
         return _hostValue.data.list.reduce((acc, cur) => acc + Number(cur.mdvDeltaValue), 0)
     }, [_hostValue])
 

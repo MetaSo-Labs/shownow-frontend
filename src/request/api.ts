@@ -491,8 +491,10 @@ export const getMetaBlockHostValue = async (params: {
   size: number;
   cursor: number;
   host: string;
-  timeBegin: number;
-  timeEnd: number;
+  timeBegin?: number;
+  timeEnd?: number;
+  heightBegin?: number;
+  heightEnd?: number;
 }) => {
   return request<{
     code: number;
@@ -512,8 +514,10 @@ export const getMetaBlockHostUserValue = async (params: {
   cursor: number;
   host: string;
   address: string;
-  timeBegin: number;
-  timeEnd: number;
+  timeBegin?: number;
+  timeEnd?: number;
+  heightBegin?: number;
+  heightEnd?: number;
 }) => {
   return request<{
     code: number;
@@ -531,8 +535,10 @@ export const getMetaBlockHostUserList = async (params: {
   size: number;
   cursor: number;
   host: string;
-  timeBegin: number;
-  timeEnd: number;
+  timeBegin?: number;
+  timeEnd?: number;
+  heightBegin?: number;
+  heightEnd?: number;
 }) => {
   return request<{
     code: number;
@@ -544,5 +550,15 @@ export const getMetaBlockHostUserList = async (params: {
   }>(`${BASE_MAN_URL}/statistics/metablock/host/address/list`, {
     method: "GET",
     params,
+  });
+};
+
+export const getMetaBlockNewest = async () => {
+  return request<{
+    code: number;
+    data: API.MetaBlockNewest;
+    message: string;
+  }>(`${BASE_MAN_URL}/statistics/host/metablock/sync-newest`, {
+    method: "GET",
   });
 };
