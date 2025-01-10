@@ -74,6 +74,7 @@ export default {
   "My contribution value": "我的贡献值",
   Rank: "排名",
   User: "用户",
-  'Total Value': '总贡献值',
-  'Proportion%': '比例%',
+  "Total Value": "总贡献值",
+  "Proportion%": "比例%",
+  "total NDV": "总NDV",
 };

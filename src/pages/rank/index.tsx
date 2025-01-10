@@ -110,6 +110,11 @@ export default () => {
         return _hostValue.data.list.reduce((acc, cur) => acc + Number(cur.mdvDeltaValue), 0)
     }, [_hostValue])
 
+    const totalNDV = useMemo(() => {
+        if (!_hostValue || !_hostValue.data.list) return 0;
+        return _hostValue.data.list[0].mdvValue
+    }, [_hostValue])
+
     const userValue = useMemo(() => {
         if (!_userValue || !_userValue.data.list) return 0;
         return _userValue.data.list.reduce((acc, cur) => acc + Number(cur.dataValue), 0)
@@ -123,8 +128,8 @@ export default () => {
             key: 'name',
             render: (text, record, index) => {
                 if (index === 0) return <img src={_1} alt="" />
-                if (index === 1) return <img src={_2} alt="" />
-                if (index === 2) return <img src={_3} alt="" />
+                if (index === 1) return <img src={_3} alt="" />
+                if (index === 2) return <img src={_2} alt="" />
                 return <Typography.Text>
                     {index + 1}
                 </Typography.Text>
@@ -180,9 +185,9 @@ export default () => {
             <Row gutter={[12, 12]}>
                 <Col span={12}>
                     <Card loading={_hostValueFetching}>
-                        <Typography.Title level={4} style={{ padding: 0, margin: 0 }}><NumberFormat value={hostValue} precision={2}></NumberFormat></Typography.Title>
+                        <Typography.Title level={4} style={{ padding: 0, margin: 0 }}><NumberFormat value={totalNDV} precision={2}></NumberFormat></Typography.Title>
                         <Typography.Text type='secondary'>
-                            <Trans>Current site total FDV</Trans>
+                            <Trans>total NDV</Trans>
                         </Typography.Text>
                     </Card>
                 </Col>
