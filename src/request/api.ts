@@ -1,4 +1,4 @@
-import { BASE_IDCOIN_URL, BASE_MAN_URL } from "@/config";
+import { BASE_MAN_URL } from "@/config";
 import { IBtcConnector } from "@metaid/metaid";
 import axios from "axios";
 import { UserInfo } from "node_modules/@metaid/metaid/dist/types";
@@ -570,7 +570,7 @@ export const getHostNDV = async (params: {
 }) => {
   return request<{
     code: number;
-    data: API.MetaBlockValueListItem[]  
+    data: API.MetaBlockValueListItem[];
     message: string;
   }>(`${BASE_MAN_URL}/statistics/ndv`, {
     method: "GET",

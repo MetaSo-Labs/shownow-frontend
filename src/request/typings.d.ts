@@ -151,6 +151,7 @@ declare namespace API {
     likeCount: number;
     commentCount: number;
     shareCount: number;
+    donateCount: number;
     hot: number;
     like: string[];
   };

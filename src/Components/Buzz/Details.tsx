@@ -1,46 +1,32 @@
-import { BASE_MAN_URL, curNetwork, FallbackImage, FLAG } from "@/config";
+import { curNetwork, FLAG } from "@/config";
 import {
   fetchBuzzDetail,
-  fetchCurrentBuzzComments,
-  fetchCurrentBuzzLikes,
   getControlByContentPin,
-  getDecryptContent,
   getMRC20Info,
-  getPinDetailByPid,
   getUserInfo,
 } from "@/request/api";
 import {
-  CheckCircleOutlined,
   DownOutlined,
   GiftOutlined,
   HeartFilled,
   HeartOutlined,
   LinkOutlined,
-  LockOutlined,
   MessageOutlined,
-  PlusCircleFilled,
   SyncOutlined,
-  UnlockFilled,
   UploadOutlined,
-  CloseOutlined,
-  RightOutlined,
 } from "@ant-design/icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Card,
   theme,
-  Image,
   message,
   Space,
   Spin,
   Tag,
   Typography,
-  Dropdown,
-  Input,
-  Modal,
 } from "antd";
-import { is, isEmpty, isNil, set } from "ramda";
+import { isEmpty, isNil } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useModel, history, useIntl } from "umi";
 import Comment from "../Comment";
@@ -52,12 +38,11 @@ import { FollowIconComponent } from "../Follow";
 import dayjs from "dayjs";
 import { buildAccessPass, decodePayBuzz } from "@/utils/buzz";
 import { getMvcBalance, getUtxoBalance } from "@/utils/psbtBuild";
-import Decimal from "decimal.js";
 const { Paragraph, Text } = Typography;
 import _btc from "@/assets/btc.png";
-import Unlock from "../Unlock";
 import {
   detectUrl,
+  determineAddressInfo,
   formatMessage,
   handleSpecial,
   openWindowTarget,
@@ -70,6 +55,10 @@ import { fetchTranlateResult } from "@/request/baidu-translate";
 import Trans from "../Trans";
 import NFTGallery from "./NFTGallery";
 import _mvc from "@/assets/mvc.png";
+import DonateModal from "./components/DonateModal";
+import Decimal from "decimal.js";
+
+// TODO: use metaid manage state
 
 type Props = {
   buzzItem: API.Buzz;
@@ -132,17 +121,20 @@ export default ({
   const [donateAmount, setDonateAmount] = useState<string>("");
   const [donateMessage, setDonateMessage] = useState<string>("");
   const [balance, setBalance] = useState<number>(0);
+  const [selectedChain, setSelectedChain] = useState<string>(
+    determineAddressInfo(buzzItem.address) === 'p2pkh' ? chain : 'btc'
+  );
 
   useEffect(() => {
     const fetchBalance = async () => {
-      if (isLogin && chain === "btc") {
+      if (isLogin && selectedChain === "btc") {
         try {
           const bal = await getUtxoBalance();
           setBalance(bal);
         } catch (e) {
           console.error("Failed to fetch balance:", e);
         }
-      } else if (isLogin && chain === "mvc") {
+      } else if (isLogin && selectedChain === "mvc") {
         try {
           const bal = await getMvcBalance();
           setBalance(bal);
@@ -152,7 +144,7 @@ export default ({
       }
     };
     fetchBalance();
-  }, [isLogin, chain]);
+  }, [isLogin, selectedChain]);
 
   useEffect(() => {
     if (!buzzItem) {
@@ -406,7 +398,7 @@ export default ({
 
     setPaying(true);
     try {
-      if (chain === "btc") {
+      if (selectedChain === "btc") {
         const donateEntity = await btcConnector!.use("simpledonate");
         const donateRes = await donateEntity.create({
           dataArray: [
@@ -427,10 +419,55 @@ export default ({
           options: {
             noBroadcast: "no",
             feeRate: Number(feeRate),
+            outputs: [
+              {
+                address: buzzItem.address,
+                satoshis: new Decimal(donateAmount).times(1e8).toString(),
+              },
+            ],
+            service: fetchServiceFee("donate_service_fee_amount", "BTC"),
           },
         });
 
         if (!isNil(donateRes?.revealTxIds[0])) {
+          message.success("Donate successfully");
+          setShowGift(false);
+          setDonateAmount("");
+          setDonateMessage("");
+        }
+      } else if (chain === "mvc") {
+        console.log(chain);
+        
+        const donateEntity = (await mvcConnector!.use("simpledonate")) as IMvcEntity;
+        
+        const donateRes = await donateEntity.create({
+          data: {
+            body: JSON.stringify({
+              createTime: Date.now().toString(),
+              to: buzzItem.address,
+              coinType: chain,
+              amount: donateAmount,
+              toPin: buzzItem.id,
+              message: donateMessage,
+            }),
+            flag: FLAG,
+            contentType: "text/plain;utf-8",
+            path: `${showConf?.host || ""}/protocols/simpledonate`,
+          },
+          options: {
+            network: curNetwork,
+            signMessage: "donate buzz",
+            service: fetchServiceFee("donate_service_fee_amount", "MVC"),
+            outputs: [
+              {
+                address: buzzItem.address,
+                satoshis: new Decimal(donateAmount).times(1e8).toString(),
+              },
+            ],
+          },
+        });
+
+        if (!isNil(donateRes?.txid)) {
           message.success("Donate successfully");
           setShowGift(false);
           setDonateAmount("");
@@ -788,14 +825,11 @@ export default ({
                 const isPass = checkUserSetting();
                 if (!isPass) return;
 
-                if (chain === "mvc") {
-                  message.info("Coming soon");
-                  return;
-                }
-
                 showGift ? setShowGift(false) : setShowGift(true);
               }}
-            />
+            >
+              {buzzItem.donateCount || 0}
+            </Button>
             <div className="item">
               <Button
                 type="text"
@@ -832,215 +866,30 @@ export default ({
         }}
         quotePin={buzzItem}
       />
-      <Unlock
+      <DonateModal
         show={showGift}
-        bodyStyle={{
-          padding: "0 16px",
-        }}
         onClose={() => {
           setShowGift(false);
           setDonateAmount("");
           setDonateMessage("");
+          setSelectedChain(chain);
         }}
-      >
-        <div style={{ position: "absolute", right: 16, top: 16, zIndex: 10 }}>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={() => {
-              setShowGift(false);
-              setDonateAmount("");
-              setDonateMessage("");
-            }}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            className="hover-bg-button"
-          />
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 16,
-            width: "100%",
-            padding: "30px 0",
-          }}
-        >
-          <UserAvatar src={currentUserInfoData.data?.avatar} size={60} />
-          <Typography.Title
-            level={3}
-            style={{ margin: 0, fontSize: 24, fontWeight: 600 }}
-          >
-            {currentUserInfoData.data?.name || "Unnamed"}
-          </Typography.Title>
-          <Typography.Text
-            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.45)" }}
-          >
-            MetaID: {currentUserInfoData.data?.metaid?.slice(0, 8)}...
-            {currentUserInfoData.data?.metaid?.slice(-4)}
-          </Typography.Text>
-
-          <div style={{ width: "100%", marginTop: 12 }}>
-            <div style={{ position: "relative" }}>
-              <Typography.Title
-                level={4}
-                style={{ margin: "0 0 16px 0", fontSize: 16, fontWeight: 600 }}
-              >
-                Reward amount
-              </Typography.Title>
-              <div
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                  color: "rgba(0, 0, 0, 0.45)",
-                  fontSize: 14,
-                }}
-              >
-                Availabile {new Decimal(balance).div(1e8).toFixed(8)}
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "100%",
-                  gap: "12px",
-                  padding: "16px",
-                  marginBottom: "32px",
-                  background: "#fff",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(0, 0, 0, 0.06)",
-                  maxWidth: "100%",
-                  boxSizing: "border-box",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <div
-                  style={{ flex: "1 1 0%", minWidth: 0, overflow: "hidden" }}
-                >
-                  <Input
-                    placeholder="Enter amount"
-                    value={donateAmount}
-                    onChange={(e) => setDonateAmount(e.target.value)}
-                    style={{
-                      border: "none",
-                      boxShadow: "none",
-                      fontSize: 16,
-                      padding: 0,
-                      color: "rgba(0, 0, 0, 0.88)",
-                      width: "100%",
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    flexShrink: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    background: "#F5F5F5",
-                    padding: "4px 12px",
-                    borderRadius: "20px",
-                  }}
-                >
-                  <img
-                    src={chain === "btc" ? _btc : _mvc}
-                    alt={chain === "btc" ? "BTC" : "MVC"}
-                    width={20}
-                    height={20}
-                    style={{ flexShrink: 0 }}
-                  />
-                  <Typography.Text
-                    style={{
-                      fontSize: 14,
-                      margin: 0,
-                      color: "rgba(0, 0, 0, 0.88)",
-                    }}
-                  >
-                    {chain.toUpperCase()}
-                  </Typography.Text>
-                </div>
-              </div>
-
-              <Typography.Title
-                level={4}
-                style={{
-                  margin: "24px 0 16px 0",
-                  fontSize: 16,
-                  fontWeight: 600,
-                }}
-              >
-                Message
-              </Typography.Title>
-              <div
-                style={{
-                  width: "100%",
-                  padding: "16px",
-                  marginBottom: "32px",
-                  background: "#fff",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(0, 0, 0, 0.06)",
-                  maxWidth: "100%",
-                  boxSizing: "border-box",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Input.TextArea
-                  placeholder="Enter message"
-                  value={donateMessage}
-                  onChange={(e) => setDonateMessage(e.target.value)}
-                  style={{
-                    border: "none",
-                    boxShadow: "none",
-                    fontSize: 16,
-                    padding: 0,
-                    color: "rgba(0, 0, 0, 0.88)",
-                    width: "100%",
-                    resize: "none",
-                  }}
-                  autoSize={{ minRows: 2, maxRows: 4 }}
-                />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Button
-                  type="primary"
-                  block
-                  size="large"
-                  shape="round"
-                  loading={paying}
-                  onClick={handleDonate}
-                  style={{
-                    width: "220px",
-                    height: "52px",
-                    background:
-                      "linear-gradient(270deg, #F824DA 0%, #FF5815 100%)",
-                    border: "none",
-                    fontSize: 16,
-                    fontWeight: 600,
-                    color: "#fff",
-                  }}
-                >
-                  Confirm
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Unlock>
+        isLegacy={determineAddressInfo(buzzItem.address)==='p2pkh'}
+        userInfo={{
+          avatar: currentUserInfoData.data?.avatar,
+          name: currentUserInfoData.data?.name,
+          metaid: currentUserInfoData.data?.metaid,
+        }}
+        balance={balance}
+        chain={selectedChain}
+        setChain={setSelectedChain}
+        paying={paying}
+        donateAmount={donateAmount}
+        donateMessage={donateMessage}
+        setDonateAmount={setDonateAmount}
+        setDonateMessage={setDonateMessage}
+        onDonate={handleDonate}
+      />
     </Card>
   );
 };
