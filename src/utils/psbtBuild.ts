@@ -319,7 +319,6 @@ export const getUtxos = async (address: string, network?: API.Network) => {
     needRawTx: ["P2PKH"].includes(addressType),
     useUnconfirmed: true,
   });
-  console.log(utxos, "utxos");
   for (let i = 0; i < utxos.length; i++) {
     const { txId, vout } = utxos[i];
     if (!utxos[i].confirmed) {
