@@ -121,6 +121,9 @@ export default ({
   const [donateAmount, setDonateAmount] = useState<string>("");
   const [donateMessage, setDonateMessage] = useState<string>("");
   const [balance, setBalance] = useState<number>(0);
+  const [donateLoading, setDonateLoading] = useState(false);
+  const [donateCount, setDonateCount] = useState(buzzItem.donateCount || 0);
+  const [isDonated, setIsDonated] = useState(false);
   const [selectedChain, setSelectedChain] = useState<string>(
     determineAddressInfo(buzzItem.address) === 'p2pkh' ? chain : 'btc'
   );
@@ -397,6 +400,7 @@ export default ({
     }
 
     setPaying(true);
+    setDonateLoading(true);
     try {
       if (selectedChain === "btc") {
         const donateEntity = await btcConnector!.use("simpledonate");
@@ -434,6 +438,8 @@ export default ({
           setShowGift(false);
           setDonateAmount("");
           setDonateMessage("");
+          setIsDonated(true);
+          setDonateCount(prev => prev + 1);
         }
       } else if (selectedChain === "mvc") {
         console.log(chain);
@@ -472,6 +478,8 @@ export default ({
           setShowGift(false);
           setDonateAmount("");
           setDonateMessage("");
+          setIsDonated(true);
+          setDonateCount(prev => prev + 1);
         }
       } else {
         throw new Error("Donate not supported on this chain");
@@ -484,6 +492,7 @@ export default ({
       }
     }
     setPaying(false);
+    setDonateLoading(false);
   };
 
   return (
@@ -814,7 +823,14 @@ export default ({
             </Button>
             <Button
               type="text"
-              icon={<GiftOutlined />}
+              icon={
+                isDonated ? (
+                  <GiftOutlined style={{ color: "#1677ff" }} />
+                ) : (
+                  <GiftOutlined />
+                )
+              }
+              loading={donateLoading}
               onClick={async () => {
                 if (!isLogin) {
                   message.error(
@@ -828,7 +844,7 @@ export default ({
                 showGift ? setShowGift(false) : setShowGift(true);
               }}
             >
-              {buzzItem.donateCount || 0}
+              {donateCount}
             </Button>
             <div className="item">
               <Button
