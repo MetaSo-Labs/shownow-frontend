@@ -435,7 +435,7 @@ export default ({
           setDonateAmount("");
           setDonateMessage("");
         }
-      } else if (chain === "mvc") {
+      } else if (selectedChain === "mvc") {
         console.log(chain);
         
         const donateEntity = (await mvcConnector!.use("simpledonate")) as IMvcEntity;
