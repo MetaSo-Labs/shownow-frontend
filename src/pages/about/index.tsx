@@ -50,6 +50,7 @@ export default () => {
             <DescItem label='Commet Serivice Fee' value={curFee?.comment_service_fee_amount} />
             <Divider />
             <DescItem label='Like Serivice Fee' value={curFee?.like_service_fee_amount} />
+            <DescItem label='Donate Serivice Fee' value={curFee?.donate_service_fee_amount} />
 
         </Card>
     </Card>

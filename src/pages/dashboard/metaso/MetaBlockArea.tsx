@@ -10,7 +10,7 @@ export default () => {
     const { admin } = useModel('dashboard')
     const { data, isFetching } = useQuery({
         queryKey: ['metablockArea', admin?.host],
-        enabled: Boolean(admin?.domainName),
+        enabled: Boolean(admin?.host),
         queryFn: () => {
             return fetchMetaBlockAreaInfo({
                 host: admin!.host

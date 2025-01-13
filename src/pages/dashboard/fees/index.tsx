@@ -108,6 +108,13 @@ export default () => {
                                             placeholder="Enter the fee amount for like actions"
                                             fieldProps={{ precision: 0, suffix: 'SAT' }}
                                         />
+                                        <ProFormDigit
+                                            width="md"
+                                            name="donate_service_fee_amount"
+                                            label="Donate Service Fee Amount"
+                                            placeholder="Enter the fee amount for Donate actions"
+                                            fieldProps={{ precision: 0, suffix: 'SAT' }}
+                                        />
 
 
                                     </ProForm>,
@@ -172,6 +179,13 @@ export default () => {
                                             name="like_service_fee_amount"
                                             label="Like Service Fee Amount"
                                             placeholder="Enter the fee amount for like actions"
+                                            fieldProps={{ precision: 0, suffix: 'SAT' }}
+                                        />
+                                        <ProFormDigit
+                                            width="md"
+                                            name="donate_service_fee_amount"
+                                            label="Donate Service Fee Amount"
+                                            placeholder="Enter the fee amount for Donate actions"
                                             fieldProps={{ precision: 0, suffix: 'SAT' }}
                                         />
 
