@@ -99,6 +99,20 @@ declare namespace API {
     pinNumber: number;
     CreateMetaid: string;
   };
+  type DonateRes = {
+    CreateMetaid: string;
+    amount: string;
+    chainName: string;
+    coinType: string;
+    createAddress: string;
+    createTime: number;
+    message: string;
+    pinId: string;
+    pinNumber: number;
+    timestamp: number;
+    toAddress: string;
+    toPin: string;
+  };
 
   type FeeRateApi = {
     fastestFee: number;
@@ -154,6 +168,7 @@ declare namespace API {
     donateCount: number;
     hot: number;
     like: string[];
+    donate: string[];
   };
 
   type BuzzListRet = {
@@ -171,6 +186,7 @@ declare namespace API {
     data: {
       tweet: Buzz;
       like: LikeRes[];
+      donates: DonateRes[];
       comments: CommentRes[];
     };
   };

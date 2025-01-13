@@ -49,7 +49,7 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
 
         }
     }}>
-        <Buzz buzzItem={buzzDetail.data.tweet} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} />
+        <Buzz buzzItem={buzzDetail.data.tweet} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates}  />
         <Divider />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <UserAvatar src={user?.avater} size={48} />

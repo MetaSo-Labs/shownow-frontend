@@ -7,6 +7,7 @@ import {
 } from "@/request/api";
 import {
     DownOutlined,
+    GiftFilled,
     GiftOutlined,
     HeartFilled,
     HeartOutlined,
@@ -64,6 +65,7 @@ import Unlock from "../Unlock";
 type Props = {
     buzzItem: API.Buzz;
     like?: API.LikeRes[];
+    donate?: API.DonateRes[];
     showActions?: boolean;
     padding?: number;
     reLoading?: boolean;
@@ -80,6 +82,7 @@ export default ({
     isForward = false,
     loading,
     like = [],
+    donate = [],
     handleClick,
 }: Props) => {
     const {
@@ -112,6 +115,7 @@ export default ({
     const { showConf, fetchServiceFee, manPubKey } = useModel("dashboard");
     const [handleLikeLoading, setHandleLikeLoading] = useState(false);
     const [likes, setLikes] = useState<string[]>([]);
+    const [donates, setDonates] = useState<string[]>([]);
     const currentUserInfoData = useQuery({
         queryKey: ["userInfo", buzzItem!.address],
         enabled: !isNil(buzzItem?.address),
@@ -158,7 +162,10 @@ export default ({
         const _likes = buzzItem.like ?? [];
         const _like = like ?? [];
         setLikes([..._likes, ..._like.map((item) => item.CreateMetaid)]);
-    }, [buzzItem, like]);
+        const _donates = buzzItem.donate ?? [];
+        const _donate = donate ?? [];
+        setDonates([..._donates, ..._donate.map((item) => item.CreateMetaid)]);
+    }, [buzzItem, like, donate]);
 
     const payBuzz = useMemo(() => {
         let _summary = buzzItem!.content;
@@ -172,6 +179,11 @@ export default ({
 
         return likes.includes(user.metaid);
     }, [likes]);
+
+    const isDonatedUser = useMemo(() => {
+        if (!buzzItem || !user) return false;
+        return donates.includes(user.metaid);
+    }, [donates]);
     const handleLike = async () => {
         if (!isLogin) {
             message.error(formatMessage("Please connect your wallet first"));
@@ -442,6 +454,7 @@ export default ({
                     setDonateMessage("");
                     setIsDonated(true);
                     setDonateCount(prev => prev + 1);
+                    setDonates([...donates, user.metaid]);
                 }
             } else if (selectedChain === "mvc") {
                 console.log(chain);
@@ -481,7 +494,7 @@ export default ({
                     setDonateAmount("");
                     setDonateMessage("");
                     setIsDonated(true);
-                    setDonateCount(prev => prev + 1);
+                    setDonates([...donates, user.metaid]);
                 }
             } else {
                 throw new Error("Donate not supported on this chain");
@@ -824,8 +837,8 @@ export default ({
                         <Button
                             type="text"
                             icon={
-                                isDonated ? (
-                                    <GiftOutlined style={{ color: showConf?.brandColor}} />
+                                isDonatedUser ? (
+                                    <GiftFilled style={{ color: showConf?.brandColor }} />
                                 ) : (
                                     <GiftOutlined />
                                 )
@@ -844,7 +857,7 @@ export default ({
                                 showGift ? setShowGift(false) : setShowGift(true);
                             }}
                         >
-                            {donateCount}
+                            {donates.length}
                         </Button>
                         <div className="item">
                             <Button
