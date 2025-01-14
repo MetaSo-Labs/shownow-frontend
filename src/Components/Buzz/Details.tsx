@@ -319,12 +319,15 @@ export default ({
                 );
                 setShowUnlock(false);
             }
-        } catch (e: unknown) {
-            if (e instanceof Error) {
-                message.error(e.message);
-            } else {
-                message.error("An unknown error occurred");
-            }
+        } catch (error: unknown) {
+            const errorMessage = (error as any)?.message ?? error;
+            const toastMessage = errorMessage?.includes(
+                'Cannot read properties of undefined'
+            )
+                ? 'User Canceled'
+                : errorMessage;
+            message.error(toastMessage);
+
         }
         setUnlocking(false);
     };
@@ -446,6 +449,9 @@ export default ({
                         service: fetchServiceFee("donate_service_fee_amount", "BTC"),
                     },
                 });
+                if (donateRes.status) {
+                    throw new Error(donateRes.status)
+                }
 
                 if (!isNil(donateRes?.revealTxIds[0])) {
                     message.success("Donate successfully");
@@ -460,7 +466,7 @@ export default ({
                 console.log(chain);
 
                 const donateEntity = (await mvcConnector!.use("simpledonate")) as IMvcEntity;
-
+                console.log(donateEntity, 'donateEntity');
                 const donateRes = await donateEntity.create({
                     data: {
                         body: JSON.stringify({
@@ -486,7 +492,11 @@ export default ({
                             },
                         ],
                     },
-                });
+                })
+
+                console.log(donateRes, 'donateRes');
+
+
 
                 if (!isNil(donateRes?.txid)) {
                     message.success("Donate successfully");
@@ -499,12 +509,14 @@ export default ({
             } else {
                 throw new Error("Donate not supported on this chain");
             }
-        } catch (e: unknown) {
-            if (e instanceof Error) {
-                message.error(e.message);
-            } else {
-                message.error("An unknown error occurred");
-            }
+        } catch (error: unknown) {
+            const errorMessage = (error as any)?.message ?? error;
+            const toastMessage = errorMessage?.includes(
+                'Cannot read properties of undefined'
+            )
+                ? 'User Canceled'
+                : errorMessage;
+            message.error(toastMessage);
         }
         setPaying(false);
         setDonateLoading(false);
