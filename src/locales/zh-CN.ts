@@ -77,4 +77,5 @@ export default {
   "Total Value": "总贡献值",
   "Proportion%": "比例%",
   "total NDV": "总NDV",
+  'Donate Serivice Fee': '打赏服务费',
 };
