@@ -244,3 +244,59 @@ export const convertToFileList = (images: any) => {
 
   return dataTransfer.files; // 返回 FileList 对象
 };
+
+// Calculate the SHA-256 hash of a chunk
+export function calculateChunkHash(chunk: ArrayBuffer): string {
+  // Convert ArrayBuffer to CryptoJS WordArray
+  const wordArray = CryptoJS.lib.WordArray.create(new Uint8Array(chunk));
+  // Compute the SHA-256 hash
+  const hash = CryptoJS.SHA256(wordArray);
+  // Return the hash as a hexadecimal string
+  return hash.toString(CryptoJS.enc.Hex);
+}
+
+export async function processFile(
+  file: File,
+  chunkSize: number = 0.3 * 1024 * 1024
+): Promise<void> {
+  const totalChunks = Math.ceil(file.size / chunkSize);
+  const chunks = Array.from({ length: totalChunks }, (_, index) => {
+    const start = index * chunkSize;
+    const end = Math.min(start + chunkSize, file.size);
+    return file.slice(start, end);
+  });
+  const parts = []
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    const partNumber = i + 1;
+    const uploadPartCommand = new UploadPartCommand({
+      Bucket: bucket_name,
+      Key: `${prefix_path}/${fileName}`,
+      UploadId,
+      PartNumber: partNumber,
+      Body: chunk,
+    });
+    try {
+      const ret = (await s3.send(uploadPartCommand));
+      parts.push({ PartNumber: partNumber, ETag: ret.ETag })
+      setPrecent(parseInt(String(((i + 1) / totalChunks) * 100)));
+    } catch (err) {
+      console.log(err)
+      const refreshToken = await getS3ClientParams(prefix_path, endpoint);
+      const { bucket_name, region } = response.data;
+      s3 = new S3Client({
+        region,
+        endpoint,
+        credentials: {
+          accessKeyId: refreshToken.data.sts.access_key_id,
+          secretAccessKey: refreshToken.data.sts.access_secret,
+          sessionToken: refreshToken.data.sts.security_token,
+        },
+      });
+      const ret = (await s3.send(uploadPartCommand));
+      parts.push({ PartNumber: partNumber, ETag: ret.ETag })
+      setPrecent(parseInt(String(((i + 1) / totalChunks) * 100)));
+    }
+
+  }
+}
