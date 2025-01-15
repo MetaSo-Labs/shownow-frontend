@@ -79,7 +79,7 @@ export default () => {
     chain: "BTC" | "MVC" = "BTC"
   ) => {
     const _fee = fees.find((item) => item.chain === chain);
-    if (_fee) {
+    if (_fee && _fee[feeType]) {
       return {
         address: _fee["service_fee_address"] as string,
         satoshis: String(_fee[feeType]) as string,
