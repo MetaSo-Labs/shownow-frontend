@@ -5,7 +5,7 @@ import UserInfo from "../UserInfo"
 import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumber, message, Radio, Result, Row, Segmented, Space, Tag, Typography, Upload, UploadFile, UploadProps } from "antd";
 import { CloseOutlined, FileImageOutlined, LockOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { AttachmentItem, convertToFileList, image2Attach } from "@/utils/file";
+import { AttachmentItem, convertToFileList, image2Attach, processFile } from "@/utils/file";
 import { CreateOptions, IBtcEntity, IMvcEntity, MvcTransaction } from "@metaid/metaid";
 import { isEmpty, isNil, set } from "ramda";
 import { BASE_MAN_URL, curNetwork, FLAG } from "@/config";
@@ -26,6 +26,7 @@ import Trans from "../Trans";
 import NFTModal from "../NFTModal";
 import SelectChain from "./SelectChain";
 import { getBuzzSchemaWithCustomHost } from "@/entities/buzz";
+import { v4 as uuidv4 } from 'uuid';
 const { TextArea } = Input;
 type Props = {
     show: boolean,
@@ -46,6 +47,7 @@ export default ({ show, onClose, quotePin }: Props) => {
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
     const { showConf, fetchServiceFee, manPubKey, admin } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
+    const [video, setVideo] = useState<any>();
     const [content, setContent] = useState('');
     const [encryptContent, setEncryptContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
@@ -75,9 +77,23 @@ export default ({ show, onClose, quotePin }: Props) => {
         setImages((prevImages) => [...prevImages, { file, previewUrl }]);
         return false;
     };
+
+    const handleVideoBeforeUpload = (file: any) => {
+        const isVideo = file.type.startsWith('video/');
+        if (!isVideo) {
+            message.error('You can only upload video file!');
+            return Upload.LIST_IGNORE;
+        }
+        const previewUrl = URL.createObjectURL(file);
+        setVideo({ file, previewUrl });
+        return false;
+    }
     const handleRemoveImage = (index: number) => {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
+    const handleRemoveVideo = () => {
+        setVideo(undefined);
+    }
     const onCreateSubmit = async () => {
         if (!isLogin) {
             message.error(formatMessage('Please connect your wallet first'))
@@ -185,6 +201,63 @@ export default ({ show, onClose, quotePin }: Props) => {
                     finalBody.attachments = finalAttachMetafileUri
                 }
 
+            }
+
+            if (video) {
+                const chunks = await processFile(video.file);
+                const chunkPids: string[] = [];
+                for (let i = 0; i < chunks.length; i++) {
+                    const { chunk, hash } = chunks[i];
+                    const metaidData: InscribeData = {
+                        operation: "create",
+                        body: chunk,
+                        path: `${showConf?.host || ''}/file/${hash}`,
+                        contentType: "metafile/chunk;binary",
+                        flag: "metaid",
+                    };
+                    if (chain === 'btc') {
+                        // todo
+                    } else {
+                        const { transactions: pinTransations } = await mvcConnector!.createPin(
+                            metaidData,
+                            {
+                                network: curNetwork,
+                                signMessage: "file chunk",
+                                serialAction: "combo",
+                                transactions: [...fileTransactions],
+                            }
+                        );
+                        fileTransactions = pinTransations as MvcTransaction[];
+                        const chunkPid = fileTransactions[fileTransactions.length - 1].txComposer.getTxId() + "i0";
+                        chunkPids.push(chunkPid);
+                    }
+                }
+                const metaidData: InscribeData = {
+                    operation: "create",
+                    body: JSON.stringify({
+                        chunkList: chunks.map((chunk, index) => {
+                            return {
+                                sha256: chunk.hash,
+                                pid: chunkPids[index]
+                            }
+                        }),
+                        contentType: `${video.file.fileType};binary`,
+                    }),
+                    path: `${showConf?.host || ''}/file/index/${uuidv4()}`,
+                    contentType: "metafile/index;utf-8",
+                    flag: "metaid",
+                };
+                const { transactions: pinTransations } = await mvcConnector!.createPin(
+                    metaidData,
+                    {
+                        network: curNetwork,
+                        signMessage: "file index",
+                        serialAction: "combo",
+                        transactions: [...fileTransactions],
+                    }
+                );
+                fileTransactions = pinTransations as MvcTransaction[];
+                finalBody.attachments = [...finalBody.attachments || [], 'metafile://index/' + fileTransactions[fileTransactions.length - 1].txComposer.getTxId() + 'i0']
             }
             //   await sleep(5000);
 
@@ -477,6 +550,37 @@ export default ({ show, onClose, quotePin }: Props) => {
 
                             </div>
                         ))}
+
+                        {
+                            video && (
+                                <div
+                                    style={{
+                                        position: 'relative',
+                                        marginRight: 8,
+                                        marginBottom: 8,
+                                        width: 100,
+                                        height: 100,
+                                    }}
+                                >
+                                    <video
+                                        src={video.previewUrl}
+                                        controls
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                    <Button
+                                        onClick={() => handleRemoveVideo()}
+                                        size="small"
+                                        style={{
+                                            position: 'absolute',
+                                            top: 4,
+                                            right: 4,
+                                        }}
+                                        icon={<CloseOutlined />}
+                                    >
+                                    </Button>
+                                </div>
+                            )
+                        }
                     </div>
                 </Col>
                 {
@@ -566,7 +670,11 @@ export default ({ show, onClose, quotePin }: Props) => {
                         <Button icon={<FileImageOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
                     </Upload>
                     <Button type='text' onClick={() => setShowNFTModal(true)} style={{ color: showConf?.brandColor }}>NFT</Button>
-                    <Button disabled icon={<VideoCameraOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
+                    <Upload beforeUpload={handleVideoBeforeUpload}
+                        showUploadList={false}
+                        accept='video/mp4'  >
+                        <Button icon={<VideoCameraOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
+                    </Upload>
 
 
                 </Space>
