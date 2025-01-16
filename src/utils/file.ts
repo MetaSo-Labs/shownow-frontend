@@ -279,7 +279,7 @@ export type MetaFile = {
 };
 export async function processFile(
   file: File,
-  chunkSize: number = 0.2 * 1024 * 1024
+  chunkSize: number 
 ): Promise<MetaFile> {
   console.log("file", file.size);
   const totalChunks = Math.ceil(file.size / chunkSize);

@@ -59,6 +59,7 @@ import _mvc from "@/assets/mvc.png";
 import DonateModal from "./components/DonateModal";
 import Decimal from "decimal.js";
 import Unlock from "../Unlock";
+import Video from "./Video";
 
 // TODO: use metaid manage state
 
@@ -655,7 +656,9 @@ export default ({
                     {decryptContent && <NFTGallery nfts={decryptContent.nfts} />}
 
                     {decryptContent && <ImageGallery decryptContent={decryptContent} />}
-
+                    {
+                        decryptContent?.video && <Video pid={decryptContent?.video[0]} />
+                    }
                     {decryptContent?.buzzType === "pay" && (
                         <Spin spinning={accessControl?.data.mempool === 1}>
                             {accessControl?.data?.payCheck && (

@@ -16,8 +16,8 @@ import _btc from '@/assets/btc.png'
 import _mvc from '@/assets/mvc.png'
 import { InscribeData } from "node_modules/@metaid/metaid/dist/core/entity/btc";
 import * as crypto from 'crypto'
-import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, openWindowTarget } from "@/utils/utils";
-import { postPayBuzz } from "@/utils/buzz";
+import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, openWindowTarget, sleep } from "@/utils/utils";
+import { postPayBuzz, postVideo } from "@/utils/buzz";
 import { IBtcConnector } from "metaid/dist";
 import { getDeployList, getMRC20Info, getUserInfo } from "@/request/api";
 import defaultAvatar from '@/assets/avatar.svg'
@@ -138,13 +138,102 @@ export default ({ show, onClose, quotePin }: Props) => {
     }) => {
         setIsAdding(true);
         const buzzEntity: IBtcEntity = await btcConnector!.use('buzz');
-        let fileTransactions: MvcTransaction[] = []
+        let fileTransactions: MvcTransaction[] = [];
+
+        let TxMap: Map<string, MvcTransaction | string> = new Map()
+
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const finalBody: any = {
                 content: buzz.content,
                 contentType: 'text/plain',
             };
+
+            if (video) {
+                const { metafile, transactions } = await postVideo(video.file, showConf?.host || '', chainNet, btcConnector, mvcConnector);
+                fileTransactions = transactions as MvcTransaction[];
+                finalBody.attachments = [metafile]
+                // let chunkTransactions: MvcTransaction[] = [];
+
+                // const chunkSize = 1024 * 1024 * 0.2
+                // const { chunks, chunkNumber, sha256, fileSize, dataType, name } = await processFile(video.file, chunkSize);
+                // let chunkPids: string[] = [];
+                // const chunkList = []
+                // for (let i = 0; i < chunks.length; i++) {
+                //     const { chunk, hash } = chunks[i];
+                //     const metaidData: InscribeData = {
+                //         operation: "create",
+                //         body: chunk,
+                //         path: `${showConf?.host || ''}/file/chunk/${hash}`,
+                //         contentType: "metafile/chunk;binary",
+                //         encoding: "base64",
+                //         flag: "metaid",
+                //     };
+                //     if (chain === 'btc') {
+                //         // todo
+                //     } else {
+                //         const serialAction = (i + 1) % 2 === 0 ? 'finish' : "combo";
+                //         const { transactions, txid } = await mvcConnector!.createPin(
+                //             metaidData,
+                //             {
+                //                 network: curNetwork,
+                //                 signMessage: "file chunk",
+                //                 serialAction: serialAction,
+                //                 transactions: chunkTransactions,
+                //             }
+                //         );
+                //         if (txid) {
+                //             TxMap.set(hash, txid)
+                //         }
+                //         if (transactions) {
+                //             transactions.forEach(tx => {
+                //                 if (!TxMap.has(hash)) {
+                //                     TxMap.set(hash, tx)
+                //                 }
+                //             })
+                //         }
+
+
+                //         // chunkList.push({
+                //         //     sha256: hash,
+                //         //     pinId: txid ? `${txid}i0` : transactions![transactions!.length - 1].txComposer.getTxId() + 'i0'
+                //         // })
+                //         chunkTransactions = transactions as MvcTransaction[];
+                //     }
+                // }
+                // console.log('chunkPids', chunkPids);
+                // const metaidData: InscribeData = {
+                //     operation: "create",
+                //     body: JSON.stringify({
+                //         chunkList:chunks.map(({hash, chunk}) => ({
+                //             sha256: hash,
+                //             pinId: typeof TxMap.get(hash) === 'string' ? TxMap.get(hash)+'i0' : (TxMap.get(hash) as MvcTransaction).txComposer.getTxId() + 'i0'
+                //         })),
+                //         fileSize,
+                //         chunkSize,
+                //         dataType,
+                //         name,
+                //         chunkNumber,
+                //         sha256,
+                //     }),
+                //     path: `${showConf?.host || ''}/file/index/${uuidv4()}`,
+                //     contentType: "metafile/index;utf-8",
+                //     flag: "metaid",
+                // };
+
+                // console.log('metaidData', metaidData);
+                // const { transactions: pinTransations } = await mvcConnector!.createPin(
+                //     metaidData,
+                //     {
+                //         network: curNetwork,
+                //         signMessage: "file index",
+                //         serialAction: "combo",
+                //         transactions: [...chunkTransactions],
+                //     }
+                // );
+                // fileTransactions = pinTransations as MvcTransaction[];
+                // finalBody.attachments = [...finalBody.attachments || [], 'metafile://video/' + fileTransactions[fileTransactions.length - 1].txComposer.getTxId() + 'i0']
+            }
             if (!isEmpty(buzz.images)) {
                 const fileOptions: CreateOptions[] = [];
                 for (const image of buzz.images) {
@@ -167,9 +256,9 @@ export default ({ show, onClose, quotePin }: Props) => {
                     });
 
                     console.log('imageRes', imageRes);
-                    finalBody.attachments = imageRes.revealTxIds.map(
+                    finalBody.attachments = [...finalBody.attachments, imageRes.revealTxIds.map(
                         (rid) => 'metafile://' + rid + 'i0'
-                    );
+                    )];
                 } else {
                     const fileEntity = (await mvcConnector!.use('file')) as IMvcEntity
                     const finalAttachMetafileUri: string[] = []
@@ -198,77 +287,12 @@ export default ({ show, onClose, quotePin }: Props) => {
                         fileTransactions = transactions
                     }
 
-                    finalBody.attachments = finalAttachMetafileUri
+                    finalBody.attachments = [...finalBody.attachments, ...finalAttachMetafileUri]
                 }
 
             }
 
-            if (video) {
-                const chunkSize = 0.2 * 1024 * 1024
-                const { chunks, chunkNumber, sha256, fileSize, dataType, name } = await processFile(video.file, chunkSize);
-                const chunkPids: string[] = [];
-                const base64Str = chunks.map(chunk => chunk.chunk).join('');
-                console.log('base64Str', base64Str);
-               
-                for (let i = 0; i < chunks.length; i++) {
-                    const { chunk, hash } = chunks[i];
-                    const metaidData: InscribeData = {
-                        operation: "create",
-                        body: chunk,
-                        path: `${showConf?.host || ''}/file/chunk/${hash}`,
-                        contentType: "metafile/chunk;binary",
-                        encoding: "base64",
-                        flag: "metaid",
-                    };
-                    if (chain === 'btc') {
-                        // todo
-                    } else {
-                        const { transactions: pinTransations } = await mvcConnector!.createPin(
-                            metaidData,
-                            {
-                                network: curNetwork,
-                                signMessage: "file chunk",
-                                serialAction: "combo",
-                                transactions: [...fileTransactions],
-                            }
-                        );
-                        fileTransactions = pinTransations as MvcTransaction[];
-                        const chunkPid = fileTransactions[fileTransactions.length - 1].txComposer.getTxId() + "i0";
-                        chunkPids.push(chunkPid);
-                    }
-                }
-                const metaidData: InscribeData = {
-                    operation: "create",
-                    body: JSON.stringify({
-                        chunkList: chunks.map((chunk, index) => {
-                            return {
-                                sha256: chunk.hash,
-                                pinId: chunkPids[index]
-                            }
-                        }),
-                        fileSize,
-                        chunkSize,
-                        dataType,
-                        name,
-                        chunkNumber,
-                        sha256,
-                    }),
-                    path: `${showConf?.host || ''}/file/index/${uuidv4()}`,
-                    contentType: "metafile/index;utf-8",
-                    flag: "metaid",
-                };
-                const { transactions: pinTransations } = await mvcConnector!.createPin(
-                    metaidData,
-                    {
-                        network: curNetwork,
-                        signMessage: "file index",
-                        serialAction: "combo",
-                        transactions: [...fileTransactions],
-                    }
-                );
-                fileTransactions = pinTransations as MvcTransaction[];
-                finalBody.attachments = [...finalBody.attachments || [], 'metafile://index/' + fileTransactions[fileTransactions.length - 1].txComposer.getTxId() + 'i0']
-            }
+
             //   await sleep(5000);
 
 
@@ -326,6 +350,8 @@ export default ({ show, onClose, quotePin }: Props) => {
                         service: fetchServiceFee('post_service_fee_amount', 'MVC'),
                     },
                 })
+
+                console.log(fileTransactions.map(tx => tx.txComposer.getTxId()));
                 if (!isNil(createRes?.txid)) {
                     // await sleep(5000);
                     queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] })

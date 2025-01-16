@@ -4,7 +4,7 @@ import {
   IMvcEntity,
   MvcTransaction,
 } from "@metaid/metaid";
-import { AttachmentItem } from "./file";
+import { AttachmentItem, processFile } from "./file";
 import {
   decryptPayloadAES,
   encryptPayloadAES,
@@ -19,6 +19,7 @@ import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
 import ECPairFactory, { ECPairInterface, SignerAsync } from "ecpair";
 import * as bitcoin from "bitcoinjs-lib";
 import { dec, isEmpty } from "ramda";
+import { v4 as uuidv4 } from "uuid";
 import {
   getControlByContentPin,
   getDecryptContent,
@@ -194,6 +195,111 @@ export const postPayBuzz = async (
   }
 };
 
+export const postVideo = async (
+  file: File,
+  host: string,
+  chain: API.Chain,
+  btcConnector: IBtcConnector | undefined,
+  mvcConnector: IMvcConnector | undefined
+) => {
+  //TODO
+
+  let chunkTransactions: MvcTransaction[] = [];
+
+  const chunkSize = 1024 * 1024 * 0.2;
+  const { chunks, chunkNumber, sha256, fileSize, dataType, name } =
+    await processFile(file, chunkSize);
+  let chunkPids: string[] = [];
+  let chunkList: any[] = [];
+  for (let i = 0; i < chunks.length; i++) {
+    const { chunk, hash } = chunks[i];
+    const metaidData: InscribeData = {
+      operation: "create",
+      body: chunk,
+      path: `${host || ""}/file/chunk/${hash}`,
+      contentType: "metafile/chunk;binary",
+      encoding: "base64",
+      flag: "metaid",
+    };
+    if (chain === "btc") {
+      // todo
+    } else {
+      const serialAction = (i + 1) % 4 === 0 ? "finish" : "combo";
+      const { transactions, txid, allTxid } = await mvcConnector!.createPin(
+        metaidData,
+        {
+          network: curNetwork,
+          signMessage: "file chunk",
+          serialAction: serialAction,
+          transactions: chunkTransactions,
+        }
+      );
+
+      if (allTxid || i === chunks.length - 1) {
+        if (allTxid) {
+          chunkList = [
+            ...chunkList,
+            ...allTxid.map((txid: string) => {
+              return {
+                sha256: hash,
+                pinId: txid + "i0",
+              };
+            }),
+          ];
+        } else {
+          chunkList = [
+            ...chunkList,
+            ...transactions!.map((tx) => {
+              return {
+                sha256: hash,
+                pinId: tx.txComposer.getTxId() + "i0",
+              };
+            }),
+          ];
+        }
+      }
+
+      chunkTransactions = transactions as MvcTransaction[];
+    }
+  }
+  const metaidData: InscribeData = {
+    operation: "create",
+    body: JSON.stringify({
+      chunkList: chunkList,
+      fileSize,
+      chunkSize,
+      dataType,
+      name,
+      chunkNumber,
+      sha256,
+    }),
+    path: `${host || ""}/file/index/${uuidv4()}`,
+    contentType: "metafile/index;utf-8",
+    flag: "metaid",
+  };
+  const { transactions: pinTransations } = await mvcConnector!.createPin(
+    metaidData,
+    {
+      network: curNetwork,
+      signMessage: "file index",
+      serialAction: "combo",
+      transactions: [...chunkTransactions],
+    }
+  );
+  chunkTransactions = pinTransations as MvcTransaction[];
+  return {
+    transactions: chunkTransactions,
+    metafile:
+      "metafile://video/" +
+      chunkTransactions[chunkTransactions.length - 1].txComposer.getTxId() +
+      "i0",
+  };
+};
+
+export const postChunk = async () => {
+  //TODO
+};
+
 export const postImages = async (
   images: AttachmentItem[],
   feeRate: number,
@@ -246,7 +352,7 @@ export const postImages = async (
           network: curNetwork,
           signMessage: "upload image file",
           serialAction: "combo",
-          transactions: [],
+          transactions: fileTransactions,
         },
       });
 
@@ -259,6 +365,7 @@ export const postImages = async (
           transactions[transactions.length - 1].txComposer.getTxId() +
           "i0"
       );
+      console.log("finalAttachMetafileUri", finalAttachMetafileUri);
       fileTransactions = transactions;
     }
 
@@ -397,6 +504,7 @@ export const decodePayBuzz = async (
   publicFiles: string[];
   encryptFiles: string[];
   nfts: API.NFT[];
+  video: string[];
   buzzType: "normal" | "pay";
   status: API.PayStatus;
 }> => {
@@ -410,6 +518,7 @@ export const decodePayBuzz = async (
       publicFiles: [],
       encryptFiles: [],
       nfts: [],
+      video: [],
       buzzType: "normal",
       status: "unpurchased",
     };
@@ -418,6 +527,7 @@ export const decodePayBuzz = async (
   if (!isEmpty(parseSummary?.attachments ?? [])) {
     const _publicFiles: string[] = [];
     const _nfts: API.NFT[] = [];
+    const _videos: string[] = [];
     for (let i = 0; i < parseSummary.attachments.length; i++) {
       if (parseSummary.attachments[i].startsWith("metafile://nft/mrc721/")) {
         const _nftId = parseSummary.attachments[i].split(
@@ -434,19 +544,27 @@ export const decodePayBuzz = async (
           });
         } catch (e) {}
       } else {
-        if (parseSummary.attachments[i].startsWith("metafile://")) {
-          parseSummary.attachments[i] =
-            parseSummary.attachments[i].split("metafile://")[1];
+        if (parseSummary.attachments[i].startsWith("metafile://video/")) {
+          _videos.push(
+            parseSummary.attachments[i].split("metafile://video/")[1]
+          );
+        } else {
+          if (parseSummary.attachments[i].startsWith("metafile://")) {
+            parseSummary.attachments[i] =
+              parseSummary.attachments[i].split("metafile://")[1];
+          }
+          _publicFiles.push(parseSummary.attachments[i]);
         }
-        _publicFiles.push(parseSummary.attachments[i]);
       }
     }
+
     return {
       publicContent: parseSummary.content,
       encryptContent: "",
       publicFiles: _publicFiles,
       nfts: _nfts,
       encryptFiles: [],
+      video: _videos,
       buzzType: "normal",
       status: "unpurchased",
     };
@@ -491,6 +609,7 @@ export const decodePayBuzz = async (
         encryptContent: "",
         publicFiles: _publicFiles,
         encryptFiles: [],
+        video: [],
         nfts: _nfts,
         buzzType: "normal",
         status: "unpurchased",
@@ -503,6 +622,7 @@ export const decodePayBuzz = async (
         publicFiles: _publicFiles,
         encryptFiles: parseSummary.encryptFiles,
         nfts: _nfts,
+        video: [],
         buzzType: "pay",
         status: "unpurchased",
       };
@@ -542,6 +662,7 @@ export const decodePayBuzz = async (
         encryptContent: Buffer.from(encryptContent, "hex").toString("utf-8"),
         publicFiles: _publicFiles,
         nfts: _nfts,
+        video: [],
         encryptFiles: decryptFiles,
         buzzType: "pay",
         status: "purchased",
@@ -576,6 +697,7 @@ export const decodePayBuzz = async (
         nfts: _nfts,
         encryptFiles: parseSummary.encryptFiles,
         buzzType: "pay",
+        video: [],
         status: "unpurchased",
       };
     }
@@ -585,6 +707,7 @@ export const decodePayBuzz = async (
         data.status === "purchased" ? data.contentResult || "" : "",
       publicFiles: _publicFiles,
       nfts: _nfts,
+      video: [],
       encryptFiles:
         data.status === "purchased"
           ? data.filesResult || []
@@ -599,6 +722,7 @@ export const decodePayBuzz = async (
     encryptContent: "",
     publicFiles: [],
     encryptFiles: [],
+    video: [],
     nfts: [],
     buzzType: "normal",
     status: "unpurchased",
