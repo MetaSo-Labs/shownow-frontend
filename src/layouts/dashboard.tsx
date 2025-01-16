@@ -32,11 +32,11 @@ export default () => {
                         name: 'Settings',
                         icon: <SettingOutlined />,
                     },
-                    // {
-                    //     path: '/dashboard/metaso',
-                    //     name: '$METASO',
-                    //     icon: <DollarOutlined />,
-                    // },
+                    {
+                        path: '/dashboard/metaso',
+                        name: '$METASO',
+                        icon: <DollarOutlined />,
+                    },
                 ],
             }}
             menuItemRender={(item, dom) => (
