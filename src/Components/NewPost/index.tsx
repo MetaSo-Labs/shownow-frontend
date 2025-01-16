@@ -204,15 +204,20 @@ export default ({ show, onClose, quotePin }: Props) => {
             }
 
             if (video) {
-                const chunks = await processFile(video.file);
+                const chunkSize = 0.2 * 1024 * 1024
+                const { chunks, chunkNumber, sha256, fileSize, dataType, name } = await processFile(video.file, chunkSize);
                 const chunkPids: string[] = [];
+                const base64Str = chunks.map(chunk => chunk.chunk).join('');
+                console.log('base64Str', base64Str);
+               
                 for (let i = 0; i < chunks.length; i++) {
                     const { chunk, hash } = chunks[i];
                     const metaidData: InscribeData = {
                         operation: "create",
                         body: chunk,
-                        path: `${showConf?.host || ''}/file/${hash}`,
+                        path: `${showConf?.host || ''}/file/chunk/${hash}`,
                         contentType: "metafile/chunk;binary",
+                        encoding: "base64",
                         flag: "metaid",
                     };
                     if (chain === 'btc') {
@@ -238,10 +243,15 @@ export default ({ show, onClose, quotePin }: Props) => {
                         chunkList: chunks.map((chunk, index) => {
                             return {
                                 sha256: chunk.hash,
-                                pid: chunkPids[index]
+                                pinId: chunkPids[index]
                             }
                         }),
-                        contentType: `${video.file.fileType};binary`,
+                        fileSize,
+                        chunkSize,
+                        dataType,
+                        name,
+                        chunkNumber,
+                        sha256,
                     }),
                     path: `${showConf?.host || ''}/file/index/${uuidv4()}`,
                     contentType: "metafile/index;utf-8",

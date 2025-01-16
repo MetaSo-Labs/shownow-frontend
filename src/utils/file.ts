@@ -262,26 +262,56 @@ function chunkToHexString(chunk: ArrayBuffer): string {
   // Convert the WordArray to a hex string
   return wordArray.toString(CryptoJS.enc.Hex);
 }
+
+type FileChunk = {
+  chunk: string;
+  hash: string;
+};
+
+export type MetaFile = {
+  sha256: string;
+  fileSize: number;
+  chunkNumber: number;
+  chunkSize: number;
+  dataType: string;
+  name: string;
+  chunks: FileChunk[];
+};
 export async function processFile(
   file: File,
-  chunkSize: number = 0.1 * 1024 * 1024
-): Promise<{ chunk: string; hash: string }[]> {
+  chunkSize: number = 0.2 * 1024 * 1024
+): Promise<MetaFile> {
+  console.log("file", file.size);
   const totalChunks = Math.ceil(file.size / chunkSize);
   const chunks = Array.from({ length: totalChunks }, (_, index) => {
     const start = index * chunkSize;
     const end = Math.min(start + chunkSize, file.size);
     return file.slice(start, end);
   });
-  const parts = [];
+  const metafile: MetaFile = {
+    sha256: calculateChunkHash(await file.arrayBuffer()),
+    fileSize: file.size,
+    chunkNumber: chunks.length,
+    chunkSize,
+    dataType: file.type,
+    name: file.name,
+    chunks: [],
+  };
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i];
     const chunkBuffer = await chunk.arrayBuffer();
-    const chunkHex = chunkToHexString(chunkBuffer);
+    // const chunkHex = chunkToHexString(chunkBuffer);
+    const chunkBase64Str = btoa(
+      new Uint8Array(chunkBuffer).reduce(
+        (data, byte) => data + String.fromCharCode(byte),
+        ""
+      )
+    );
     const chunkHash = calculateChunkHash(chunkBuffer);
-    parts.push({
-      chunk: chunkHex,
+    metafile.chunks.push({
+      chunk: chunkBase64Str,
       hash: chunkHash,
     });
   }
-  return parts;
+  return metafile;
 }
