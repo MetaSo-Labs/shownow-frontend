@@ -4,6 +4,7 @@ import Compressor from "compressorjs";
 import imageCompression from "browser-image-compression";
 import CryptoJs from "crypto-js";
 import encHex from "crypto-js/enc-hex";
+const CryptoJS = CryptoJs;
 
 export enum IsEncrypt {
   Yes = 1,
@@ -244,3 +245,43 @@ export const convertToFileList = (images: any) => {
 
   return dataTransfer.files; // 返回 FileList 对象
 };
+
+// Calculate the SHA-256 hash of a chunk
+export function calculateChunkHash(chunk: ArrayBuffer): string {
+  // Convert ArrayBuffer to CryptoJS WordArray
+  const wordArray = CryptoJS.lib.WordArray.create(new Uint8Array(chunk));
+  // Compute the SHA-256 hash
+  const hash = CryptoJS.SHA256(wordArray);
+  // Return the hash as a hexadecimal string
+  return hash.toString(CryptoJS.enc.Hex);
+}
+// Convert a chunk to a hex string
+function chunkToHexString(chunk: ArrayBuffer): string {
+  // Convert ArrayBuffer to CryptoJS WordArray
+  const wordArray = CryptoJS.lib.WordArray.create(new Uint8Array(chunk));
+  // Convert the WordArray to a hex string
+  return wordArray.toString(CryptoJS.enc.Hex);
+}
+export async function processFile(
+  file: File,
+  chunkSize: number = 0.1 * 1024 * 1024
+): Promise<{ chunk: string; hash: string }[]> {
+  const totalChunks = Math.ceil(file.size / chunkSize);
+  const chunks = Array.from({ length: totalChunks }, (_, index) => {
+    const start = index * chunkSize;
+    const end = Math.min(start + chunkSize, file.size);
+    return file.slice(start, end);
+  });
+  const parts = [];
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    const chunkBuffer = await chunk.arrayBuffer();
+    const chunkHex = chunkToHexString(chunkBuffer);
+    const chunkHash = calculateChunkHash(chunkBuffer);
+    parts.push({
+      chunk: chunkHex,
+      hash: chunkHash,
+    });
+  }
+  return parts;
+}
