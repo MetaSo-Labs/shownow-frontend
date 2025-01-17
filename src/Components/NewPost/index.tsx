@@ -84,6 +84,10 @@ export default ({ show, onClose, quotePin }: Props) => {
             message.error('You can only upload video file!');
             return Upload.LIST_IGNORE;
         }
+        if (file.size > 1024 * 1024 * 3) {
+            message.error('The video size must be less than 3MB');
+            return Upload.LIST_IGNORE;
+        }
         const previewUrl = URL.createObjectURL(file);
         setVideo({ file, previewUrl });
         return false;

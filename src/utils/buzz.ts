@@ -283,7 +283,7 @@ export const postVideo = async (
       network: curNetwork,
       signMessage: "file index",
       serialAction: "combo",
-      transactions: [...chunkTransactions],
+      transactions: [...(chunkTransactions ?? [])],
     }
   );
   chunkTransactions = pinTransations as MvcTransaction[];
