@@ -153,7 +153,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 contentType: 'text/plain',
             };
 
-            if (video) {
+            if (video && chainNet === 'mvc') {
                 const { metafile, transactions } = await postVideo(video.file, showConf?.host || '', chainNet, btcConnector, mvcConnector);
                 fileTransactions = transactions as MvcTransaction[];
                 finalBody.attachments = [metafile]
@@ -592,7 +592,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                         ))}
 
                         {
-                            video && (
+                            (video && chainNet === 'mvc') && (
                                 <div
                                     style={{
                                         position: 'relative',
@@ -713,7 +713,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     <Upload beforeUpload={handleVideoBeforeUpload}
                         showUploadList={false}
                         accept='video/mp4'  >
-                        <Button icon={<VideoCameraOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
+                        <Button disabled={chainNet === 'btc'} icon={<VideoCameraOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
                     </Upload>
 
 
