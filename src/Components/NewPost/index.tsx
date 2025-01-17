@@ -707,13 +707,13 @@ export default ({ show, onClose, quotePin }: Props) => {
                 <Space>
                     <Upload beforeUpload={handleBeforeUpload}
                         showUploadList={false}  >
-                        <Button icon={<FileImageOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
+                        <Button icon={<FileImageOutlined  />} variant='text' color='primary'></Button>
                     </Upload>
-                    <Button type='text' onClick={() => setShowNFTModal(true)} style={{ color: showConf?.brandColor }}>NFT</Button>
+                    <Button type='text' onClick={() => setShowNFTModal(true)} variant='text' color='primary'>NFT</Button>
                     <Upload beforeUpload={handleVideoBeforeUpload}
                         showUploadList={false}
                         accept='video/mp4'  >
-                        <Button disabled={chainNet === 'btc'} icon={<VideoCameraOutlined style={{ color: showConf?.brandColor }} />} type='text'></Button>
+                        <Button disabled={chainNet === 'btc'} icon={<VideoCameraOutlined />} variant='text' color='primary'></Button>
                     </Upload>
 
 
