@@ -600,7 +600,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                                 >
                                     <video
                                         src={video.previewUrl}
-                                        controls
+                                        // controls
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
                                     <Button
