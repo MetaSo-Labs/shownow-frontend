@@ -65,26 +65,13 @@ import Video from "./Video";
 
 type Props = {
     buzzItem: API.Buzz;
-    like?: API.LikeRes[];
-    donate?: API.DonateRes[];
-    showActions?: boolean;
-    padding?: number;
-    reLoading?: boolean;
-    refetch?: () => Promise<any>;
-    isForward?: boolean;
     loading?: boolean;
-    handleClick?: () => void;
+
 };
 
 export default ({
     buzzItem,
-    showActions = true,
-    refetch,
-    isForward = false,
-    loading,
-    like = [],
-    donate = [],
-    handleClick,
+    loading
 }: Props) => {
     const {
         token: { colorBorderSecondary, colorBorder, colorBgBlur, colorBgContainer },
@@ -94,7 +81,6 @@ export default ({
     const [isTranslating, setIsTranslating] = useState(false);
     const [showTrans, setShowTrans] = useState(false);
     const [transResult, setTransResult] = useState<string[]>([]);
-    const [showComment, setShowComment] = useState(false);
     const [showNewPost, setShowNewPost] = useState(false);
     const [showUnlock, setShowUnlock] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null); // 引用内容容器
@@ -128,7 +114,8 @@ export default ({
     const [donateMessage, setDonateMessage] = useState<string>("");
     const [balance, setBalance] = useState<number>(0);
     const [donateLoading, setDonateLoading] = useState(false);
-
+    const [donateCount, setDonateCount] = useState(buzzItem.donateCount || 0);
+    const [isDonated, setIsDonated] = useState(false);
     const [selectedChain, setSelectedChain] = useState<string>(
         determineAddressInfo(buzzItem.address) === 'p2pkh' ? chain : 'btc'
     );
@@ -154,17 +141,7 @@ export default ({
         fetchBalance();
     }, [isLogin, selectedChain]);
 
-    useEffect(() => {
-        if (!buzzItem) {
-            return;
-        }
-        const _likes = buzzItem.like ?? [];
-        const _like = like ?? [];
-        setLikes([..._likes, ..._like.map((item) => item.CreateMetaid)]);
-        const _donates = buzzItem.donate ?? [];
-        const _donate = donate ?? [];
-        setDonates([..._donates, ..._donate.map((item) => item.CreateMetaid)]);
-    }, [buzzItem, like, donate]);
+
 
     const payBuzz = useMemo(() => {
         let _summary = buzzItem!.content;
@@ -172,113 +149,6 @@ export default ({
         const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
         return isSummaryJson ? parseSummary : undefined;
     }, [buzzItem]);
-
-    const isLiked = useMemo(() => {
-        if (!buzzItem || !user) return false;
-
-        return likes.includes(user.metaid);
-    }, [likes]);
-
-    const isDonatedUser = useMemo(() => {
-        if (!buzzItem || !user) return false;
-        return donates.includes(user.metaid);
-    }, [donates]);
-    const handleLike = async () => {
-        if (!isLogin) {
-            message.error(formatMessage("Please connect your wallet first"));
-            return;
-        }
-        const isPass = checkUserSetting();
-        if (!isPass) return;
-        const pinId = buzzItem!.id;
-        if (isLiked) {
-            message.error("You have already liked that buzz...");
-            return;
-        }
-        setHandleLikeLoading(true);
-        try {
-            if (chain === "btc") {
-                const likeEntity = await btcConnector!.use("like");
-                const likeRes = await likeEntity.create({
-                    dataArray: [
-                        {
-                            body: JSON.stringify({ isLike: "1", likeTo: pinId }),
-                            flag: FLAG,
-                            contentType: "text/plain;utf-8",
-                            path: `${showConf?.host || ""}/protocols/paylike`,
-                        },
-                    ],
-                    options: {
-                        noBroadcast: "no",
-                        feeRate: Number(feeRate),
-                        service: fetchServiceFee("like_service_fee_amount", "BTC"),
-                    },
-                });
-                if (!isNil(likeRes?.revealTxIds[0])) {
-                    setLikes([...likes, user.metaid]);
-                    // await sleep(5000);
-                    // queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
-                    // queryClient.invalidateQueries({ queryKey: ['payLike', buzzItem!.id] });
-
-                    message.success("like buzz successfully");
-                }
-            } else {
-                const likeEntity = (await mvcConnector!.use("like")) as IMvcEntity;
-                const likeRes = await likeEntity.create({
-                    data: {
-                        body: JSON.stringify({
-                            isLike: "1",
-                            likeTo: pinId,
-                        }),
-                        path: `${showConf?.host || ""}/protocols/paylike`,
-                    },
-                    options: {
-                        network: curNetwork,
-                        signMessage: "like buzz",
-                        service: fetchServiceFee("like_service_fee_amount", "MVC"),
-                    },
-                });
-                console.log("likeRes", likeRes);
-                if (!isNil(likeRes?.txid)) {
-                    // await sleep(8000);
-                    // refetch && refetch()
-                    // queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] })
-                    // queryClient.invalidateQueries({
-                    //     queryKey: ['payLike', buzzItem!.id],
-                    // })
-                    // await sleep(5000);
-                    setLikes([...likes, user.metaid]);
-                    message.success("like buzz successfully");
-                }
-            }
-        } catch (error) {
-            console.log("error", error);
-            const errorMessage = (error as any)?.message ?? error;
-            const toastMessage = errorMessage?.includes(
-                "Cannot read properties of undefined"
-            )
-                ? "User Canceled"
-                : errorMessage;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            message.error(toastMessage);
-        }
-        setHandleLikeLoading(false);
-    };
-    const quotePinId = useMemo(() => {
-        if (isForward) return "";
-        let _summary = buzzItem!.content;
-        const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
-        const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
-        return isSummaryJson && !isEmpty(parseSummary?.quotePin ?? "")
-            ? parseSummary.quotePin
-            : "";
-    }, [buzzItem, isForward]);
-
-    const { isLoading: isQuoteLoading, data: quoteDetailData } = useQuery({
-        enabled: !isEmpty(quotePinId),
-        queryKey: ["buzzDetail", quotePinId],
-        queryFn: () => fetchBuzzDetail({ pinId: quotePinId }),
-    });
 
     const { data: accessControl } = useQuery({
         enabled: !isEmpty(payBuzz),
@@ -527,12 +397,12 @@ export default ({
             loading={loading}
             style={{
                 width: "100%",
-                borderColor: isForward ? colorBorder : colorBorderSecondary,
+                borderColor: colorBorder,
             }}
             styles={{
                 header: {
                     height: 40,
-                    borderColor: isForward ? colorBorder : colorBorderSecondary,
+                    borderColor: colorBorder,
                 },
             }}
             title={
@@ -579,7 +449,7 @@ export default ({
             >
                 <div
                     onClick={() => {
-                        handleClick ? handleClick() : history.push(`/buzz/${buzzItem.id}`);
+                        history.push(`/buzz/${buzzItem.id}`);
                     }}
                 >
                     {textContent.length > 0 && (
@@ -655,7 +525,7 @@ export default ({
 
                     {decryptContent && <ImageGallery decryptContent={decryptContent} />}
                     {
-                        decryptContent && decryptContent.video[0] && <Video pid={decryptContent?.video[0]} />
+                        decryptContent && decryptContent.video && decryptContent.video[0] && <Video pid={decryptContent.video[0]} />
                     }
                     {decryptContent?.buzzType === "pay" && (
                         <Spin spinning={accessControl?.data.mempool === 1}>
@@ -757,24 +627,7 @@ export default ({
                         </Spin>
                     )}
 
-                    {!isEmpty(quotePinId) && (
-                        <Card
-                            onClick={(e) => {
-                                e.stopPropagation();
-                            }}
-                            style={{ padding: 0, marginBottom: 12, boxShadow: "none" }}
-                            bordered={false}
-                            styles={{ body: { padding: 0 } }}
-                            loading={isQuoteLoading}
-                        >
-                            {quoteDetailData?.data && (
-                                <ForwardTweet
-                                    buzzItem={quoteDetailData?.data.tweet}
-                                    showActions={false}
-                                />
-                            )}
-                        </Card>
-                    )}
+
                     <Space>
                         <Button
                             size="small"
@@ -811,96 +664,7 @@ export default ({
                         </Typography.Text>
                     </Space>
                 </div>
-
-                {showActions && (
-                    <div className="actions">
-                        <Button
-                            type="text"
-                            icon={<MessageOutlined />}
-                            onClick={async () => {
-                                if (!isLogin) {
-                                    message.error(
-                                        formatMessage("Please connect your wallet first")
-                                    );
-                                    return;
-                                }
-                                const isPass = checkUserSetting();
-                                if (!isPass) return;
-
-                                showComment ? setShowComment(false) : setShowComment(true);
-                            }}
-                        >
-                            {buzzItem.commentCount}
-                        </Button>
-
-                        <Button
-                            type="text"
-                            loading={handleLikeLoading}
-                            onClick={handleLike}
-                            icon={
-                                isLiked ? (
-                                    <HeartFilled style={{ color: "red" }} />
-                                ) : (
-                                    <HeartOutlined />
-                                )
-                            }
-                        >
-                            {likes.length}
-                        </Button>
-                        <Button
-                            type="text"
-                            icon={
-                                isDonatedUser ? (
-                                    <GiftFilled style={{ color: showConf?.brandColor }} />
-                                ) : (
-                                    <GiftOutlined />
-                                )
-                            }
-                            loading={donateLoading}
-                            onClick={async () => {
-                                if (!isLogin) {
-                                    message.error(
-                                        formatMessage("Please connect your wallet first")
-                                    );
-                                    return;
-                                }
-                                const isPass = checkUserSetting();
-                                if (!isPass) return;
-
-                                showGift ? setShowGift(false) : setShowGift(true);
-                            }}
-                        >
-                            {donates.length}
-                        </Button>
-                        <div className="item">
-                            <Button
-                                type="text"
-                                icon={<UploadOutlined />}
-                                onClick={() => {
-                                    if (!isLogin) {
-                                        message.error(
-                                            formatMessage("Please connect your wallet first")
-                                        );
-                                        return;
-                                    }
-                                    const isPass = checkUserSetting();
-                                    if (!isPass) return;
-                                    showNewPost ? setShowNewPost(false) : setShowNewPost(true);
-                                }}
-                            />
-                        </div>
-                    </div>
-                )}
             </div>
-
-            <Comment
-                tweetId={buzzItem.id}
-                onClose={() => {
-                    setShowComment(false);
-                }}
-                show={showComment}
-                refetch={refetch}
-            />
             <NewPost
                 show={showNewPost}
                 onClose={() => {

@@ -6,9 +6,14 @@ import {
   mvcConnect,
   IBtcConnector,
   btcConnect,
-} from "@metaid/metaid";
+} from "@feiyangl1020/metaid";
 
-import { curNetwork, DASHBOARD_TOKEN, getHostByNet } from "@/config";
+import {
+  BASE_MAN_URL,
+  curNetwork,
+  DASHBOARD_TOKEN,
+  getHostByNet,
+} from "@/config";
 import {
   fetchFeeRate,
   fetchFollowingList,
@@ -107,11 +112,13 @@ export default () => {
     const btcConnector = await btcConnect({
       wallet: btcWallet,
       network: curNetwork,
+      host: BASE_MAN_URL,
     });
     setBtcConnector(btcConnector);
     const mvcConnector = await mvcConnect({
       wallet: mvcWallet,
       network: curNetwork,
+      host: BASE_MAN_URL,
     });
     setMvcConnector(mvcConnector);
     const connector = chain === "btc" ? btcConnector : mvcConnector;
@@ -198,15 +205,17 @@ export default () => {
       const btcConnector = await btcConnect({
         wallet: btcWallet,
         network: curNetwork,
+        host: BASE_MAN_URL,
       });
       setBtcConnector(btcConnector);
       const mvcConnector = await mvcConnect({
         wallet: mvcWallet,
         network: curNetwork,
+        host: BASE_MAN_URL,
       });
       setMvcConnector(mvcConnector);
       const connector = chain === "btc" ? btcConnector : mvcConnector;
-      if(connector.user){
+      if (connector.user) {
         setUser({
           avater: connector.user.avatar
             ? `${getHostByNet(network)}${connector.user.avatar}`
@@ -220,7 +229,7 @@ export default () => {
           address: connector.wallet.address,
         });
       }
-      
+
       setIsLogin(true);
     }
     setInitializing(false);

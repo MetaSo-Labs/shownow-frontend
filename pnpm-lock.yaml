@@ -22,6 +22,9 @@ importers:
       '@bitcoin-js/tiny-secp256k1-asmjs':
         specifier: ^2.2.3
         version: 2.2.3
+      '@feiyangl1020/metaid':
+        specifier: ^0.0.3
+        version: 0.0.3(@types/react@18.3.11)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))
       '@ivliu/react-offscreen':
         specifier: ^1.0.8
         version: 1.0.8(react@18.3.1)
@@ -955,6 +958,9 @@ packages:
   '@eslint/js@8.57.1':
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@feiyangl1020/metaid@0.0.3':
+    resolution: {integrity: sha512-xw7tHFc8v0VtV538/niYls1kH41ph+5oxJbapHxpv8yMArQZR1XQmzW+yHOb3I9nMqdZLXgDJCohvu1qQpLY3A==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.3.tgz}
 
   '@floating-ui/core@0.6.2':
     resolution: {integrity: sha512-jktYRmZwmau63adUG3GKOAVCofBXkk55S/zQ94XOorAHhwqFIOFAy1rSp2N0Wp6/tGbe9V3u/ExlGZypyY17rg==, tarball: https://registry.npmjs.org/@floating-ui/core/-/core-0.6.2.tgz}
@@ -7411,6 +7417,33 @@ snapshots:
       - supports-color
 
   '@eslint/js@8.57.1': {}
+
+  '@feiyangl1020/metaid@0.0.3(@types/react@18.3.11)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))':
+    dependencies:
+      '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
+      '@metaid/metaid': 1.5.19(patch_hash=pbjtkyked7jhqxoeahctdxqba4)(@types/react@18.3.11)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))
+      '@metaid/metaid-cli': 0.0.2
+      '@okxweb3/crypto-lib': 1.0.10
+      '@scure/bip39': 1.5.1
+      '@tanstack/react-query': 5.64.1(react@18.3.1)
+      '@types/ramda': 0.29.12
+      axios: 1.7.7
+      bip32: 4.0.0
+      bip39: 3.1.0
+      bitcoinjs-lib: 6.1.7
+      chalk: 3.0.0
+      dayjs: 1.11.13
+      meta-contract: 0.3.42(encoding@0.1.13)
+      ramda: 0.29.1
+      uuid: 9.0.1
+      zustand: 5.0.3(@types/react@18.3.11)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))
+    transitivePeerDependencies:
+      - '@types/react'
+      - debug
+      - encoding
+      - immer
+      - react
+      - use-sync-external-store
 
   '@floating-ui/core@0.6.2': {}
 

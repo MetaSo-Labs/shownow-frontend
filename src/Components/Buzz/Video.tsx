@@ -33,7 +33,7 @@ type Metafile = {
 export default ({ pid }: {
     pid: string;
 }) => {
-    const { showConf } = useModel('dashboard')
+    const { showConf } = useModel('dashboard');
     if (!pid) return null;
     const ref = useRef<HTMLDivElement>(null)
     const [videoSrc, setVideoSrc] = useState<string>();
@@ -50,9 +50,9 @@ export default ({ pid }: {
     const _fetchChunksAndCombine = useCallback(async () => {
         setLoading(true)
         try {
-            if (isIntersecting && metafile && !videoSrc) {
+            if (isIntersecting && metafile) {
                 const chunkUrls = (metafile as Metafile).chunkList.map(chunk => `${BASE_MAN_URL}/content/${chunk.pinId}`);
-                const src = await fetchChunksAndCombine(chunkUrls, metafile.dataType)
+                const src = await fetchChunksAndCombine(chunkUrls, metafile.dataType);
                 setVideoSrc(src)
             }
         } catch (e) {
@@ -75,7 +75,7 @@ export default ({ pid }: {
         return () => {
             observer.disconnect()
         }
-    }, [isIntersecting,])
+    }, [])
 
     useEffect(() => {
         _fetchChunksAndCombine()

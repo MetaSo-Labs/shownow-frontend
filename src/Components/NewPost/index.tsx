@@ -592,7 +592,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                         ))}
 
                         {
-                            (video && chainNet === 'mvc') && (
+                            (video && chainNet === 'mvc' && !lock) && (
                                 <div
                                     style={{
                                         position: 'relative',
@@ -707,13 +707,13 @@ export default ({ show, onClose, quotePin }: Props) => {
                 <Space>
                     <Upload beforeUpload={handleBeforeUpload}
                         showUploadList={false}  >
-                        <Button icon={<FileImageOutlined  />} variant='text' color='primary'></Button>
+                        <Button icon={<FileImageOutlined />} variant='text' color='primary'></Button>
                     </Upload>
                     <Button type='text' onClick={() => setShowNFTModal(true)} variant='text' color='primary'>NFT</Button>
                     <Upload beforeUpload={handleVideoBeforeUpload}
                         showUploadList={false}
                         accept='video/mp4'  >
-                        <Button disabled={chainNet === 'btc'} icon={<VideoCameraOutlined />} variant='text' color='primary'></Button>
+                        <Button disabled={chainNet === 'btc' || lock} icon={<VideoCameraOutlined />} variant='text' color='primary'></Button>
                     </Upload>
 
 
