@@ -260,7 +260,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     });
 
                     console.log('imageRes', imageRes);
-                    finalBody.attachments = [...finalBody.attachments, imageRes.revealTxIds.map(
+                    finalBody.attachments = [...finalBody.attachments||[], imageRes.revealTxIds.map(
                         (rid) => 'metafile://' + rid + 'i0'
                     )];
                 } else {
@@ -291,7 +291,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                         fileTransactions = transactions
                     }
 
-                    finalBody.attachments = [...finalBody.attachments, ...finalAttachMetafileUri]
+                    finalBody.attachments = [...finalBody.attachments||[], ...finalAttachMetafileUri]
                 }
 
             }
