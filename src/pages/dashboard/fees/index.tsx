@@ -5,6 +5,7 @@ import { useModel, history } from "umi";
 import '../index.less'
 import { useEffect, useState } from "react";
 import Rpc from "../rpc";
+import BlockList from "./blockList";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
@@ -267,7 +268,12 @@ export default () => {
                             />
                         </ProForm>
                     </ProCard>
-                }
+                },
+                {
+                    key: '4',
+                    label: 'Screen',
+                    children: <BlockList />
+                },
             ],
             onChange: (key) => {
                 setActiveKey(key)

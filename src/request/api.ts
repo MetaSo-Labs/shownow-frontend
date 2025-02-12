@@ -1,4 +1,4 @@
-import { BASE_MAN_URL } from "@/config";
+import { BASE_MAN_URL, DASHBOARD_ADMIN_PUBKEY, DASHBOARD_SIGNATURE } from "@/config";
 import { IBtcConnector } from "@metaid/metaid";
 import axios from "axios";
 import { UserInfo } from "node_modules/@metaid/metaid/dist/types";
@@ -575,5 +575,59 @@ export const getHostNDV = async (params: {
   }>(`${BASE_MAN_URL}/statistics/ndv`, {
     method: "GET",
     params,
+  });
+};
+
+
+export const getBlockedList = async (params: {
+  blockType: string;
+  size: number;
+  cursor: number;
+}) => {
+  return request<{
+    code: number;
+    data:{ list:API.BlockedItem[],total:number};
+    message: string;
+  }>(`${BASE_MAN_URL}/metaso/settings/blocked/list`, {
+    method: "GET",
+    params,
+    headers: {
+            "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+            "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+          },
+  });
+};
+
+export const addBlockedItem = async (params: {
+  blockType: string;
+  blockContent: string;
+}) => {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/metaso/settings/blocked/add`, {
+    method: "GET",
+    params,
+    headers: {
+            "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+            "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+          },
+  });
+};
+
+export const deleteBlockedItem = async (params: {
+  blockType: string;
+  blockContent: string;
+}) => {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/metaso/settings/blocked/delete`, {
+    method: "GET",
+    params,
+    headers: {
+            "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+            "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+          },
   });
 };

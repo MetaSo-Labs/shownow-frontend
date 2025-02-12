@@ -27,6 +27,7 @@ import NFTModal from "../NFTModal";
 import SelectChain from "./SelectChain";
 import { getBuzzSchemaWithCustomHost } from "@/entities/buzz";
 import { v4 as uuidv4 } from 'uuid';
+import { createPinWithAssist } from "@/utils/mvcCreatePin";
 const { TextArea } = Input;
 type Props = {
     show: boolean,
@@ -344,6 +345,17 @@ export default ({ show, onClose, quotePin }: Props) => {
                 }
             } else {
                 const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity
+
+                // await createPinWithAssist({ body: JSON.stringify({ ...finalBody }) },
+                // {
+                //     network: curNetwork,
+                //     signMessage: 'create buzz',
+                //     serialAction: 'finish',
+                //     service: fetchServiceFee('post_service_fee_amount', 'MVC'),
+                //     assistDomian:'https://www.metaso.network/assist-open-api-testnet'
+                // })
+                // debugger
+                // return
                 const createRes = await buzzEntity!.create({
                     data: { body: JSON.stringify({ ...finalBody }) },
                     options: {

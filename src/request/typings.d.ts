@@ -348,4 +348,9 @@ declare namespace API {
     progressStartBlock: number;
     syncMetaBlockHeight: number;
   };
+
+  type BlockedItem = {
+    blockedType: string;
+    blockedContent: string;
+  };
 }
