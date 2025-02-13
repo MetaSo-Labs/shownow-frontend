@@ -261,7 +261,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     });
 
                     console.log('imageRes', imageRes);
-                    finalBody.attachments = [...finalBody.attachments||[], imageRes.revealTxIds.map(
+                    finalBody.attachments = [...finalBody.attachments || [], imageRes.revealTxIds.map(
                         (rid) => 'metafile://' + rid + 'i0'
                     )];
                 } else {
@@ -292,7 +292,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                         fileTransactions = transactions
                     }
 
-                    finalBody.attachments = [...finalBody.attachments||[], ...finalAttachMetafileUri]
+                    finalBody.attachments = [...finalBody.attachments || [], ...finalAttachMetafileUri]
                 }
 
             }
@@ -346,16 +346,16 @@ export default ({ show, onClose, quotePin }: Props) => {
             } else {
                 const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity
 
-                // await createPinWithAssist({ body: JSON.stringify({ ...finalBody }) },
-                // {
-                //     network: curNetwork,
-                //     signMessage: 'create buzz',
-                //     serialAction: 'finish',
-                //     service: fetchServiceFee('post_service_fee_amount', 'MVC'),
-                //     assistDomian:'https://www.metaso.network/assist-open-api-testnet'
-                // })
-                // debugger
-                // return
+                await createPinWithAssist({ body: JSON.stringify({ ...finalBody }), path: `${showConf?.host || ''}/protocols/simplebuzz`, operation: 'create' },
+                    {
+                        network: curNetwork,
+                        signMessage: 'create buzz',
+                        serialAction: 'finish',
+                        service: fetchServiceFee('post_service_fee_amount', 'MVC'),
+                        assistDomian: 'https://www.metaso.network/assist-open-api-testnet'
+                    })
+                debugger
+                return
                 const createRes = await buzzEntity!.create({
                     data: { body: JSON.stringify({ ...finalBody }) },
                     options: {

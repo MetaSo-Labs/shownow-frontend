@@ -85,6 +85,9 @@ importers:
       md5:
         specifier: ^2.3.0
         version: 2.3.0
+      meta-contract:
+        specifier: ^0.4.10
+        version: 0.4.10(encoding@0.1.13)
       plyr-react:
         specifier: ^5.3.0
         version: 5.3.0(plyr@3.7.8)(react@18.3.1)
@@ -4171,6 +4174,10 @@ packages:
 
   meta-contract@0.3.42:
     resolution: {integrity: sha512-CJ77fKTfNENAu7J0RiI/crSNmzpXH0if2wqx3PvPOg0ixPVTj5oCBBxFd14fNvNL7q9+mCtrxAbD5tzQ2wyNcg==, tarball: https://registry.npmjs.org/meta-contract/-/meta-contract-0.3.42.tgz}
+    engines: {node: '>=12.0.0'}
+
+  meta-contract@0.4.10:
+    resolution: {integrity: sha512-f/B9l/lrS83Il5GDj5gysJMfGA/6Elt4nN0IGhbz1uDot2ziUgeUmCwL7rVQkVutAtb2BGndIbkSI1mv53D7+Q==, tarball: https://registry.npmjs.org/meta-contract/-/meta-contract-0.4.10.tgz}
     engines: {node: '>=12.0.0'}
 
   methods@1.1.2:
@@ -11481,6 +11488,13 @@ snapshots:
   merge2@1.4.1: {}
 
   meta-contract@0.3.42(encoding@0.1.13):
+    dependencies:
+      mvc-scrypt: 0.1.2
+      node-fetch: 2.7.0(encoding@0.1.13)
+    transitivePeerDependencies:
+      - encoding
+
+  meta-contract@0.4.10(encoding@0.1.13):
     dependencies:
       mvc-scrypt: 0.1.2
       node-fetch: 2.7.0(encoding@0.1.13)
