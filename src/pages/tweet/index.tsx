@@ -1,4 +1,5 @@
 import Buzz from "@/Components/Buzz"
+import BlockedBuzz from "@/Components/Buzz/BlockedBuzz"
 import Comment from "@/Components/Comment"
 import CommentPanel from "@/Components/CommentPanel"
 import Recommend from "@/Components/Recommend"
@@ -31,6 +32,8 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
 
     if (!buzzDetail) return null;
 
+
+
     return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none' }} title={<>
         {
             showConf?.showSliderMenu && <Button type="text" size='small' icon={<LeftOutlined />} onClick={onClose}>
@@ -49,42 +52,47 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
 
         }
     }}>
-        <Buzz buzzItem={buzzDetail.data.tweet} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates}  />
-        <Divider />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <UserAvatar src={user?.avater} size={48} />
-            <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => {
-                if (!isLogin) {
-                    message.error(formatMessage({ id: 'Please connect your wallet first' }))
-                    return
-                }
-                const isPass = checkUserSetting();
-                if (!isPass) {
-                    return;
-                }
-                setShowComment(true)
-            }} />
-            <Button type='primary' shape='round' onClick={() => {
-                if (!isLogin) {
-                    message.error(formatMessage({ id: 'Please connect your wallet first' }))
-                    return
-                }
-                const isPass = checkUserSetting();
-                if (!isPass) {
-                    return;
-                }
-                setShowComment(true)
-            }}>
-                {formatMessage({ id: "Comment" })}
-            </Button>
-        </div>
-        <Comment tweetId={quotePinId ?? ''} refetch={refetch} onClose={() => {
-            setShowComment(false);
-            setRefetchNum(refetchNum + 1);
-            setReLoading(!reLoading)
-        }} show={showComment} />
-        <Divider />
-        <CommentPanel tweetId={quotePinId ?? ''} refetchNum={refetchNum} commentData={buzzDetail?.data.comments} />
+        {
+            buzzDetail.data.blocked ? <BlockedBuzz /> :
+                <>
+                    <Buzz buzzItem={buzzDetail.data.tweet} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates} />
+                    <Divider />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <UserAvatar src={user?.avater} size={48} />
+                        <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => {
+                            if (!isLogin) {
+                                message.error(formatMessage({ id: 'Please connect your wallet first' }))
+                                return
+                            }
+                            const isPass = checkUserSetting();
+                            if (!isPass) {
+                                return;
+                            }
+                            setShowComment(true)
+                        }} />
+                        <Button type='primary' shape='round' onClick={() => {
+                            if (!isLogin) {
+                                message.error(formatMessage({ id: 'Please connect your wallet first' }))
+                                return
+                            }
+                            const isPass = checkUserSetting();
+                            if (!isPass) {
+                                return;
+                            }
+                            setShowComment(true)
+                        }}>
+                            {formatMessage({ id: "Comment" })}
+                        </Button>
+                    </div>
+                    <Comment tweetId={quotePinId ?? ''} refetch={refetch} onClose={() => {
+                        setShowComment(false);
+                        setRefetchNum(refetchNum + 1);
+                        setReLoading(!reLoading)
+                    }} show={showComment} />
+                    <Divider />
+                    <CommentPanel tweetId={quotePinId ?? ''} refetchNum={refetchNum} commentData={buzzDetail?.data.comments} />
+                </>
+        }
 
     </Card>)
 }

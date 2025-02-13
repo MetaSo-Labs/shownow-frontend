@@ -35,7 +35,7 @@ const Home = () => {
 
     const tweets = useMemo(() => {
         return data ? data?.pages.reduce((acc, item) => {
-            return [...acc || [], ...item.data.list || []]
+            return [...acc || [], ...item.data.list.filter(item => item.blocked === false) || []]
         }, []) : []
     }, [data])
     return <div
@@ -58,7 +58,7 @@ const Home = () => {
                 dataSource={tweets}
                 renderItem={(item: API.Pin) => (
                     <List.Item key={item.id} >
-                        <Buzz buzzItem={item} refetch={refetch}  />
+                        <Buzz buzzItem={item} refetch={refetch} />
                     </List.Item>
                 )}
             />

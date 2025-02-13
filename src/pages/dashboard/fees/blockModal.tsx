@@ -49,7 +49,7 @@ export default ({ type,actionRef }: BlockModalProps) => {
                     return false;
                 }
                 actionRef.current?.reload();
-                message.success('Add successfully');
+                message.success('Add successfully, Changes will take effect in 2 minutes.');
                 return true;
             }}
         >

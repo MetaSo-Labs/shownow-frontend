@@ -170,27 +170,54 @@ export const createPinWithAssist = async (
   }
 
   const tx = new mvc.Transaction(preData.data.txHex);
-  const txObj = tx.toObject();
-  console.log(tx);
-  console.log(pinTxComposer.toObject());
-  console.log(new TxComposer(tx).serialize());
-  console.log(tx.toObject(), "tx.toObject()");
-  const preTxComposer = new TxComposer(tx); //
-  console.log(preTxComposer, "preTxComposer");
+  const txComposer = new TxComposer(tx);
 
-  let tx2 = new mvc.Transaction();
-  const preTx = txObj.outputs.slice(-2);
-  txObj.inputs.forEach((v, index) => {
-    // console.log(v, index, "inputs");
-    v.output = preTx[index];
-    tx2.addInput(new mvc.Transaction.Input(v));
+  const params={
+    toPayTransactions: [
+      {
+        txComposer: txComposer.serialize(),
+        message: "create pin",
+      },
+    ],
+    utxos: [utxo],
+    sighashType: 195,
+    hasMetaid: false,
+  }
+
+  console.log(params);
+
+  const ret = await window.metaidwallet.signPartialTx({
+    toPayTransactions: [
+      {
+        txComposer: txComposer.serialize(),
+        message: "create pin",
+      },
+    ],
+    utxos: [utxo],
+    sighashType: mvc.crypto.Signature.SIGHASH_FORKID,
+    hasMetaid: false,
   });
-  txObj.outputs.forEach((v) => {
-    tx2.addOutput(new mvc.Transaction.Output(v));
-  });
-  tx.nLockTime = txObj.nLockTime;
-  tx.version = txObj.version;
-  let txComposer = new TxComposer(tx2);
+  // const txObj = tx.toObject();
+  // console.log(tx);
+  // console.log(pinTxComposer.toObject());
+  // console.log(new TxComposer(tx).serialize());
+  // console.log(tx.toObject(), "tx.toObject()");
+  // const preTxComposer = new TxComposer(tx); //
+  // console.log(preTxComposer, "preTxComposer");
+
+  // let tx2 = new mvc.Transaction();
+  // const preTx = txObj.outputs.slice(-2);
+  // txObj.inputs.forEach((v, index) => {
+  //   // console.log(v, index, "inputs");
+  //   v.output = preTx[index];
+  //   tx2.addInput(new mvc.Transaction.Input(v));
+  // });
+  // txObj.outputs.forEach((v) => {
+  //   tx2.addOutput(new mvc.Transaction.Output(v));
+  // });
+  // tx.nLockTime = txObj.nLockTime;
+  // tx.version = txObj.version;
+  // let txComposer = new TxComposer(tx2);
   // txComposer.appendP2PKHInput({
   //   address: new mvc.Address(address, options.network),
   //   satoshis: utxo.value,
@@ -211,12 +238,12 @@ export const createPinWithAssist = async (
   //   txId: utxo2.txid,
   //   outputIndex: utxo2.outIndex,
   // });
-  txComposer.sigHashList = [];
-  txComposer.changeOutputIndex = -1;
-  console.log(txComposer, "txComposer");
+  // txComposer.sigHashList = [];
+  // txComposer.changeOutputIndex = -1;
+  // console.log(txComposer, "txComposer");
 
   // txComposer.unlockP2PKHInput(new mvc.PrivateKey(privateKey, "testnet"), 0);
-  
+
   // const toPayTransactions = [];
   // pinTxComposer.appendP2PKHOutput({
   //   address: new mvc.Address(address, options.network),
@@ -227,17 +254,7 @@ export const createPinWithAssist = async (
   //   message: "Sign partial transaction",
   // });
 
-  const ret = await window.metaidwallet.signPartialTx({
-    toPayTransactions: [
-      {
-        txComposer: txComposer.serialize(),
-        message: "create pin",
-      },
-    ],
-    utxos: [utxo],
-    sighashType: 195,
-    hasMetaid: false,
-  });
+
   console.log(ret);
   return;
   // const ret = await window.metaidwallet.signTransactions({

@@ -14,6 +14,24 @@ export async function fetchCoinSummary() {
   );
 }
 
+export async function fetchDomianList(params: {
+  cursor: number;
+  size: number;
+}) {
+  return request<
+    MS.IRet<{
+      list: {
+        domain: string;
+        host: string;
+      }[];
+      total: number;
+    }>
+  >(`${METASO_BASE_API}/v1/metaso/host/domain-list`, {
+    method: "GET",
+    params,
+  });
+}
+
 export async function fetchAreaInfo(params: { host: string }) {
   return request<MS.IRet<MS.AreaInfo>>(
     `${METASO_BASE_API}/v1/metaso/coin/area-info`,

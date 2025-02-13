@@ -26,6 +26,7 @@ import {
     Spin,
     Tag,
     Typography,
+    Alert,
 } from "antd";
 import { isEmpty, isNil } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -60,6 +61,8 @@ import DonateModal from "./components/DonateModal";
 import Decimal from "decimal.js";
 import Unlock from "../Unlock";
 import Video from "./Video";
+import BuzzOrigin from "./components/BuzzOrigin";
+import BlockedBuzz from "./BlockedBuzz";
 
 // TODO: use metaid manage state
 
@@ -327,7 +330,7 @@ export default ({
                     setShowGift(false);
                     setDonateAmount("");
                     setDonateMessage("");
-                    setIsDonated(true);
+                    // setIsDonated(true);
                     setDonateCount(prev => prev + 1);
                     setDonates([...donates, user.metaid]);
                 }
@@ -372,7 +375,7 @@ export default ({
                     setShowGift(false);
                     setDonateAmount("");
                     setDonateMessage("");
-                    setIsDonated(true);
+                    // setIsDonated(true);
                     setDonates([...donates, user.metaid]);
                 }
             } else {
@@ -390,6 +393,10 @@ export default ({
         setPaying(false);
         setDonateLoading(false);
     };
+
+    if(buzzItem.blocked && user.metaid !== buzzItem.creator) {
+        return  <Card><BlockedBuzz /></Card>
+    }
 
     return (
         <Card
@@ -434,13 +441,21 @@ export default ({
                             {" "}
                             {currentUserInfoData.data?.name || "Unnamed"}
                         </Text>
-                        <Text type="secondary" style={{ fontSize: 10, lineHeight: 1 }}>
-                            {currentUserInfoData.data?.metaid.slice(0, 8)}
-                        </Text>
+                        <div style={{ display: "flex", gap: 8, alignItems: 'center' }}>
+                            <Text type="secondary" style={{ fontSize: 10, lineHeight: 1 }}>
+                                {currentUserInfoData.data?.metaid.slice(0, 8)}
+                            </Text>
+                            <BuzzOrigin host={buzzItem.host} />
+                        </div>
                     </div>
                 </div>
             }
         >
+            {
+                buzzItem.blocked && <Alert  message={
+                    <Trans>Blocked Buzz</Trans>
+                } type="warning" banner />
+            }
             <div
                 className="content"
                 style={{

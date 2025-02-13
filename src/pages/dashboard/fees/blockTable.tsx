@@ -19,6 +19,8 @@ export default ({ type }: Props) => {
         {
             title: 'Content',
             dataIndex: 'blockedContent',
+            copyable: true,
+            ellipsis: true,
         },
         {
             title: 'Operation',
@@ -41,7 +43,7 @@ export default ({ type }: Props) => {
                             return false;
                         }
                         actionRef.current?.reload();
-                        message.success('Delete successfully');
+                        message.success('Delete successfully, Changes will take effect in 2 minutes.');
                     }}
                     okText="Yes"
                     cancelText="No"

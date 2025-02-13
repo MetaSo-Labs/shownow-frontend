@@ -346,16 +346,16 @@ export default ({ show, onClose, quotePin }: Props) => {
             } else {
                 const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity
 
-                await createPinWithAssist({ body: JSON.stringify({ ...finalBody }), path: `${showConf?.host || ''}/protocols/simplebuzz`, operation: 'create' },
-                    {
-                        network: curNetwork,
-                        signMessage: 'create buzz',
-                        serialAction: 'finish',
-                        service: fetchServiceFee('post_service_fee_amount', 'MVC'),
-                        assistDomian: 'https://www.metaso.network/assist-open-api-testnet'
-                    })
-                debugger
-                return
+                // await createPinWithAssist({ body: JSON.stringify({ ...finalBody }), path: `${showConf?.host || ''}/protocols/simplebuzz`, operation: 'create' },
+                //     {
+                //         network: curNetwork,
+                //         signMessage: 'create buzz',
+                //         serialAction: 'finish',
+                //         service: fetchServiceFee('post_service_fee_amount', 'MVC'),
+                //         assistDomian: 'https://www.metaso.network/assist-open-api-testnet'
+                //     })
+                // debugger
+                // return
                 const createRes = await buzzEntity!.create({
                     data: { body: JSON.stringify({ ...finalBody }) },
                     options: {

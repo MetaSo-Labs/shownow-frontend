@@ -123,6 +123,8 @@ declare namespace API {
   };
 
   type Buzz = {
+    blocked: boolean;
+    host: string;
     id: string;
     number: number;
     metaid: string;
@@ -184,6 +186,7 @@ declare namespace API {
     code: number;
     message: string;
     data: {
+      blocked: boolean;
       tweet: Buzz;
       like: LikeRes[];
       donates: DonateRes[];

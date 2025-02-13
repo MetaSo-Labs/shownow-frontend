@@ -2,6 +2,7 @@ import { DASHBOARD_TOKEN } from "@/config";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
 import { getMetaidByAddress, getPubKey } from "@/request/api";
 import { fetchAdmin, fetchFees, fetchShowConf } from "@/request/dashboard";
+import { fetchDomianList } from "@/request/metaso";
 import { useCallback, useEffect, useState } from "react";
 export const showNowConf = {
   alias: "default",
@@ -40,6 +41,8 @@ export default () => {
   const [manPubKey, setManPubKey] = useState<string>();
   const [fees, setFees] = useState<DB.FeeDto[]>([]);
   const [admin, setAdmin] = useState<DB.LoginWithWallerDto>();
+
+  const [domainMap, setDomainMap] = useState<Record<string, string>>({}); // host -> domain
   const [logined, setLogined] = useState(
     Boolean(window.localStorage.getItem(DASHBOARD_TOKEN))
   );
@@ -61,6 +64,29 @@ export default () => {
   const _fetchFees = useCallback(async () => {
     const ret = await fetchFees();
     setFees(ret);
+  }, []);
+
+  const _fetchDomainList = useCallback(async () => {
+    const _domainMap: Record<string, string> = {};
+    for (let i = 0; i < 10; i++) {
+      const ret = await fetchDomianList({
+        cursor: i * 50,
+        size: 50,
+      });
+      if (ret.data && ret.data.list) {
+        ret.data.list.forEach((item) => {
+          _domainMap[item.host] = item.domain;
+        });
+      } else {
+        break;
+      }
+      if (ret.data && ret.data.list && ret.data.list.length === 50) {
+        continue;
+      } else {
+        break;
+      }
+    }
+    setDomainMap(_domainMap);
   }, []);
 
   useEffect(() => {
@@ -88,7 +114,9 @@ export default () => {
       return undefined;
     }
   };
+
   const updateFees = useIntervalAsync(_fetchFees, 600000);
+  const updateDomainInfo = useIntervalAsync(_fetchDomainList, 600000);
   return {
     loading,
     fetchConfig,
@@ -102,5 +130,6 @@ export default () => {
     logined,
     setLogined,
     admin,
+    domainMap,
   };
 };
