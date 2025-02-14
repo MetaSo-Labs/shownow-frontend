@@ -1,7 +1,7 @@
 import { BASE_MAN_URL, curNetwork } from "@/config";
 import { fetchFollowDetailPin, fetchFollowerList, fetchFollowingList, getUserInfo } from "@/request/api";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, Avatar, Button, Card, Divider, Space } from "antd"
+import { Alert, Avatar, Button, Card, Divider, Space, Typography } from "antd"
 import { F, isEmpty } from "ramda";
 import { useModel, history } from "umi";
 import { FollowButtonComponent } from "../Follow";
@@ -66,7 +66,9 @@ export default ({ address }: Props) => {
 
                     <div style={{ marginTop: 10 }}>
                         <h3>{profileUserData?.data?.name}</h3>
-                        <p>MetaID: {profileUserData?.data?.metaid.slice(0, 8)}</p>
+                        <p>MetaID: <Typography.Text copyable={{
+                            text: profileUserData?.data?.metaid,
+                        }}>{profileUserData?.data?.metaid.slice(0, 8)}</Typography.Text></p>
                     </div>
 
 

@@ -17,8 +17,8 @@ export default ({ host }: BuzzOriginProps) => {
     </>
     return <>
         <Typography.Text type='secondary' style={{ fontSize: 10, lineHeight: 1 }}>from</Typography.Text>
-        {domain.startsWith('https://') ? <Typography.Link href={domain} target="_blank" style={{ fontSize: 10, lineHeight: 1 }} onClick={(e) => e.stopPropagation()}>
-            {domain.slice(8)}
+        {/^(?!\-)(?:[A-Za-z0-9-]{1,63}\.?)+(?<=\.[A-Za-z]{2,})$/.test(domain) ? <Typography.Link href={`https://${domain}`} target="_blank" style={{ fontSize: 10, lineHeight: 1 }} onClick={(e) => e.stopPropagation()}>
+            {domain}
         </Typography.Link> : <Typography.Text style={{ fontSize: 10, lineHeight: 1 }}>{domain.length > 10 ? domain.substring(0, 10) + '...' : domain} </Typography.Text>}
 
     </>
