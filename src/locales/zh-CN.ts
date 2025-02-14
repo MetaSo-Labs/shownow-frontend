@@ -79,5 +79,6 @@ export default {
   "total NDV": "总NDV",
   'Donate Serivice Fee': '打赏服务费',
   'More': '更多',
-  'Blocked Buzz': '已屏蔽Buzz',
+  'This Buzz has been blocked by the administrator.': '此Buzz已被管理员屏蔽。',
+  'This user has been blocked by the administrator.': '此用户已被管理员屏蔽。',
 };

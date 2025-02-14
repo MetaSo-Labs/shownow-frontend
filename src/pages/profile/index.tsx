@@ -69,7 +69,7 @@ const Home = () => {
 
     const tweets = useMemo(() => {
         return data ? data?.pages.reduce((acc, item) => {
-            return [...acc || [], ...item.data.list || []]
+            return [...acc || [], ...(item.data.list??[]).filter(buzz=>(buzz.blocked===false||(buzz.blocked===true&&buzz.createMetaId===user?.metaid))) || []]
         }, []) : []
     }, [data])
     return <div

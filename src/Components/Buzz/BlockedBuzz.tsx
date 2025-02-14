@@ -6,7 +6,7 @@ export default () => {
         status="warning"
         title={
             <Trans>
-                Blocked Buzz
+                This Buzz has been blocked by the administrator.
             </Trans>
         }
     />

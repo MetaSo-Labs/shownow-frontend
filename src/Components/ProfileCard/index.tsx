@@ -1,7 +1,7 @@
 import { BASE_MAN_URL, curNetwork } from "@/config";
 import { fetchFollowDetailPin, fetchFollowerList, fetchFollowingList, getUserInfo } from "@/request/api";
 import { useQuery } from "@tanstack/react-query";
-import { Avatar, Button, Card, Divider, Space } from "antd"
+import { Alert, Avatar, Button, Card, Divider, Space } from "antd"
 import { F, isEmpty } from "ramda";
 import { useModel, history } from "umi";
 import { FollowButtonComponent } from "../Follow";
@@ -94,6 +94,14 @@ export default ({ address }: Props) => {
                 </Space>
 
             </div>
+            {
+                profileUserData?.data?.blocked && <Alert message={
+                    <Trans>
+                        This user has been blocked by the administrator.
+                    </Trans>
+                } type="warning" banner />
+            }
+
 
         </Card>
     )

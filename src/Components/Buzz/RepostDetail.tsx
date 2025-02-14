@@ -453,7 +453,7 @@ export default ({
         >
             {
                 buzzItem.blocked && <Alert  message={
-                    <Trans>Blocked Buzz</Trans>
+                    <Trans>This Buzz has been blocked by the administrator.</Trans>
                 } type="warning" banner />
             }
             <div
