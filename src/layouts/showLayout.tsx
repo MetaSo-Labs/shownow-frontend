@@ -196,14 +196,14 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                         isLogin ? <Dropdown placement='bottom' menu={
                                             {
                                                 items: [
-                                                    {
-                                                        key: 'rank',
-                                                        label: formatMessage({ id: 'Rank' }),
-                                                        icon: <ProjectOutlined />,
-                                                        onClick: () => {
-                                                            history.push('/rank')
-                                                        }
-                                                    }, 
+                                                    // {
+                                                    //     key: 'rank',
+                                                    //     label: formatMessage({ id: 'Rank' }),
+                                                    //     icon: <ProjectOutlined />,
+                                                    //     onClick: () => {
+                                                    //         history.push('/rank')
+                                                    //     }
+                                                    // }, 
                                                     {
                                                         key: 'profile',
                                                         label: formatMessage({ id: 'Profile' }),
