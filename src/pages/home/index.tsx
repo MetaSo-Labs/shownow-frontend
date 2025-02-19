@@ -37,7 +37,7 @@ const Home = () => {
 
     const tweets = useMemo(() => {
         return data ? data?.pages.reduce((acc, item) => {
-            return [...acc || [], ...(item.data.list ?? []).filter(item => item.blocked === false) || []]
+            return [...acc || [], ...(item.data.list ?? []).filter(item => !item.blocked) || []]
         }, []) : []
     }, [data])
 
