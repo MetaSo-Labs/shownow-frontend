@@ -1,7 +1,7 @@
 import NumberFormat from "@/Components/NumberFormat"
 import { fetchCoinSummary } from "@/request/metaso"
 import { useQuery } from "@tanstack/react-query"
-import { Card, Col, Row, Typography } from "antd"
+import { Alert, Card, Col, Row, Typography } from "antd"
 import { useMemo } from "react"
 import _coin from '@/assets/dashboard/usd-coin.svg'
 import _chart from '@/assets/dashboard/chart-2.svg'
@@ -22,6 +22,20 @@ export default () => {
         return data?.data
     }, [data])
     return <div>
+        {
+            (coinSummary && coinSummary.isActive === false )&& <Alert message={
+                <Typography.Text style={{ color: '#fff'}}>
+                    {
+                        coinSummary?.activeMetaBlockHeight > 0 ? `Activated at block height ${coinSummary?.activeMetaBlockHeight}` : 'Not activated yet'
+                    }
+
+                </Typography.Text>
+            } type="error"   style={{
+                marginBottom: 24,
+                backgroundColor: '#ff4d4f',
+               
+            }} />
+        }
 
         <Row gutter={[24, 24]}>
             <Col {...{ xs: 24, sm: 24, md: 8, lg: 8, xl: 8 }}>

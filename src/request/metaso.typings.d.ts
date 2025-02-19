@@ -16,6 +16,8 @@ declare namespace MS {
     totalReward: string;
   };
   type CoinSummary = {
+    isActive: boolean;
+    activeMetaBlockHeight: number;
     tickId: string;
     tick: string;
     tokenName: string;

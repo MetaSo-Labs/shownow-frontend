@@ -53,9 +53,9 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
         }
     }}>
         {
-            buzzDetail.data.blocked ? <BlockedBuzz /> :
+            buzzDetail.data.blocked && buzzDetail.data.tweet.createMetaId !== user.metaid ? <BlockedBuzz /> :
                 <>
-                    <Buzz buzzItem={buzzDetail.data.tweet} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates} />
+                    <Buzz buzzItem={{...buzzDetail.data.tweet,blocked:buzzDetail.data.blocked}} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates} />
                     <Divider />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <UserAvatar src={user?.avater} size={48} />

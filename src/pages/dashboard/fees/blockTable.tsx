@@ -4,6 +4,10 @@ import { Button, ConfigProvider, message, Popconfirm } from "antd";
 import BlockModal from "./blockModal";
 import { useRef } from "react";
 import './index.less'
+import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime);
+dayjs.locale('en');
 
 type Props = {
     type: string;
@@ -21,6 +25,11 @@ export default ({ type }: Props) => {
             dataIndex: 'blockedContent',
             copyable: true,
             ellipsis: true,
+        },
+        {
+            title: 'Time',
+            dataIndex: 'timestamp',
+            render: (text) => dayjs(text * 1000).format('YYYY-MM-DD HH:mm:ss')
         },
         {
             title: 'Operation',

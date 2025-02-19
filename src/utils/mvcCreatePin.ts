@@ -105,8 +105,8 @@ export const createPinWithAssist = async (
   const address = await window.metaidwallet.getAddress();
   const utxos = await window.metaidwallet.getUtxos();
   const utxo = utxos.find((utxo) => utxo.address === address);
-  // const privateKey =
-  //   "5d22e5db4258b8fff21e9d79784a13356ff6d409db3baaf42c701247f7bb8109";
+  const privateKey =
+    "3cea7c7bb44466dd48274008105709a890635de13cc8161944cdfdeafd9e61cd";
   // const address = "mn7d2BYmUJ3Nvt7FAfKeGbiEjnHuPLkmYL";
   // const utxo = {
   //   flag: "e196df5ff3d67b0660bea985427d9bf17b8aa2796be7246a979eb049c2063c07_2",
@@ -169,35 +169,17 @@ export const createPinWithAssist = async (
     throw new Error(preData.error);
   }
 
+  console.log(
+    JSON.stringify({
+      txHex: preData.data.txHex,
+      inputIndex:[0],
+    })
+  )
+
+  debugger
+
   const tx = new mvc.Transaction(preData.data.txHex);
-  const txComposer = new TxComposer(tx);
-
-  const params={
-    toPayTransactions: [
-      {
-        txComposer: txComposer.serialize(),
-        message: "create pin",
-      },
-    ],
-    utxos: [utxo],
-    sighashType: 195,
-    hasMetaid: false,
-  }
-
-  console.log(params);
-
-  const ret = await window.metaidwallet.signPartialTx({
-    toPayTransactions: [
-      {
-        txComposer: txComposer.serialize(),
-        message: "create pin",
-      },
-    ],
-    utxos: [utxo],
-    sighashType: mvc.crypto.Signature.SIGHASH_FORKID,
-    hasMetaid: false,
-  });
-  // const txObj = tx.toObject();
+  const txObj = tx.toObject();
   // console.log(tx);
   // console.log(pinTxComposer.toObject());
   // console.log(new TxComposer(tx).serialize());
@@ -205,19 +187,19 @@ export const createPinWithAssist = async (
   // const preTxComposer = new TxComposer(tx); //
   // console.log(preTxComposer, "preTxComposer");
 
-  // let tx2 = new mvc.Transaction();
-  // const preTx = txObj.outputs.slice(-2);
-  // txObj.inputs.forEach((v, index) => {
-  //   // console.log(v, index, "inputs");
-  //   v.output = preTx[index];
-  //   tx2.addInput(new mvc.Transaction.Input(v));
-  // });
-  // txObj.outputs.forEach((v) => {
-  //   tx2.addOutput(new mvc.Transaction.Output(v));
-  // });
-  // tx.nLockTime = txObj.nLockTime;
-  // tx.version = txObj.version;
-  // let txComposer = new TxComposer(tx2);
+  let tx2 = new mvc.Transaction();
+  const preTx = txObj.outputs.slice(-2);
+  txObj.inputs.forEach((v, index) => {
+    // console.log(v, index, "inputs");
+    v.output = preTx[index];
+    tx2.addInput(new mvc.Transaction.Input(v));
+  });
+  txObj.outputs.forEach((v) => {
+    tx2.addOutput(new mvc.Transaction.Output(v));
+  });
+  tx.nLockTime = txObj.nLockTime;
+  tx.version = txObj.version;
+  let txComposer = new TxComposer(tx2);
   // txComposer.appendP2PKHInput({
   //   address: new mvc.Address(address, options.network),
   //   satoshis: utxo.value,
@@ -241,8 +223,8 @@ export const createPinWithAssist = async (
   // txComposer.sigHashList = [];
   // txComposer.changeOutputIndex = -1;
   // console.log(txComposer, "txComposer");
-
-  // txComposer.unlockP2PKHInput(new mvc.PrivateKey(privateKey, "testnet"), 0);
+  // const txComposer = new TxComposer(tx);
+  txComposer.unlockP2PKHInput(new mvc.PrivateKey(privateKey, "testnet"), 0);
 
   // const toPayTransactions = [];
   // pinTxComposer.appendP2PKHOutput({
@@ -254,9 +236,19 @@ export const createPinWithAssist = async (
   //   message: "Sign partial transaction",
   // });
 
-
-  console.log(ret);
-  return;
+  // const ret = await window.metaidwallet.signTransactions({
+  //   toPayTransactions: [
+  //     {
+  //       txComposer: txComposer.serialize(),
+  //       message: "create pin",
+  //     },
+  //   ],
+  //   utxos: [utxo],
+  //   sighashType: mvc.crypto.Signature.SIGHASH_FORKID,
+  //   hasMetaid: false,
+  // });
+  // console.log(ret);
+  // return;
   // const ret = await window.metaidwallet.signTransactions({
   //   transactions: [{
   //     txHex: preData.data.txHex,
@@ -281,7 +273,7 @@ export const createPinWithAssist = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      txHex: ret.signedTransactions[0].txHex,
+      txHex: txComposer.getRawHex(),
       orderId: preData.data.orderId,
     }),
   });

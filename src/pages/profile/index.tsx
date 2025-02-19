@@ -1,5 +1,5 @@
 import { fetchAllBuzzs, fetchBuzzs, getIndexTweet, getUserInfo } from "@/request/api";
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import './index.less'
 import { Grid, Carousel, Col, Divider, List, Row, Skeleton } from "antd";
 import defaultImg from '@/assets/img 2@1x.png'
@@ -40,6 +40,9 @@ const Home = () => {
     const [search, setSearch] = useState('');
     const [total, setTotal] = useState<null | number>(null);
 
+    const containerRef = useRef<any>();
+    const contentRef = useRef<any>();
+
 
 
 
@@ -55,7 +58,7 @@ const Home = () => {
             enabled: Boolean(profileUserData.data?.metaid),
             queryFn: ({ pageParam }) =>
                 fetchAllBuzzs({
-                    size: 5,
+                    size: 10,
                     lastId: pageParam,
                     metaid: profileUserData.data?.metaid,
                 }),
@@ -72,9 +75,19 @@ const Home = () => {
             return [...acc || [], ...(item.data.list??[]).filter(buzz=>(buzz.blocked===false||(buzz.blocked===true&&buzz.createMetaId===user?.metaid))) || []]
         }, []) : []
     }, [data])
+    useEffect(() => {
+        if (!containerRef.current || !contentRef.current || isLoading || !hasNextPage) return;
+        const containerHeight = containerRef.current.clientHeight;
+        const contentHeight = contentRef.current.scrollHeight;
+        // 如果内容高度不足且还有数据，继续加载
+        if (contentHeight <= containerHeight) {
+            fetchNextPage();
+        }
+    }, [data, hasNextPage, isLoading]);
     return <div
         className="profilePage"
         id="scrollableDiv3"
+        ref={containerRef}
         style={{
             height: `100%`,
             overflow: 'auto',
@@ -93,6 +106,7 @@ const Home = () => {
             scrollableTarget="scrollableDiv3"
         >
             <List
+                ref={contentRef}
                 dataSource={tweets}
                 renderItem={(item: API.Pin) => (
                     <List.Item key={item.id}>

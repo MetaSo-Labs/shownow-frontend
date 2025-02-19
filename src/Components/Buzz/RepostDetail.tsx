@@ -106,10 +106,10 @@ export default ({
     const [likes, setLikes] = useState<string[]>([]);
     const [donates, setDonates] = useState<string[]>([]);
     const currentUserInfoData = useQuery({
-        queryKey: ["userInfo", buzzItem!.address],
-        enabled: !isNil(buzzItem?.address),
+        queryKey: ["userInfo", buzzItem!.creator],
+        enabled: !isNil(buzzItem?.creator),
         queryFn: () => {
-            return getUserInfo({ address: buzzItem!.address });
+            return getUserInfo({ address: buzzItem!.creator });
         },
     });
     const [showGift, setShowGift] = useState(false);

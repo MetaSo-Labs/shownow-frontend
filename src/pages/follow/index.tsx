@@ -1,5 +1,5 @@
 import { fetchAllBuzzs, fetchBuzzs, fetchFollowingList, fetchMyFollowingBuzzs, fetchMyFollowingTotal, getIndexTweet } from "@/request/api";
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import './index.less'
 import { Grid, Col, Divider, List, Row, Skeleton } from "antd";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -19,7 +19,8 @@ const Home = () => {
     const [search, setSearch] = useState('');
     const [total, setTotal] = useState<null | number>(null);
 
-
+    const containerRef = useRef<any>();
+    const contentRef = useRef<any>();
 
 
 
@@ -46,11 +47,25 @@ const Home = () => {
 
     const tweets = useMemo(() => {
         return data ? data?.pages.reduce((acc, item) => {
-            return [...acc || [], ...item.data.list.filter(item => item.blocked === false) || []]
+            return [...acc || [], ...(item.data.list ?? []).filter(item => item.blocked === false) || []]
         }, []) : []
     }, [data])
+
+    // 数据更新后检查高度
+    useEffect(() => {
+        if (!containerRef.current || !contentRef.current || isLoading || !hasNextPage) return;
+        const containerHeight = containerRef.current.clientHeight;
+        const contentHeight = contentRef.current.scrollHeight;
+        // 如果内容高度不足且还有数据，继续加载
+        if (contentHeight <= containerHeight) {
+            fetchNextPage();
+        }
+    }, [data, hasNextPage, isLoading]);
+
+
     return <div
         id="scrollableDiv2"
+        ref={containerRef}
         style={{
             height: '100%',
             overflow: 'auto',
@@ -66,6 +81,7 @@ const Home = () => {
             scrollableTarget="scrollableDiv2"
         >
             <List
+                ref={contentRef}
                 dataSource={tweets}
                 renderItem={(item: API.Pin) => (
                     <List.Item key={item.id}>
