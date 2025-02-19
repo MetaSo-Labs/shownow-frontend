@@ -22,32 +22,32 @@ export default ({ type }: Props) => {
     const columns: ProColumns<TableListItem>[] = [
         {
             title: 'Content',
-            dataIndex: 'blockedContent',
+            dataIndex: type === 'host' ? 'originalContent' : 'blockedContent',
             copyable: true,
             ellipsis: true,
         },
         {
             title: 'Time',
             dataIndex: 'timestamp',
-            render: (text) => dayjs(text * 1000).format('YYYY-MM-DD HH:mm:ss')
+            render: (text) => text ? dayjs(text * 1000).format('YYYY-MM-DD HH:mm:ss') : '--'
         },
         {
             title: 'Operation',
             key: 'option',
             width: 120,
             valueType: 'option',
-            render: (_,record) => [
+            render: (_, record) => [
                 <Popconfirm
                     title="Delete the item"
                     description="Are you sure to delete this item?"
-                    onConfirm={async ()=>{
-                        const ret =await deleteBlockedItem(
+                    onConfirm={async () => {
+                        const ret = await deleteBlockedItem(
                             {
                                 blockType: type,
                                 blockContent: record.blockedContent,
                             }
                         )
-                        if(ret.code !== 1){
+                        if (ret.code !== 1) {
                             message.error(ret.message);
                             return false;
                         }
@@ -67,27 +67,27 @@ export default ({ type }: Props) => {
         className="block-table"
 
     ><ProTable<TableListItem>
-        columns={columns}
-       
-        actionRef={actionRef}
-        request={async (params, sorter, filter) => {
-            const ret = await getBlockedList({
-                blockType: type,
-                cursor: (params.current ? params.current - 1 : 0) * (params.pageSize || 10),
-                size: params.pageSize || 10,
-            })
-            return {
-                data: ret.data.list || [],
-                success: true,
-                total: ret.data.total || 0,
-            }
-        }}
-        toolbar={{
-            actions: [
-                <BlockModal type={type} actionRef={actionRef} />,
-            ],
-        }}
-        rowKey="blockedContent"
-        search={false}
-    /></div>
+            columns={columns}
+
+            actionRef={actionRef}
+            request={async (params, sorter, filter) => {
+                const ret = await getBlockedList({
+                    blockType: type,
+                    cursor: (params.current ? params.current - 1 : 0) * (params.pageSize || 10),
+                    size: params.pageSize || 10,
+                })
+                return {
+                    data: ret.data.list || [],
+                    success: true,
+                    total: ret.data.total || 0,
+                }
+            }}
+            toolbar={{
+                actions: [
+                    <BlockModal type={type} actionRef={actionRef} />,
+                ],
+            }}
+            rowKey="blockedContent"
+            search={false}
+        /></div>
 }
