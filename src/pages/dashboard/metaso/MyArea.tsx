@@ -4,12 +4,14 @@ import { claimCommit, claimPre, fetchAreaInfo } from "@/request/metaso"
 import { buildClaimPsbt } from "@/utils/metaso"
 import { GifOutlined, GiftOutlined } from "@ant-design/icons"
 import { useQuery } from "@tanstack/react-query"
-import { Button, Card, Descriptions, DescriptionsProps, message, Modal, Space, Typography } from "antd"
+import { Button, Card, Descriptions, DescriptionsProps, message, Modal, notification, Space, Typography } from "antd"
 import Decimal from "decimal.js"
 import { useMemo, useState } from "react"
 import { useModel } from "umi"
+import ClaimHistory from "./ClaimHistory"
 
 export default () => {
+    const [api, contextHolder2] = notification.useNotification();
     const [modal, contextHolder] = Modal.useModal();
     const { admin } = useModel('dashboard')
     const { feeRate } = useModel('user');
@@ -27,8 +29,34 @@ export default () => {
         return data?.data
     }, [data]);
 
+    const successNotice = (txid: string) => {
+        const key = `open${Date.now()}`;
+        const btn = (
+            <Space>
+                <Button type="primary" size="small" onClick={() => {
+                    const link = `${curNetwork === "testnet"
+                        ? "https://mempool.space/testnet/tx/"
+                        : "https://mempool.space/tx/"
+                        }${txid}`
+
+                    window.open(link, "_blank");
+                }}>
+                    open
+                </Button>
+            </Space>
+        );
+        api.open({
+            message: 'Claim Success',
+            description: txid,
+            btn,
+            key,
+        });
+    };
+
     const handleClaim = async () => {
         setCommiting(true)
+
+
         try {
             if (!areaInfo) throw new Error('No data')
             const address = await window.metaidwallet.btc.getAddress();
@@ -51,7 +79,7 @@ export default () => {
                 false,
                 false,
             )
-           
+
 
             const confirmed = await modal.confirm({
                 title: 'Trade Confirm',
@@ -68,7 +96,7 @@ export default () => {
                         children: <NumberFormat value={order.claimAmount} suffix=' $METASO'></NumberFormat>,
                     }, {
                         label: 'Receive Address',
-                        children: order.receiveAddress,
+                        children: address,
                     },
                     {
                         label: 'Gas Fee',
@@ -96,11 +124,18 @@ export default () => {
                 commitTxRaw: rawTx
             })
             if (commitRes.code !== 0) throw new Error(commitRes.message);
-            message.success('Claim success')
+
+            successNotice(commitRes.data.commitTxId)
             await refetch()
         } catch (e: any) {
-            console.log(e)
-            message.error(e.message)
+            if (e.message === 'Insufficient funds to reach the target amount') {
+                message.error('Insufficient BTC for network fee')
+
+            } else {
+                message.error(e.message)
+            }
+
+
 
         }
         setCommiting(false)
@@ -132,7 +167,11 @@ export default () => {
                     fontWeight: 'bold',
                     color: '#2563EB'
                 }} value={areaInfo?.pendingReward} suffix=' $METASO'></NumberFormat>
-                <Button type='primary' loading={commiting} icon={<GiftOutlined />} disabled={areaInfo?.pendingReward <= 0} onClick={handleClaim}>Claim</Button>
+                <Space>
+                    <Button type='primary' loading={commiting} icon={<GiftOutlined />} disabled={areaInfo?.pendingReward <= 0} onClick={handleClaim}>Claim</Button>
+                    <ClaimHistory />
+                </Space>
+
             </Space>,
         },
         {
@@ -158,5 +197,6 @@ export default () => {
             <Descriptions layout="vertical" items={items} />
         </Card>
         {contextHolder}
+        {contextHolder2}
     </div>
 }

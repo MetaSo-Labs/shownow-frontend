@@ -61,8 +61,10 @@ export default () => {
             heightEnd: -1
         };
         if (!_newest) return null;
-        const heightEnd = _newest.data.syncMetaBlockHeight;
-        const heightBegin = heightEnd - Number(value);
+        const { progressStartBlock, progressEndBlock, syncMetaBlockHeight } = _newest.data;
+        const heightEnd = syncMetaBlockHeight;
+        const step = progressEndBlock - progressStartBlock + 1
+        const heightBegin = heightEnd - Number(value) * step;
         return {
             heightBegin,
             heightEnd
@@ -121,7 +123,6 @@ export default () => {
         if (!_hostValue || !_hostValue.data.list) return 0;
         return _hostValue.data.list.reduce((acc, cur) => acc + Number(cur.mdvDeltaValue), 0)
     }, [_hostValue])
-
     const totalNDV = useMemo(() => {
         if (!_ndv || !_ndv.data) return 0;
         return _ndv.data[0].dataValue
@@ -197,7 +198,7 @@ export default () => {
             <Row gutter={[12, 12]}>
                 <Col span={12}>
                     <Card loading={_ndvFetching}>
-                        <Typography.Title level={4} style={{ padding: 0, margin: 0 }}><NumberFormat value={totalNDV} precision={2}></NumberFormat></Typography.Title>
+                        <Typography.Title level={4} style={{ padding: 0, margin: 0 }}><NumberFormat value={totalNDV} precision={4}></NumberFormat></Typography.Title>
                         <Typography.Text type='secondary'>
                             <Trans>total NDV</Trans>
                         </Typography.Text>
@@ -210,7 +211,7 @@ export default () => {
                     <Card loading={_userValueFetching || _hostValueFetching}>
                         <Typography.Title level={4} style={{ padding: 0, margin: 0 }}>
                             <NumberFormat value={userValue} precision={2}></NumberFormat>
-                            <NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={2} prefix=' (' suffix='%)'></NumberFormat>
+                            <NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={4} prefix=' (' suffix='%)'></NumberFormat>
                         </Typography.Title>
                         <Typography.Text type='secondary'>
                             <Trans>My contribution value</Trans>

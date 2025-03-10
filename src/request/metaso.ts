@@ -49,6 +49,7 @@ export async function fetchAreaInfo(params: { host: string }) {
 export async function fetchMetaBlockList(params: {
   cursor: number;
   size: number;
+  host?: string;
 }) {
   return request<
     MS.IRet<{
@@ -105,7 +106,7 @@ export async function claimCommit(
   },
   options?: { [key: string]: any }
 ) {
-  return request<MS.IRet<MS.ClaimPreRes>>(
+  return request<MS.IRet<MS.ClaimCommitRes>>(
     `${METASO_BASE_API}/v1/metaso/coin/claim/commit`,
     {
       method: "POST",
@@ -117,4 +118,28 @@ export async function claimCommit(
       },
     }
   );
+}
+
+export async function getClaimRecords(
+  params: {
+    cursor: number;
+    size: number;
+    host: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<
+    MS.IRet<{
+      list: MS.ClaimRecord[];
+      total: number;
+    }>
+  >(`${METASO_BASE_API}/v1/metaso/coin/claim/records`, {
+    method: "GET",
+    params,
+    ...(options || {}),
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+  });
 }

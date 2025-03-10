@@ -361,7 +361,10 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                     {!md && showConf?.showSliderMenu ? <Footer className='footer' style={{ background: colorBgContainer }}><Mobilefooter /></Footer> : ''}
                 </Layout>
 
-                <NewPost show={showPost} onClose={() => setShowPost(false)} />
+                <NewPost show={showPost} onClose={() => {
+                     
+                    setShowPost(false)
+                }} />
                 {
                     !md && <FloatButton style={{ bottom: 100 }} icon={<EditOutlined />} onClick={() => {
                         if (!isLogin) {

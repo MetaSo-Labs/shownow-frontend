@@ -14,6 +14,7 @@ import HomePage from '@/pages/home';
 import IndexPage from '@/pages/index';
 import './index.less'
 import { bitBuzzConf, showNowConf } from '@/models/dashboard';
+import SetIcon from './setIcon';
 
 const queryClient = new QueryClient()
 
@@ -312,11 +313,11 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span>Logo</span>
 
-                    <Upload {...props}  listType="picture-card"
-                        className="avatar-uploader" maxCount={1} showUploadList={false} onChange={handleChange} 
-                        >
-                    {styles?.logo ?
-                            <div style={{position:'relative'}}>
+                    <Upload {...props} listType="picture-card"
+                        className="avatar-uploader" maxCount={1} showUploadList={false} onChange={handleChange}
+                    >
+                        {styles?.logo ?
+                            <div style={{ position: 'relative' }}>
                                 <Button style={{
                                     position: 'absolute',
                                     right: '50%',
@@ -324,7 +325,7 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                                     transform: 'translate(50%,-50%)',
                                     background: 'rgba(0,0,0,0.5)',
                                     color: '#fff'
-                                }} icon={<DeleteOutlined />} onClick={(e)=>{
+                                }} icon={<DeleteOutlined />} onClick={(e) => {
                                     e.stopPropagation();
                                     setStyles({ ...styles, logo: '' });
                                 }}></Button>
@@ -340,7 +341,7 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                         listType="picture-card"
                         className="avatar-uploader" maxCount={1} showUploadList={false} onChange={handleBackImageChange}>
                         {styles?.homeBackgroundImage ?
-                            <div style={{position:'relative'}}>
+                            <div style={{ position: 'relative' }}>
                                 <Button style={{
                                     position: 'absolute',
                                     right: '50%',
@@ -348,7 +349,7 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                                     transform: 'translate(50%,-50%)',
                                     background: 'rgba(0,0,0,0.5)',
                                     color: '#fff'
-                                }} icon={<DeleteOutlined />} onClick={(e)=>{
+                                }} icon={<DeleteOutlined />} onClick={(e) => {
                                     e.stopPropagation();
                                     setStyles({ ...styles, homeBackgroundImage: '' });
                                 }}></Button>
@@ -358,7 +359,7 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                     </Upload>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
-                    <span style={{whiteSpace:'nowrap'}}>Twitter</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>Twitter</span>
 
                     <Input value={styles?.twitterUrl} onChange={(e) => {
                         if (styles) {
@@ -368,7 +369,7 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                     }} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
-                    <span style={{whiteSpace:'nowrap'}}> Main Title</span>
+                    <span style={{ whiteSpace: 'nowrap' }}> Main Title</span>
 
                     <Input value={styles?.brandIntroMainTitle} onChange={(e) => {
                         if (styles) {
@@ -377,7 +378,7 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                     }} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
-                    <span style={{whiteSpace:'nowrap'}}> Sub Title</span>
+                    <span style={{ whiteSpace: 'nowrap' }}> Sub Title</span>
 
                     <Input value={styles?.brandIntroSubTitle} onChange={(e) => {
                         if (styles) {
@@ -387,7 +388,7 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                     }} />
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',gap: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
                     <span>Need Login</span>
                     <Switch value={styles?.checkLogin} onChange={(value) => {
                         if (styles) {
@@ -615,9 +616,12 @@ const Page = () => {
 
     >
         <Col span={24}>
-            <Button type='primary' icon={<PlusOutlined />} onClick={() => {
-                setShowCreate(true)
-            }}>Create Styles</Button>
+            <Space>
+                <Button type='primary' icon={<PlusOutlined />} onClick={() => {
+                    setShowCreate(true)
+                }}>Create Styles</Button>
+                <SetIcon />
+            </Space>
         </Col>
         {
             (styleList ?? []).map(item => {

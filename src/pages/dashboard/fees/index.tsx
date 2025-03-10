@@ -6,6 +6,7 @@ import '../index.less'
 import { useEffect, useState } from "react";
 import Rpc from "../rpc";
 import BlockList from "./blockList";
+import Introduction from "./introduction";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
@@ -273,6 +274,11 @@ export default () => {
                     key: '4',
                     label: 'Screen',
                     children: <BlockList />
+                },
+                {
+                    key: '5',
+                    label: 'About',
+                    children: <Introduction />
                 },
             ],
             onChange: (key) => {

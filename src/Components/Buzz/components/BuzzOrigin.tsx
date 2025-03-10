@@ -10,7 +10,7 @@ export default ({ host }: BuzzOriginProps) => {
         return null
     }
     const { domainMap } = useModel('dashboard');
-    const domain = domainMap[host];
+    const domain = domainMap[host.toLowerCase()];
     if (!domain) return <>
         <Typography.Text type='secondary' style={{ fontSize: 10, lineHeight: 1 }}>from</Typography.Text>
         <Typography.Text style={{ fontSize: 10, lineHeight: 1 }}> {host.length > 10 ? host.substring(0, 10) + '...' : host}</Typography.Text>

@@ -28,7 +28,7 @@ declare namespace MS {
     marketCap: string;
     marketCapUsd: string;
     priceChange24h: string;
-    marketCapChange24h:string
+    marketCapChange24h: string;
   };
 
   type MetaBlock = {
@@ -68,6 +68,21 @@ declare namespace MS {
     commitTxId: string;
     orderId: string;
     revealTxId: string;
+    tickId: string;
+    txId: string;
+  };
+  type ClaimRecord = {
+    blockHeight: number;
+    chain: string;
+    claimAmount: string;
+    claimAmountInAll: number;
+    claimAssetDecimals: number;
+    confirmationState: number;
+    createTime: number;
+    hostAddress: string;
+    orderId: string;
+    orderState: number;
+    receiveAddress: string;
     tickId: string;
     txId: string;
   };

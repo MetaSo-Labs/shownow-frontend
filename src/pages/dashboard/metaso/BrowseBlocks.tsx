@@ -7,8 +7,10 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime);
 dayjs.locale('en');
 import { useState } from "react";
+import { useModel } from "umi";
 
 export default () => {
+    const { admin } = useModel('dashboard')
     const columns: TableProps<MS.MetaBlock>['columns'] = [{
         title: 'Height',
         dataIndex: 'metaBlockHeight',
@@ -34,15 +36,27 @@ export default () => {
         dataIndex: 'mdvDeltaValueStr',
         key: 'mdvDeltaValue',
         render: (text) => <NumberFormat value={text} />
+    }, {
+        title: 'My NDV',
+        dataIndex: 'hostMdvValueStr',
+        key: 'hostMdvValueStr',
+        render: (text) => <NumberFormat value={text} />
+    }, {
+        title: 'My ΔNDV',
+        dataIndex: 'hostMdvDeltaValueStr',
+        key: 'hostMdvDeltaValueStr',
+        render: (text) => <NumberFormat value={text} />
     }]
     const [page, setPage] = useState(0);
     const { isLoading, isError, error, data, isFetching, isPreviousData } =
         useQuery({
-            queryKey: ['metablockList', page],
+            enabled: Boolean(admin?.host),
+            queryKey: ['metablockList', page, admin?.host],
             queryFn: () => {
                 return fetchMetaBlockList({
                     cursor: page * 5,
-                    size: 5
+                    size: 5,
+                    host: admin!.host
                 })
             },
         });

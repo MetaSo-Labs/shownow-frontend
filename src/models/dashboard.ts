@@ -75,7 +75,7 @@ export default () => {
       });
       if (ret.data && ret.data.list) {
         ret.data.list.forEach((item) => {
-          _domainMap[item.host] = item.domain;
+          _domainMap[item.host.toLowerCase()] = item.domain;
         });
       } else {
         break;

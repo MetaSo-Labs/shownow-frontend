@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import './index.less'
 import { Divider, List, Row, Skeleton, Grid, Drawer } from "antd";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useModel } from "umi";
+import { useModel, useMatch, useRouteData, useLocation } from "umi";
 import Buzz from "@/Components/Buzz";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Trans from "@/Components/Trans";
@@ -19,6 +19,11 @@ const Home = () => {
     const [currentBuzzId, setCurrentBuzzId] = useState('');
     const containerRef = useRef<any>();
     const contentRef = useRef<any>();
+    const { state } = useLocation();
+
+    const targetBuzzId = useMemo(() => {
+        return state?.buzzId
+    }, [state])
     const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
         useInfiniteQuery({
             queryKey: ['homebuzzesnew', user.address],
@@ -51,6 +56,14 @@ const Home = () => {
             fetchNextPage();
         }
     }, [data, hasNextPage, isLoading]);
+
+
+    useEffect(() => {
+        if (containerRef.current && targetBuzzId) {
+            containerRef.current.scrollTop = 0
+            refetch();
+        }
+    }, [targetBuzzId])
 
 
     return <div

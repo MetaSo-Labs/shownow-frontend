@@ -32,7 +32,7 @@ export default () => {
         },
         {
             key: '2',
-            label: 'My ΔMDV/ ΔtMDV',
+            label: 'My ΔNDV/ ΔtMDV',
             span: 2,
             children: <Space>
                 <NumberFormat

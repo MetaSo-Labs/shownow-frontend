@@ -27,6 +27,7 @@ import {
   getPinDetailByPid,
 } from "@/request/api";
 import * as crypto from "crypto";
+import { isArray } from "lib/tool";
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
 type PostParams = {
@@ -528,6 +529,9 @@ export const decodePayBuzz = async (
     const _publicFiles: string[] = [];
     const _nfts: API.NFT[] = [];
     const _videos: string[] = [];
+    if (Array.isArray(parseSummary.attachments[0])) {
+      parseSummary.attachments = parseSummary.attachments[0];
+    }
     for (let i = 0; i < parseSummary.attachments.length; i++) {
       if (parseSummary.attachments[i].startsWith("metafile://nft/mrc721/")) {
         const _nftId = parseSummary.attachments[i].split(

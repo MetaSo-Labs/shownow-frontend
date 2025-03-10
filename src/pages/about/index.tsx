@@ -16,43 +16,73 @@ const DescItem = ({ label, value }) => {
 export default () => {
     const {
         token: {
-            colorPrimary
+            colorPrimary,
+            colorTextSecondary
         }
     } = theme.useToken()
     const [activeKey, setActiveKey] = useState('BTC');
-    const { fees } = useModel('dashboard')
+    const { fees, admin } = useModel('dashboard')
 
     const curFee = useMemo(() => {
         return fees.find((item) => item.chain === activeKey)
     }, [fees, activeKey])
-    return <Card bordered={false}>
-        <Typography.Text strong style={{ color: colorPrimary }}><Trans>Fee</Trans></Typography.Text>
-        <Divider />
-        <Space>
-            <Button variant='filled' color={activeKey === 'BTC' ? 'primary' : 'default'} onClick={() => setActiveKey('BTC')}>
-                BTC
-            </Button>
-            <Button variant='filled' color={activeKey === 'MVC' ? 'primary' : 'default'} onClick={() => setActiveKey('MVC')}>
-                MVC
-            </Button>
-        </Space>
-        <Card style={{
-            marginTop: 20
-        }} styles={{
-            body: {
-                padding: '20px 0'
-            }
-        }}>
-            <DescItem label='Follow Serivice Fee' value={curFee?.follow_service_fee_amount} />
-            <Divider />
-            <DescItem label='Post Serivice Fee' value={curFee?.post_service_fee_amount} />
-            <Divider />
-            <DescItem label='Commet Serivice Fee' value={curFee?.comment_service_fee_amount} />
-            <Divider />
-            <DescItem label='Like Serivice Fee' value={curFee?.like_service_fee_amount} />
-            <Divider />
-            <DescItem label='Donate Serivice Fee' value={curFee?.donate_service_fee_amount} />
+    const [activeTabKey2, setActiveTabKey2] = useState<string>('fee');
+    const onTab2Change = (key: string) => {
+        setActiveTabKey2(key);
+    };
 
-        </Card>
+    const tabListNoTitle = [
+        {
+            key: 'fee',
+            label: <Trans>Fee</Trans>,
+        },
+        {
+            key: 'introduction',
+            label: <Trans>Introduction</Trans>,
+        },
+    ];
+    return <Card bordered={false} tabList={tabListNoTitle}
+        activeTabKey={activeTabKey2}
+        onTabChange={onTab2Change}>
+        {
+            activeTabKey2 === 'fee' ? <>
+                <Space>
+                    <Button variant='filled' color={activeKey === 'BTC' ? 'primary' : 'default'} onClick={() => setActiveKey('BTC')}>
+                        BTC
+                    </Button>
+                    <Button variant='filled' color={activeKey === 'MVC' ? 'primary' : 'default'} onClick={() => setActiveKey('MVC')}>
+                        MVC
+                    </Button>
+                </Space>
+                <Card style={{
+                    marginTop: 20
+                }} styles={{
+                    body: {
+                        padding: '20px 0'
+                    }
+                }}>
+                    <DescItem label='Follow Serivice Fee' value={curFee?.follow_service_fee_amount} />
+                    <Divider />
+                    <DescItem label='Post Serivice Fee' value={curFee?.post_service_fee_amount} />
+                    <Divider />
+                    <DescItem label='Commet Serivice Fee' value={curFee?.comment_service_fee_amount} />
+                    <Divider />
+                    <DescItem label='Like Serivice Fee' value={curFee?.like_service_fee_amount} />
+                    <Divider />
+                    <DescItem label='Donate Serivice Fee' value={curFee?.donate_service_fee_amount} />
+
+                </Card></> : <Card title={<Trans>Introduction</Trans>} styles={{
+                    header: {
+                        
+                    }
+                }}>
+                <div
+                style={{ whiteSpace: 'pre-line',color:colorTextSecondary }}
+                    >
+                        {admin?.introduction || ''}
+                    </div>
+            </Card>
+        }
+
     </Card>
 }

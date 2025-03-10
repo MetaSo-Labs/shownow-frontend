@@ -1,5 +1,5 @@
 
-import { useIntl, useModel } from "umi"
+import { useIntl, useModel, history } from "umi"
 import Popup from "../ResponPopup"
 import UserInfo from "../UserInfo"
 import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumber, message, Radio, Result, Row, Segmented, Space, Tag, Typography, Upload, UploadFile, UploadProps } from "antd";
@@ -261,7 +261,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     });
 
                     console.log('imageRes', imageRes);
-                    finalBody.attachments = [...finalBody.attachments || [], imageRes.revealTxIds.map(
+                    finalBody.attachments = [...finalBody.attachments || [], ...imageRes.revealTxIds.map(
                         (rid) => 'metafile://' + rid + 'i0'
                     )];
                 } else {
@@ -342,6 +342,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     setContent('');
                     setImages([]);
                     onClose();
+                    history.push('/home', { buzzId: new Date().getTime() })
                 }
             } else {
                 const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity
@@ -376,6 +377,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     setImages([])
                     onClose();
                     setNFTs([])
+                    history.push('/home', { buzzId: new Date().getTime() })
                 }
             }
 
@@ -438,6 +440,7 @@ export default ({ show, onClose, quotePin }: Props) => {
             setNFTs([])
             onClose()
             queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
+            history.push('/home', { buzzId: new Date().getTime() })
 
         } catch (error) {
             console.log('error', error);
@@ -449,6 +452,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 : errorMessage;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             message.error(toastMessage);
+           
 
         }
         setIsAdding(false);

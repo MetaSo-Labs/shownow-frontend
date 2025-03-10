@@ -67,7 +67,9 @@ export default defineConfig({
   // process.env.BUILD_ENV === "docker" ? "../server-shownow/public" : "dist",
   esbuildMinifyIIFE: true,
   jsMinifier: "none",
-  favicons: ["/favicon.ico"],
+  favicons: [
+    "/ico/favicon.ico",
+    "/favicon.ico"],
   title: "ShowNow",
   define: {
     "process.env.BUILD_ENV": process.env.BUILD_ENV,

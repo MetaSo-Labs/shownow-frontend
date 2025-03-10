@@ -90,6 +90,24 @@ export async function saveDomain(
   });
 }
 
+export async function saveIntro(
+  params: Pick<DB.LoginWithWallerDto, "introduction">,
+  options?: { [key: string]: any }
+) {
+  return request<{
+    success: boolean;
+  }>(`${DASHBOARD_API}/users/admin`, {
+    method: "POST",
+    data: params,
+    ...(options || {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}
+
 export async function saveConf(
   params: DB.ShowConfDto,
   options?: { [key: string]: any }
@@ -116,6 +134,21 @@ export async function saveAndApply(
     ...(options || {
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}
+
+export async function uploadIcon(
+  params: FormData,
+  options?: { [key: string]: any }
+) {
+  return request<any>(`${DASHBOARD_API}/users/ico`, {
+    method: "POST",
+    data: params,
+    ...(options || {
+      headers: {
         Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
       },
     }),

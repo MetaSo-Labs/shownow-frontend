@@ -32,6 +32,7 @@ declare namespace DB {
     publicKey: string;
     domainName: string;
     host: string;
+    introduction: string;
   };
   type FeeDto = {
     id: number;
