@@ -11,6 +11,7 @@ import _1 from '@/assets/rank/1.svg'
 import _2 from '@/assets/rank/2.svg'
 import _3 from '@/assets/rank/3.svg'
 import './index.less'
+import UserMetaSoReward from "@/Components/UserMetaSoReward";
 interface DataType {
     key: string;
     name: string;
@@ -210,8 +211,8 @@ export default () => {
                 }}>
                     <Card loading={_userValueFetching || _hostValueFetching}>
                         <Typography.Title level={4} style={{ padding: 0, margin: 0 }}>
-                            <NumberFormat value={userValue} precision={2}></NumberFormat>
-                            <NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={4} prefix=' (' suffix='%)'></NumberFormat>
+                            <NumberFormat value={userValue} precision={4}></NumberFormat>
+                            <NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={2} prefix=' (' suffix='%)'></NumberFormat>
                         </Typography.Title>
                         <Typography.Text type='secondary'>
                             <Trans>My contribution value</Trans>
@@ -219,6 +220,9 @@ export default () => {
                     </Card>
                 </Col>
             </Row>
+            {
+                isLogin && user?.address && <UserMetaSoReward address={user.address} host={admin!.host} />
+            }
             <Typography.Title level={5}>
                 <Trans>Rank</Trans>
             </Typography.Title>
@@ -286,7 +290,7 @@ export default () => {
                     </Flex>
 
 
-                    <Typography.Text strong><NumberFormat value={userValue} precision={2}></NumberFormat></Typography.Text>
+                    <Typography.Text strong><NumberFormat value={userValue} precision={4}></NumberFormat></Typography.Text>
                     <Typography.Text ><NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={2} prefix='' suffix='%'></NumberFormat></Typography.Text>
 
                 </Flex>

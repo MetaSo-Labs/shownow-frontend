@@ -33,6 +33,7 @@ declare namespace DB {
     domainName: string;
     host: string;
     introduction: string;
+    distribution: boolean;
   };
   type FeeDto = {
     id: number;

@@ -74,6 +74,7 @@ export default () => {
   const [showSetting, setShowSetting] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
+  const [searchWord, setSearchWord] = useState("");
   const connectWallet = useCallback(async () => {
     const [isConnected, errMsg] = await checkWallet();
     if (!isConnected && !isEmpty(errMsg)) {
@@ -332,5 +333,7 @@ export default () => {
     checkUserSetting,
     showProfileEdit,
     setShowProfileEdit,
+    searchWord,
+    setSearchWord,
   };
 };

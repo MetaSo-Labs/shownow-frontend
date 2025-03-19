@@ -26,12 +26,26 @@ export default ({ address }: Props) => {
         history.push(`/profile/${address}`)
     }}>
         <UserAvatar src={profileUserData?.avatar} size={40} />
-        <Typography.Text strong style={{
-            display: 'block',
-            maxWidth: 100,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-        }}>{profileUserData?.name}</Typography.Text>
+        <div>
+            <Typography.Text strong  style={{
+                display: 'block',
+                maxWidth: 100,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+            }}>{profileUserData?.name || address?.slice(0, 6) + '...'}</Typography.Text>
+            <Typography.Text type='secondary' copyable={
+                {
+                    text: profileUserData?.metaid,
+                    tooltips: ['Copy', 'Copied!'],
+                }
+            } style={{
+                display: 'block',
+                maxWidth: 100,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+            }}>MetaID:{profileUserData?.metaid || profileUserData?.metaid?.slice(0, 4) + '...'}</Typography.Text>
+        </div>
     </Space>
 }

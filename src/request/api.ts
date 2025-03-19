@@ -336,6 +336,27 @@ export const fetchAllBuzzs = async (params: {
     params,
   });
 };
+export const fetchAllHotBuzzs = async (params: {
+  size: number;
+  lastId?: string;
+
+}) => {
+  return request<API.BuzzListRet>(`${BASE_MAN_URL}/social/buzz/hot`, {
+    method: "GET",
+    params,
+  });
+};
+
+export const searchBuzzs = async (params: {
+  size: number;
+  lastId?: string;
+  key: string;
+}) => {
+  return request<API.BuzzListRet>(`${BASE_MAN_URL}/social/buzz/search`, {
+    method: "GET",
+    params,
+  });
+};
 
 export const fetchBuzzDetail = async (params: { pinId: string }) => {
   return request<API.BuzzDetailRet>(`${BASE_MAN_URL}/social/buzz/info`, {

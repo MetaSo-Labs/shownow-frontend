@@ -15,13 +15,14 @@ type FollowProps = {
     onFollowToggle?: () => void;
     loading?: boolean;
     mempool?: boolean;
+    size?: 'small' | 'middle' | 'large'
 
 }
 // Higher-order component to provide follow logic
 const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
     return function FollowComponent(props: FollowProps) {
         const { metaid } = props;
-        const { followList, chain, btcConnector, mvcConnector, user, feeRate, setFollowList, fetchUserFollowingList, checkUserSetting,isLogin } = useModel('user');
+        const { followList, chain, btcConnector, mvcConnector, user, feeRate, setFollowList, fetchUserFollowingList, checkUserSetting, isLogin } = useModel('user');
         const { fetchServiceFee, showConf } = useModel('dashboard');
         const [loading, setLoading] = useState(false);
 
@@ -68,6 +69,8 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                 } else {
 
                     const Follow = await mvcConnector!.load(getFollowEntitySchemaWithCustomHost(showConf?.host || '')) as MvcEntity
+
+                    console.log('Follow', curNetwork)
 
                     const res = await Follow.create({
                         data: { body: metaid },
@@ -191,7 +194,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
             setLoading(false);
         }
         const handleFollowToggle = async () => {
-            if(!isLogin){
+            if (!isLogin) {
                 message.error(formatMessage('Please connect your wallet first'))
                 return
             }
@@ -252,7 +255,7 @@ const FollowIcon: React.FC<FollowProps> = ({ isFollowing, onFollowToggle, loadin
     );
 };
 
-const FollowButtonIcon: React.FC<FollowProps> = ({ isFollowing, onFollowToggle, loading, mempool }) => {
+const FollowButtonIcon: React.FC<FollowProps> = ({ isFollowing, onFollowToggle, loading, mempool, size = 'middle' }) => {
     const { showConf } = useModel('dashboard');
     return (
         <Button
@@ -260,6 +263,7 @@ const FollowButtonIcon: React.FC<FollowProps> = ({ isFollowing, onFollowToggle, 
             style={{ color: showConf?.colorButton, background: showConf?.gradientColor }}
             loading={loading || mempool}
             shape='round'
+            size={size}
         >
             {
                 isFollowing

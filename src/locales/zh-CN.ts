@@ -81,4 +81,18 @@ export default {
   'More': '更多',
   'This Buzz has been blocked by the administrator.': '此Buzz已被管理员屏蔽。',
   'This user has been blocked by the administrator.': '此用户已被管理员屏蔽。',
+  Search: '搜索',
+  Hot: '热门',
+  'For You': '推荐',
+  'Pending Rewards': '待领取奖励',
+  'Claim': '领取',
+  'Claim History': '领取历史',
+  'Records': '记录',
+  'Historical Records': '历史记录',
+  Amount: '数量',
+  'Receive Address': '接收地址',
+  'Gas Fee': '矿工费',
+  'Fee Rate': '费率',
+  'Trade Confirm': '交易确认',
+
 };

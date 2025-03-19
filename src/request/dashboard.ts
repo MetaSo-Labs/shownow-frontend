@@ -154,3 +154,21 @@ export async function uploadIcon(
     }),
   });
 }
+
+export async function setDistributionEnable(
+  params: Pick<DB.LoginWithWallerDto, 'distribution'>,
+  options?: { [key: string]: any }
+) {
+  return request<{
+    success: boolean;
+  }>(`${DASHBOARD_API}/users/admin-distribution`, {
+    method: "POST",
+    data: params,
+    ...(options || {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}

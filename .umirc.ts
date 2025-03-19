@@ -21,7 +21,12 @@ export default defineConfig({
       routes: [
         { path: "", component: "@/pages/home" },
         { path: "home", component: "@/pages/home" },
-        { path: "follow", component: "@/pages/follow" },
+        { path: "home/new", component: "@/pages/home" },
+        { path: "home/following", component: "@/pages/follow" },
+        { path: "home/hot", component: "@/pages/hot" },
+        { path: "search", component: "@/pages/search" },
+        { path: "follow", component: "@/pages/followInfo" },
+        { path: "follow/:address", component: "@/pages/followInfo" },
         { path: "profile", component: "@/pages/profile" },
         { path: "profile/:address", component: "@/pages/profile" },
         { path: "tweet/:id", component: "@/pages/tweet" },

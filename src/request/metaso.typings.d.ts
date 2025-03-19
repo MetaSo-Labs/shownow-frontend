@@ -64,6 +64,7 @@ declare namespace MS {
     serviceFee: number;
     totalFee: number;
   };
+
   type ClaimCommitRes = {
     commitTxId: string;
     orderId: string;
@@ -72,6 +73,21 @@ declare namespace MS {
     txId: string;
   };
   type ClaimRecord = {
+    blockHeight: number;
+    chain: string;
+    claimAmount: string;
+    claimAmountInAll: number;
+    claimAssetDecimals: number;
+    confirmationState: number;
+    createTime: number;
+    hostAddress: string;
+    orderId: string;
+    orderState: number;
+    receiveAddress: string;
+    tickId: string;
+    txId: string;
+  };
+  type UserClaimRecord = {
     blockHeight: number;
     chain: string;
     claimAmount: string;

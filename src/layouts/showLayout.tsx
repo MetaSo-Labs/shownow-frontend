@@ -3,7 +3,7 @@ import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Inpu
 import { useEffect, useLayoutEffect, useState } from 'react';
 import './index.less';
 import Menus from './Menus';
-import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined, ProjectOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined, ProjectOutlined, SearchOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import {
     QueryClient,
     QueryClientProvider,
@@ -25,6 +25,7 @@ import { DefaultLogo } from '@/config';
 import UserSetting from '@/Components/UserSetting';
 import ConnectWallet from '@/Components/ConnectWallet';
 import ProfileSetting from '@/Components/ProfileSetting';
+import HomeTabs from '@/Components/HomeTabs';
 
 
 
@@ -38,7 +39,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
     const { showConf: __showConf } = useModel('dashboard')
-    const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain, checkUserSetting, isLogin } = useModel('user')
+    const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain, checkUserSetting, isLogin, searchWord, setSearchWord } = useModel('user')
     const { md } = useBreakpoint();
     const { token: {
         colorPrimary,
@@ -171,23 +172,19 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             {md ? <Col span={24} md={showConf?.showSliderMenu ? 14 : 9}>
 
                                 <div className="searchWrap" style={{ background: colorBgContainer }} onClick={() => {
-                                    if (!isLogin) {
-                                        setShowConnect(true)
-                                        return
-                                    }
-                                    const isPass = checkUserSetting();
-                                    if (!isPass) return;
-                                    setShowPost(true)
+                                    history.push('/search')
                                 }}>
                                     <Input size="large" prefix={
                                         <EditOutlined style={{ color: showConf?.brandColor }} />
                                     } placeholder={formatMessage({
-                                        id: 'post_placeholder'
-                                    })} variant="borderless" suffix={
-                                        <Button shape='round' style={{ background: showConf?.gradientColor, color: showConf.colorButton, marginRight: 12 }} >
-                                            {formatMessage({ id: 'Post' })}
-                                        </Button>
-                                    } />
+                                        id: 'Search'
+                                    })} variant="borderless"
+                                        value={searchWord}
+                                        onChange={(e) => {
+                                            setSearchWord(e.target.value)
+                                        }}
+                                        allowClear
+                                    />
                                 </div>
                             </Col> : ''}
                             <Col span={showConf?.showSliderMenu ? 24 : 18} md={10}>
@@ -203,7 +200,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                                         onClick: () => {
                                                             history.push('/rank')
                                                         }
-                                                    }, 
+                                                    },
                                                     {
                                                         key: 'profile',
                                                         label: formatMessage({ id: 'Profile' }),
@@ -331,22 +328,33 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             </Col>
                         </Row>
                     </Header>
-                    {
+                    {/* {
                         !showConf?.showSliderMenu && <TopTool />
-                    }
-                    <Content style={{ flexGrow: 1, width: !showConf.showSliderMenu ? showConf.contentSize : '100%', maxWidth: "100%", padding: 12 }}>
+                    } */}
+                    <Content style={{ flexGrow: 1, width: !showConf.showSliderMenu ? showConf.contentSize : '100%', maxWidth: "100%", padding: '0 12px' }}>
                         <Row gutter={[12, 12]} style={{ height: '100%', position: 'relative', padding: 0, }}>
-                            <Col span={24} md={showConf?.showRecommend ? 14 : 24} style={{ height: '100%', width: '100%', overflow: 'scroll' }} >
-                                {children ? children : <>
-                                    <Activity mode={location.pathname === '/follow' ? 'visible' : 'hidden'}><Outlet /></Activity>
-                                    <Activity mode={location.pathname === '/home' ? 'visible' : 'hidden'}><Outlet /></Activity>
-                                    <Activity mode={location.pathname === '/' ? 'visible' : 'hidden'}><Outlet /></Activity>
-                                    <Activity mode={location.pathname === '/profile' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                            <Col span={24} md={showConf?.showRecommend ? 14 : 24} style={{ height: '100%', width: '100%', overflow: 'scroll', display: 'flex', flexDirection: 'column' }} >
+                                <div>
                                     {
-                                        !['/home', '/follow', '/', '/profile'].includes(location.pathname) && <Outlet />
+                                        ['/home', '/home/new', '/', '/home/following', '/home/hot'].includes(location.pathname) && <HomeTabs />
                                     }
+                                </div>
+                                <div style={{ overflow: 'scroll', position: 'relative', flexGrow: 1 }}>
+                                    {children ? children : <>
+                                        <Activity mode={location.pathname === '/home/following' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                        <Activity mode={location.pathname === '/home' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                        <Activity mode={location.pathname === '/' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                        <Activity mode={location.pathname === '/home/new' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                        <Activity mode={location.pathname === '/home/hot' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                        <Activity mode={location.pathname === '/profile' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                        {
+                                            !['/home', '/', '/profile','/home/new','/home/following','/home/hot'].includes(location.pathname) && <Outlet />
+                                        }
 
-                                </>}
+                                    </>}
+                                </div>
+
+
 
 
                             </Col>
@@ -362,7 +370,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                 </Layout>
 
                 <NewPost show={showPost} onClose={() => {
-                     
+
                     setShowPost(false)
                 }} />
                 {
@@ -374,6 +382,11 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                         const isPass = checkUserSetting();
                         if (!isPass) return;
                         setShowPost(true)
+                    }} />
+                }
+                {
+                    !md && <FloatButton style={{ bottom: 50 }} icon={<SearchOutlined />} onClick={() => {
+                        history.push('/search')
                     }} />
                 }
                 <UserSetting />
