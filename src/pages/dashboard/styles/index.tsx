@@ -1,5 +1,5 @@
 import { ProCard, ProFormColorPicker } from '@ant-design/pro-components';
-import { Avatar, Button, Card, Col, ColorPicker, ConfigProvider, Divider, Form, Input, message, Modal, notification, Row, Segmented, Space, Switch, Tabs, theme, Typography, Upload } from 'antd';
+import { Avatar, Button, Card, Col, ColorPicker, ConfigProvider, Divider, Form, Input, message, Modal, notification, Row, Segmented, Select, Space, Switch, Tabs, theme, Typography, Upload } from 'antd';
 import type { TabsProps } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
@@ -167,7 +167,16 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
     const handleSave = async () => {
         if (!styles) return;
         setSubmiting(true);
+
+
         try {
+            if (styles.tabs?.length === 0) {
+
+                throw new Error('Please select at least one tab')
+            }
+            if (styles.tabs.length === 1 && styles.tabs[0] === 'following') {
+                throw new Error('Following tab is required')
+            }
             await saveConf({ ...styles });
             message.success('Save Success');
         } catch (e: any) {
@@ -395,6 +404,45 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                             setStyles({ ...styles, checkLogin: value })
                         }
                     }} />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+                    <span>Tabs</span>
+                    <Select
+                        mode="multiple"
+                        style={{ width: '100%' }}
+                        placeholder="at least one tab"
+                        value={styles?.tabs ?? []}
+
+                        onChange={(value) => {
+                            if (styles) {
+                                setStyles({ ...styles, tabs: value })
+                            }
+                        }
+                        }
+                        options={
+                            [
+                                {
+                                    label: 'New',
+                                    value: 'new',
+                                },
+                                {
+                                    label: 'Hot',
+                                    value: 'hot',
+                                },
+                                {
+                                    label: 'Following',
+                                    value: 'following',
+                                },
+                                {
+                                    label: 'For You',
+                                    value: 'recommend',
+                                    disabled: true
+                                },
+                            ]
+                        }
+
+                    />
                 </div>
             </Space>,
         },

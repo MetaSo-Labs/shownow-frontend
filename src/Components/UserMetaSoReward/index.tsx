@@ -69,7 +69,7 @@ export default ({ address, host }: Props) => {
 
             const publicKey = await window.metaidwallet.btc.getPublicKey();
             const _address = await window.metaidwallet.btc.getAddress();
-            if (address !== _address) throw new Error('Address not match')
+            if (address !== _address) throw new Error('Please use the default address')
             const signature: any = await window.metaidwallet.btc.signMessage('metaso.network');
 
 

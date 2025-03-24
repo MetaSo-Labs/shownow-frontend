@@ -23,6 +23,7 @@ declare namespace DB {
     comment_service_fee_amount: number;
     like_service_fee_amount: number;
     checkLogin: boolean;
+    tabs: string[];
   };
 
   type LoginWithWallerDto = {

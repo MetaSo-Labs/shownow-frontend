@@ -1,6 +1,11 @@
-import { BASE_MAN_URL, DASHBOARD_ADMIN_PUBKEY, DASHBOARD_SIGNATURE } from "@/config";
+import {
+  BASE_MAN_URL,
+  DASHBOARD_ADMIN_PUBKEY,
+  DASHBOARD_SIGNATURE,
+} from "@/config";
 import { IBtcConnector } from "@metaid/metaid";
 import axios from "axios";
+import { number } from "bitcoinjs-lib/src/script";
 import { UserInfo } from "node_modules/@metaid/metaid/dist/types";
 import { request } from "umi";
 export type BtcNetwork = "mainnet" | "testnet" | "regtest";
@@ -339,7 +344,6 @@ export const fetchAllBuzzs = async (params: {
 export const fetchAllHotBuzzs = async (params: {
   size: number;
   lastId?: string;
-
 }) => {
   return request<API.BuzzListRet>(`${BASE_MAN_URL}/social/buzz/hot`, {
     method: "GET",
@@ -599,7 +603,6 @@ export const getHostNDV = async (params: {
   });
 };
 
-
 export const getBlockedList = async (params: {
   blockType: string;
   size: number;
@@ -607,15 +610,15 @@ export const getBlockedList = async (params: {
 }) => {
   return request<{
     code: number;
-    data:{ list:API.BlockedItem[],total:number};
+    data: { list: API.BlockedItem[]; total: number };
     message: string;
   }>(`${BASE_MAN_URL}/metaso/settings/blocked/list`, {
     method: "GET",
     params,
     headers: {
-            "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
-            "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
-          },
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
   });
 };
 
@@ -630,9 +633,9 @@ export const addBlockedItem = async (params: {
     method: "GET",
     params,
     headers: {
-            "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
-            "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
-          },
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
   });
 };
 
@@ -647,8 +650,25 @@ export const deleteBlockedItem = async (params: {
     method: "GET",
     params,
     headers: {
-            "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
-            "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
-          },
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+  });
+};
+
+export const getVersionInfo = async () => {
+  return request<{
+    code: number;
+    message: string;
+    data: {
+      curNo: number;
+      curVer: string;
+      lastNo: number;
+      lastVer: string;
+      serverUrl: string;
+      mandatory: boolean;
+    };
+  }>(`${BASE_MAN_URL}/social/buzz/updater`, {
+    method: "GET",
   });
 };

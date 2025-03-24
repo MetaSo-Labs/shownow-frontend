@@ -1,13 +1,17 @@
-import { ChromeOutlined, DollarOutlined, SettingOutlined } from '@ant-design/icons';
+import { ChromeOutlined, DollarOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { PageContainer, ProLayout } from '@ant-design/pro-components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Dropdown } from 'antd';
 import { useState } from 'react';
 import { Link, Outlet, useModel, history, useLocation } from 'umi';
+import _defaultAvatar from '@/assets/defaultAvatar.svg'
+import VersionContorl from './VersionContorl';
 const queryClient = new QueryClient()
 export default () => {
     const location = useLocation();
     const path = location.pathname;
     const [pathname, setPathname] = useState(path);
+    const { admin } = useModel('dashboard')
     return <QueryClientProvider client={queryClient}><div
         style={{
             height: '100vh',
@@ -38,6 +42,37 @@ export default () => {
                         icon: <DollarOutlined />,
                     },
                 ],
+            }}
+            avatarProps={{
+                src: _defaultAvatar,
+                title: admin?.host.slice(0, 6),
+                render: (props, dom) => {
+                    return (
+                        <Dropdown
+                            menu={{
+                                items: [
+                                    {
+                                        key: 'logout',
+                                        icon: <LogoutOutlined />,
+                                        label: 'Logout',
+                                        onClick: () => {
+                                            localStorage.clear()
+                                            history.push('/dashboardLogin')
+                                        }
+                                    },
+                                ],
+                            }}
+                        >
+                            {dom}
+                        </Dropdown>
+                    );
+                },
+            }}
+
+            actionsRender={(props) => {
+                return [
+                   <VersionContorl />
+                ];
             }}
             menuItemRender={(item, dom) => (
                 <a

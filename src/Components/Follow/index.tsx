@@ -267,7 +267,7 @@ const FollowButtonIcon: React.FC<FollowProps> = ({ isFollowing, onFollowToggle, 
         >
             {
                 isFollowing
-                    ? 'Following'
+                    ? 'Unfollow'
                     : 'Follow'
             }
         </Button>

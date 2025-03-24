@@ -22,10 +22,9 @@ export default ({ metaid, type }: Props) => {
                 params: { cursor: '0', size: '100', followDetail: true },
             }),
     });
-    console.log(data)
     return <Card><List
         itemLayout="horizontal"
-        dataSource={data?.list}
+        dataSource={data?.list ?? []}
         renderItem={(item: any, index) => (
             <List.Item>
                 <PendingUser address={item.address} />

@@ -36,7 +36,7 @@ export default () => {
 
     useEffect(() => {
         if (data?.data) {
-            setDistributionRate(data?.data.distributionRate)
+            setDistributionRate(Number(data?.data.distributionRate / 100))
         }
 
     }, [data])
@@ -46,7 +46,7 @@ export default () => {
 
             const res = await setDistribution({
                 host: admin!.host,
-                distributionRate
+                distributionRate: distributionRate * 100
             })
             await refetch()
             message.success('Save success')
