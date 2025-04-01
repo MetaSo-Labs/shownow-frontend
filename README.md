@@ -66,10 +66,21 @@ shownow-frontend/
 └── patches/ - 补丁文件
 ```
 
-## 主要功能模块
 
-1. **Buzz组件** - 处理推文展示、转发、详情等功能
-2. **Dashboard** - 仪表板相关功能，包括费用管理、MetaSo等
-3. **用户系统** - 个人资料、关注、钱包连接等功能
-4. **MetaSo集成** - 区块链相关功能集成
-5. **国际化支持** - 多语言支持
+
+## Installation
+
+```bash
+$ pnpm install
+```
+
+## Running the app
+
+```bash
+# development
+$ pnpm run dev
+
+
+# build
+$ pnpm run build
+```
