@@ -2,6 +2,7 @@ import {
   BASE_MAN_URL,
   DASHBOARD_ADMIN_PUBKEY,
   DASHBOARD_SIGNATURE,
+  MARKET_ENDPOINT,
 } from "@/config";
 import { IBtcConnector } from "@metaid/metaid";
 import axios from "axios";
@@ -672,3 +673,84 @@ export const getVersionInfo = async () => {
     method: "GET",
   });
 };
+
+export async function getUserMrc20List(
+  params: {
+    address: string;
+    cursor: number;
+    size: number;
+  },
+  options?: { [key: string]: any }
+) {
+  if (!params.address)
+    return Promise.resolve({ code: 0, data: { list: [], total: 0 } });
+  return request<{
+    code: number;
+    data: {
+      list: API.UserMrc20Asset[];
+    };
+    message: string;
+  }>(`${BASE_MAN_URL}/api/mrc20/address/balance/${params.address}`, {
+    method: "GET",
+    params: {
+      cursor: params.cursor,
+      size: params.size,
+    },
+    ...(options || {}),
+  });
+}
+
+export async function getMrc20AddressUtxo(
+  params: {
+    address: string;
+    tickId: string;
+    cursor: number;
+    size: number;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<API.ListRet<API.Mrc20AddressUtxo>>(
+    `${MARKET_ENDPOINT}/api/v1/common/mrc20/address/utxo`,
+    {
+      method: "GET",
+      params,
+      ...(options || {}),
+    }
+  );
+}
+
+export async function transfertMrc20Pre(
+  params: API.TransferMRC20PreReq,
+  options?: { [key: string]: any }
+) {
+  return request<API.Ret<API.TransferMRC20PreRes>>(
+    `${MARKET_ENDPOINT}/api/v1/inscribe/mrc20/transfer/pre`,
+    {
+      method: "POST",
+      data: params,
+      ...(options || {}),
+    }
+  );
+}
+
+export async function transferMrc20Commit(
+  params: {
+    orderId: string;
+    commitTxRaw: string;
+    commitTxOutIndex: number; //commit交易中RevealAddress的output索引
+    revealPrePsbtRaw: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Ret<{
+      orderId: string;
+      commitTxId: string;
+      revealTxId: string;
+    }>
+  >(`${MARKET_ENDPOINT}/api/v1/inscribe/mrc20/transfer/commit`, {
+    method: "POST",
+    data: params,
+    ...(options || {}),
+  });
+}

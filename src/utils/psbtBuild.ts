@@ -4,9 +4,12 @@ import {
   Transaction,
   address as libAddress,
   payments,
+  initEccLib,
+  networks
 } from "bitcoinjs-lib";
 import mempoolJS from "@mempool/mempool.js";
 import { isTaprootInput } from "bitcoinjs-lib/src/psbt/bip371";
+import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
 import { Buffer } from "buffer";
 
 import { determineAddressInfo } from "./utils";
@@ -409,4 +412,16 @@ export const checkWalletAddress = async (address: string) => {
     return { status: false, message: "Wallet address is not matched" };
   }
   return { status: true };
+};
+
+
+export const getPkScriprt = (address: string, network: API.Network) => {
+  initEccLib(ecc);
+  const btcNetwork =
+    network === "mainnet" ? networks.bitcoin : networks.testnet;
+  const paymentPrevOutputScript = libAddress.toOutputScript(
+    address,
+    btcNetwork
+  );
+  return Buffer.from(paymentPrevOutputScript).toString("hex");
 };

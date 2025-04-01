@@ -23,7 +23,7 @@ export const TYPED_NETWORK: Network =
 export const METASO_BASE_API =
   curNetwork === "testnet"
     ? "https://www.metaso.network/api-base-testnet"
-    : "https://www.metaso.network/api-base-grey";
+    : "https://www.metaso.network/api-base";
 
 // export const DASHBOARD_API = "https://www.show.now/api";
 // export const DASHBOARD_API = "http://127.0.0.1:3000/api";
@@ -50,6 +50,11 @@ export const BASE_MAN_URL =
 export const FLAG = "metaid";
 
 export const IMAGESIZE = 300;
+
+export const MARKET_ENDPOINT =
+  curNetwork === "testnet"
+    ? "https://api.metaid.market/api-market-testnet"
+    : "https://api.metaid.market/api-market";
 
 export const DEFAULT_AVATAR = defaultAvatar;
 export const DefaultLogo =

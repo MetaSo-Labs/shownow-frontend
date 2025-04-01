@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Rpc from "../rpc";
 import BlockList from "./blockList";
 import Introduction from "./introduction";
+import Airdrop from "./airdrop";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
@@ -279,6 +280,11 @@ export default () => {
                     key: '5',
                     label: 'About',
                     children: <Introduction />
+                },
+                {
+                    key: '6',
+                    label: 'Token Airdrop',
+                    children: <Airdrop />
                 },
             ],
             onChange: (key) => {

@@ -356,4 +356,92 @@ declare namespace API {
     blockedType: string;
     blockedContent: string;
   };
+  type UserMrc20Asset = {
+    id: string;
+    name: string;
+    balance: string;
+    unsafeBalance: string;
+  };
+  type Mrc20AddressUtxo = {
+    address: string;
+    blockHeight: number;
+    chain: string;
+    mrc20s: {
+      amount: string;
+      decimals: string;
+      mrc20Id: string;
+      tick: string;
+      txPoint: string;
+    }[];
+    outputIndex: number;
+    satoshi: number;
+    satoshis: number;
+    scriptPk: string;
+    timestamp: number;
+    txId: string;
+    vout: number;
+    tag: string;
+    orderId: string;
+  };
+  interface ListRet<T> {
+    data: {
+      total: number;
+      list: T[];
+    };
+    message: string;
+    code: number;
+  }
+
+  type TransferMRC20PreReq = {
+    changeAddress: string;
+    changeOutValue: number;
+    mrc20Outs: {
+      address: string;
+      amount: string;
+      outValue: number;
+      pkScript: string;
+    }[];
+    networkFeeRate: number;
+    tickerId: string;
+    transfers: {
+      address: string;
+      amount: string;
+      pkScript: string;
+      tickerId: string;
+      utxoIndex: number;
+      utxoOutValue: number;
+      utxoTxId: string;
+    }[];
+  };
+
+  type TransferMRC20PreRes = {
+    extra: string;
+    orderId: string;
+    revealAddress: string;
+    revealFee: number;
+    revealGas: number;
+    revealInputIndex: number;
+    revealPrePsbtRaw: string;
+    serviceAddress: string;
+    serviceFee: number;
+    totalFee: number;
+    revealOutValue: number;
+  };
+  interface Ret<T> {
+    data: T;
+    message: string;
+    code: number;
+  }
+  type MintMRC20PreRes = {
+    orderId: string;
+    revealAddress: string;
+    revealFee: number;
+    revealGas: number;
+    revealInputIndex: number;
+    revealPrePsbtRaw: string;
+    serviceAddress: string;
+    serviceFee: number;
+    totalFee: number;
+    revealOutValue: number;
+  };
 }

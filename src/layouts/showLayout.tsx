@@ -1,6 +1,6 @@
 import { Link, Outlet, useModel, history, useIntl, useLocation, useOutlet } from 'umi';
 import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Input, InputNumber, Layout, Menu, message, notification, Radio, Row, Segmented, Space, Tag, theme, Typography } from 'antd';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './index.less';
 import Menus from './Menus';
 import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined, ProjectOutlined, SearchOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
@@ -110,8 +110,24 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
         }
 
     }
+    const isComposing = useRef(false);
 
+    const handleCompositionStart = () => {
+        isComposing.current = true;
+    };
 
+    const handleCompositionEnd = (e) => {
+        isComposing.current = false;
+        console.log('change', e.target.value)
+        setSearchWord(e.target.value);
+    };
+
+    const handleChange = (e) => {
+        if (!isComposing.current) {
+            console.log('change', e.target.value)
+            setSearchWord(e.target.value);
+        }
+    };
 
 
 
@@ -172,18 +188,32 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             {md ? <Col span={24} md={showConf?.showSliderMenu ? 14 : 9}>
 
                                 <div className="searchWrap" style={{ background: colorBgContainer }} onClick={() => {
-                                    history.push('/search')
+                                    if (location.pathname !== '/search') {
+                                        history.push('/search')
+                                    }
                                 }}>
-                                    <Input size="large" prefix={
-                                        <EditOutlined style={{ color: showConf?.brandColor }} />
-                                    } placeholder={formatMessage({
-                                        id: 'Search'
-                                    })} variant="borderless"
-                                        value={searchWord}
-                                        onChange={(e) => {
+                                    <Input.Search
+                                        size="large"
+                                        prefix={
+                                            <EditOutlined style={{ color: showConf?.brandColor }} />
+                                        }
+                                        placeholder={formatMessage({
+                                            id: 'Search'
+                                        })}
+                                        style={{
+                                            height:52
+                                        }}
+                                        variant="borderless"
+                                        className='searchInput'
+                                        allowClear
+                                        enterButton
+                                        
+                                        onSearch={(value) => {
+                                            setSearchWord(value)
+                                        }}
+                                        onPressEnter={(e) => {
                                             setSearchWord(e.target.value)
                                         }}
-                                        allowClear
                                     />
                                 </div>
                             </Col> : ''}
@@ -336,7 +366,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             <Col span={24} md={showConf?.showRecommend ? 14 : 24} style={{ height: '100%', width: '100%', overflow: 'scroll', display: 'flex', flexDirection: 'column' }} >
                                 <div>
                                     {
-                                        ['/home', '/home/new', '/', '/home/following', '/home/hot','/dashboard/styles'].includes(location.pathname) && <HomeTabs />
+                                        ['/home', '/home/new', '/', '/home/following', '/home/hot', '/dashboard/styles'].includes(location.pathname) && <HomeTabs />
                                     }
                                 </div>
                                 <div style={{ overflow: 'scroll', position: 'relative', flexGrow: 1 }}>
@@ -348,7 +378,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                         <Activity mode={location.pathname === '/home/hot' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         <Activity mode={location.pathname === '/profile' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         {
-                                            !['/home', '/', '/profile','/home/new','/home/following','/home/hot'].includes(location.pathname) && <Outlet />
+                                            !['/home', '/', '/profile', '/home/new', '/home/following', '/home/hot'].includes(location.pathname) && <Outlet />
                                         }
 
                                     </>}
