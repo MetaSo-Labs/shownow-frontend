@@ -1,5 +1,6 @@
-# 项目结构
+# ShowNow 项目结构
 
+```
 shownow-frontend/
 ├── 配置文件
 │   ├── .gitignore
@@ -18,7 +19,7 @@ shownow-frontend/
 │
 ├── src/ - 源代码目录
 │   ├── assets/ - 静态资源
-│   │   ├── 图片资源(.png, .svg)
+│   │   ├── 图片资源 (.png, .svg)
 │   │   └── dashboard/ - 仪表板相关资源
 │   │
 │   ├── Components/ - 公共组件
@@ -63,6 +64,7 @@ shownow-frontend/
 │   │   └── zh-CN.ts - 中文语言包
 │
 └── patches/ - 补丁文件
+```
 
 ## 主要功能模块
 

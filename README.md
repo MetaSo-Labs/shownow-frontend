@@ -1,5 +1,25 @@
-# ShowNow Documentation
+# ShowNow Frontend Documentation
 
-[English Version](README-en.md) | [中文版本](README-zh.md)
+## Documentation
 
-This is the main documentation index. Please select your preferred language version.
+- [English Documentation](README-en.md)
+- [Chinese Documentation](README-zh.md)
+
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+```
+
+## Project Structure
+
+See detailed project structure in:
+- [English Version](README-en.md)
+- [Chinese Version](README-zh.md)

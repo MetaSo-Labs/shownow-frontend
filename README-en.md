@@ -1,5 +1,6 @@
-# Project Structure
+# ShowNow Project Structure
 
+```
 shownow-frontend/
 ├── Configuration Files
 │   ├── .gitignore
@@ -18,7 +19,7 @@ shownow-frontend/
 │
 ├── src/ - Source code
 │   ├── assets/ - Static assets
-│   │   ├── Images(.png, .svg)
+│   │   ├── Images (.png, .svg)
 │   │   └── dashboard/ - Dashboard related assets
 │   │
 │   ├── Components/ - Common components
@@ -63,6 +64,7 @@ shownow-frontend/
 │   │   └── zh-CN.ts - Chinese language pack
 │
 └── patches/ - Patch files
+```
 
 ## Main Features
 
