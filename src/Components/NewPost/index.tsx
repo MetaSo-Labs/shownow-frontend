@@ -6,9 +6,9 @@ import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumb
 import { CloseOutlined, FileImageOutlined, LockOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { AttachmentItem, convertToFileList, image2Attach, processFile } from "@/utils/file";
-import { CreateOptions, IBtcEntity, IMvcEntity, MvcTransaction } from "@metaid/metaid";
+import { CreateOptions, IBtcEntity, IMvcEntity, MvcTransaction } from "@feiyangl1020/metaid";
 import { isEmpty, isNil, set } from "ramda";
-import { BASE_MAN_URL, curNetwork, FLAG } from "@/config";
+import { ASSIST_ENDPOINT, BASE_MAN_URL, curNetwork, FLAG } from "@/config";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import BuzzCard from "../Cards/BuzzCard";
 import Buzz from "../Buzz";
@@ -345,28 +345,36 @@ export default ({ show, onClose, quotePin }: Props) => {
                     history.push('/home', { buzzId: new Date().getTime() })
                 }
             } else {
-                const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity
+                const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity;
+                let createRes: any
+                if (finalBody.attachments && finalBody.attachments.length > 0) {
+                    createRes = await buzzEntity!.create({
+                        data: { body: JSON.stringify({ ...finalBody }) },
+                        options: {
+                            network: curNetwork,
+                            signMessage: 'create buzz',
+                            serialAction: 'finish',
+                            transactions: fileTransactions,
+                            service: fetchServiceFee('post_service_fee_amount', 'MVC'),
+                        },
+                    })
+                } else {
+                    createRes = await buzzEntity!.create({
+                        data: { body: JSON.stringify({ ...finalBody }) },
+                        options: {
+                            assistDomian: ASSIST_ENDPOINT,
+                            network: curNetwork,
+                            signMessage: 'create buzz',
+                            serialAction: 'finish',
+                            transactions: fileTransactions,
+                            service: fetchServiceFee('post_service_fee_amount', 'MVC'),
 
-                // await createPinWithAssist({ body: JSON.stringify({ ...finalBody }), path: `${showConf?.host || ''}/protocols/simplebuzz`, operation: 'create' },
-                //     {
-                //         network: curNetwork,
-                //         signMessage: 'create buzz',
-                //         serialAction: 'finish',
-                //         service: fetchServiceFee('post_service_fee_amount', 'MVC'),
-                //         assistDomian: 'https://www.metaso.network/assist-open-api-testnet'
-                //     })
-                // debugger
-                // return
-                const createRes = await buzzEntity!.create({
-                    data: { body: JSON.stringify({ ...finalBody }) },
-                    options: {
-                        network: curNetwork,
-                        signMessage: 'create buzz',
-                        serialAction: 'finish',
-                        transactions: fileTransactions,
-                        service: fetchServiceFee('post_service_fee_amount', 'MVC'),
-                    },
-                })
+                        },
+                    })
+                    debugger
+                }
+
+
 
                 console.log(fileTransactions.map(tx => tx.txComposer.getTxId()));
                 if (!isNil(createRes?.txid)) {
@@ -452,7 +460,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 : errorMessage;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             message.error(toastMessage);
-           
+
 
         }
         setIsAdding(false);

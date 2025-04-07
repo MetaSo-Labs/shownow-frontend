@@ -91,7 +91,7 @@ export default () => {
         return _hostValue.data.list.reduce((acc, cur) => acc + Number(cur.mdvDeltaValue), 0)
     }, [_hostValue])
 
-    const { data: _listValue2, isFetching: _listValueFetching } = useQuery({
+    const { data: _listValue, isFetching: _listValueFetching } = useQuery({
         queryKey: ['_listhostValue', startAndEndHeight, admin?.host],
         enabled: Boolean(admin?.host && startAndEndHeight),
         queryFn: () => {
@@ -107,35 +107,35 @@ export default () => {
         }
     })
 
-    const _listValue = {
-        "code": 1,
-        "message": "ok",
-        "data": {
-            "list": [
-                {
-                    "address": "n18EnQDAEh47fYQbLJdzt6xdw8TvUs7haL",
-                    "dataValue": "614.5904"
-                },
-                {
-                    "address": "mvsDHZ9kG68rRhzcswemCjvDpUUoWqtzfz",
-                    "dataValue": "350.8537"
-                },
-                {
-                    "address": "mqMrLrQYAaZiZUgSeVoCwrG1QSoAnWM5Dk",
-                    "dataValue": "319.4476"
-                },
-                {
-                    "address": "mpvWryQ8FTY9QXhDMoJGQFHgsCRfUDR6vH",
-                    "dataValue": "286.097"
-                },
-                {
-                    "address": "mkrSFdDJTQkFE3bWycQj1ZhzYBRLd87NVo",
-                    "dataValue": "283.6199"
-                },
-            ],
-            "total": 42
-        }
-    }
+    // const _listValue = {
+    //     "code": 1,
+    //     "message": "ok",
+    //     "data": {
+    //         "list": [
+    //             {
+    //                 "address": "n18EnQDAEh47fYQbLJdzt6xdw8TvUs7haL",
+    //                 "dataValue": "614.5904"
+    //             },
+    //             {
+    //                 "address": "mvsDHZ9kG68rRhzcswemCjvDpUUoWqtzfz",
+    //                 "dataValue": "350.8537"
+    //             },
+    //             {
+    //                 "address": "mqMrLrQYAaZiZUgSeVoCwrG1QSoAnWM5Dk",
+    //                 "dataValue": "319.4476"
+    //             },
+    //             {
+    //                 "address": "mpvWryQ8FTY9QXhDMoJGQFHgsCRfUDR6vH",
+    //                 "dataValue": "286.097"
+    //             },
+    //             {
+    //                 "address": "mkrSFdDJTQkFE3bWycQj1ZhzYBRLd87NVo",
+    //                 "dataValue": "283.6199"
+    //             },
+    //         ],
+    //         "total": 42
+    //     }
+    // }
 
     const successNotice = (txid: string) => {
         const key = `open${Date.now()}`;
