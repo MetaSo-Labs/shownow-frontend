@@ -1,5 +1,6 @@
 import { Avatar, Button, Card, ConfigProvider, Descriptions, Form, Input, InputNumber, message, Modal, notification, Select, Slider, Space, Table, TableProps, Tag, Typography } from "antd"
 import _mvc from "@/assets/mvc.png";
+import _btc from "@/assets/btc.png";
 import Decimal from "decimal.js";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -321,12 +322,12 @@ export default () => {
             layout="vertical"
             variant="filled"
             initialValues={{
-                network: 'MicrovisonChain',
+                network: 'Bitcoin',
             }}
             onFinish={handleTransfer}
         >
             <Form.Item label="Network" required name="network" >
-                <Input placeholder="input placeholder" size='large' prefix={<img src={_mvc} style={{ width: 40, height: 40 }}></img>} disabled />
+                <Input placeholder="input placeholder" size='large' prefix={<img src={_btc} style={{ width: 40, height: 40 }}></img>} disabled />
             </Form.Item>
             <Form.Item label='Token' name="transferTickerId"
                 rules={[{ required: true }]}

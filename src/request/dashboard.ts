@@ -172,3 +172,20 @@ export async function setDistributionEnable(
     }),
   });
 }
+export async function setAssistEnable(
+  params: Pick<DB.LoginWithWallerDto, 'assist'>,
+  options?: { [key: string]: any }
+) {
+  return request<{
+    success: boolean;
+  }>(`${DASHBOARD_API}/users/admin-assist`, {
+    method: "POST",
+    data: params,
+    ...(options || {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}

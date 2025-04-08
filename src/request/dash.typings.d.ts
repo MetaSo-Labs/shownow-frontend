@@ -35,6 +35,7 @@ declare namespace DB {
     host: string;
     introduction: string;
     distribution: boolean;
+    assist: boolean;
   };
   type FeeDto = {
     id: number;

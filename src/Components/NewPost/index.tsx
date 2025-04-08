@@ -346,19 +346,8 @@ export default ({ show, onClose, quotePin }: Props) => {
                 }
             } else {
                 const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity;
-                let createRes: any
-                if (finalBody.attachments && finalBody.attachments.length > 0) {
-                    createRes = await buzzEntity!.create({
-                        data: { body: JSON.stringify({ ...finalBody }) },
-                        options: {
-                            network: curNetwork,
-                            signMessage: 'create buzz',
-                            serialAction: 'finish',
-                            transactions: fileTransactions,
-                            service: fetchServiceFee('post_service_fee_amount', 'MVC'),
-                        },
-                    })
-                } else {
+                let createRes: any;
+                if (admin?.assist && isEmpty(buzz.images) && !video) {
                     createRes = await buzzEntity!.create({
                         data: { body: JSON.stringify({ ...finalBody }) },
                         options: {
@@ -371,7 +360,17 @@ export default ({ show, onClose, quotePin }: Props) => {
 
                         },
                     })
-                    debugger
+                } else {
+                    createRes = await buzzEntity!.create({
+                        data: { body: JSON.stringify({ ...finalBody }) },
+                        options: {
+                            network: curNetwork,
+                            signMessage: 'create buzz',
+                            serialAction: 'finish',
+                            transactions: fileTransactions,
+                            service: fetchServiceFee('post_service_fee_amount', 'MVC'),
+                        },
+                    })
                 }
 
 

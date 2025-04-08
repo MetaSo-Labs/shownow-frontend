@@ -8,6 +8,7 @@ import Rpc from "../rpc";
 import BlockList from "./blockList";
 import Introduction from "./introduction";
 import Airdrop from "./airdrop";
+import Assist from "./assist";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
@@ -285,6 +286,11 @@ export default () => {
                     key: '6',
                     label: 'Token Airdrop',
                     children: <Airdrop />
+                },
+                {
+                    key: '7',
+                    label: 'Assist',
+                    children: <Assist />
                 },
             ],
             onChange: (key) => {
