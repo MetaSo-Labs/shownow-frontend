@@ -166,7 +166,7 @@ export default () => {
         try {
 
 
-            const { transferTickerId, amount, addressCount } = values;
+            const { transferTickerId, amount, addressCount,feeRate } = values;
             const token = list?.find(item => item.id === transferTickerId)
             if (!token) return;
             const { data: utxoList } = await getMrc20AddressUtxo({ address: admin!.host, tickId: String(transferTickerId), cursor: 0, size: 100 }, {
@@ -203,23 +203,27 @@ export default () => {
             const preAmount = new Decimal(amount).div(Number(addressCount)).toString()
             const publicKey = await window.metaidwallet.btc.getPublicKey();
             const publicKeySign =
-                await window.metaidwallet.btc.signMessage("metaid.market");
+                await window.metaidwallet.btc.signMessage("metaso.network");
             if (publicKeySign.status) throw new Error('Sign failed');
-            const authParams = { "X-Public-Key": publicKey, "X-Signature": publicKeySign }
+            const authParams = { "X-Public-Key": publicKey, "X-Signature": publicKeySign };
+            const totalValue = _listValue!.data!.list!.slice(0, Number(addressCount)).reduce((acc, cur) => acc + Number(cur.dataValue), 0);
+            const mrc20Outs = _listValue!.data!.list!.slice(0, Number(addressCount)).map((item) => {
+                return {
+                    amount: String(Math.floor(Number(item.dataValue) / totalValue * Number(amount))),
+                    address: item.address,
+                    outValue: 546,
+                    pkScript: getPkScriprt(item.address, curNetwork)
+                }
+            }).filter(item => Number(item.amount) > 0);
+            const totalAmount2 = mrc20Outs.reduce((acc, cur) => acc + Number(cur.amount), 0);
+
             const params: API.TransferMRC20PreReq = {
                 networkFeeRate: feeRate,
                 tickerId: transferTickerId,
                 changeAddress: admin!.host,
                 changeOutValue: 546,
                 transfers: selectedUtxos,
-                mrc20Outs: _listValue!.data!.list!.slice(0, Number(addressCount)).map((item) => {
-                    return {
-                        amount: preAmount,
-                        address: item.address,
-                        outValue: 546,
-                        pkScript: getPkScriprt(item.address, curNetwork)
-                    }
-                }),
+                mrc20Outs: mrc20Outs,
             }
             const { code, message, data } = await transfertMrc20Pre(params, {
                 headers: {
@@ -242,7 +246,7 @@ export default () => {
                 }}>
                     <Descriptions column={1} items={[{
                         label: 'Amount',
-                        children: <NumberFormat value={amount} suffix={''}></NumberFormat>,
+                        children: <NumberFormat value={totalAmount2} suffix={''}></NumberFormat>,
                     }, {
                         label: 'Receive Address',
                         children: <Space wrap>{
@@ -269,7 +273,7 @@ export default () => {
 
             const ret = await transferMrc20Commit({ orderId: data.orderId, commitTxRaw: rawTx, commitTxOutIndex: 0, revealPrePsbtRaw }, { headers: { ...authParams } });
             if (ret.code !== 0) throw new Error(ret.message);
-            successNotice(ret.data.commitTxId);
+            successNotice(ret.data.revealTxId);
 
         } catch (e: any) {
             console.error(e)
@@ -294,21 +298,21 @@ export default () => {
             },
         },
         {
-            title: <Trans>User</Trans>,
+            title: <>User</>,
             dataIndex: 'address',
             key: 'name',
             minWidth: 160,
             render: (text, record, index) => <PendingUser address={text} />,
         },
         {
-            title: <Trans>Total Value</Trans>,
+            title: <>Total Value</>,
             dataIndex: 'dataValue',
             key: 'dataValue',
             align: 'center',
             render: (text, record, index) => <NumberFormat value={text} />,
         },
         {
-            title: <Trans>Proportion%</Trans>,
+            title: <>Proportion%</>,
             dataIndex: 'dataValue',
             key: 'Progress',
             align: 'center',
@@ -323,6 +327,7 @@ export default () => {
             variant="filled"
             initialValues={{
                 network: 'Bitcoin',
+                feeRate: feeRate,
             }}
             onFinish={handleTransfer}
         >
@@ -349,6 +354,15 @@ export default () => {
                 <InputNumber
                     size="large"
                     style={{ width: '100%', lineHeight: '60px' }}
+
+                />
+            </Form.Item>
+
+            <Form.Item label='Fee Rate' name="feeRate" rules={[{ required: true }, { min: 1, type: 'number' }]}>
+                <InputNumber
+                    size="large"
+                    style={{ width: '100%', lineHeight: '60px' }}
+                    suffix='sat/vB'
 
                 />
             </Form.Item>

@@ -1,18 +1,19 @@
 import { ChromeOutlined, DollarOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { PageContainer, ProLayout } from '@ant-design/pro-components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Dropdown } from 'antd';
+import { ConfigProvider, Dropdown } from 'antd';
 import { useState } from 'react';
 import { Link, Outlet, useModel, history, useLocation } from 'umi';
 import _defaultAvatar from '@/assets/defaultAvatar.svg'
 import VersionContorl from './VersionContorl';
+import enUS from 'antd/locale/en_US';
 const queryClient = new QueryClient()
 export default () => {
     const location = useLocation();
     const path = location.pathname;
     const [pathname, setPathname] = useState(path);
     const { admin } = useModel('dashboard')
-    return <QueryClientProvider client={queryClient}><div
+    return <ConfigProvider locale={enUS}><QueryClientProvider client={queryClient}><div
         style={{
             height: '100vh',
         }}
@@ -71,7 +72,7 @@ export default () => {
 
             actionsRender={(props) => {
                 return [
-                   <VersionContorl />
+                    <VersionContorl />
                 ];
             }}
             menuItemRender={(item, dom) => (
@@ -91,4 +92,5 @@ export default () => {
         </ProLayout>
     </div>
     </QueryClientProvider>
+    </ConfigProvider>
 };

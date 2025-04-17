@@ -3,6 +3,7 @@ import {
   DASHBOARD_ADMIN_PUBKEY,
   DASHBOARD_SIGNATURE,
   MARKET_ENDPOINT,
+  METASO_BASE_API,
 } from "@/config";
 import { IBtcConnector } from "@metaid/metaid";
 import axios from "axios";
@@ -724,7 +725,7 @@ export async function transfertMrc20Pre(
   options?: { [key: string]: any }
 ) {
   return request<API.Ret<API.TransferMRC20PreRes>>(
-    `${MARKET_ENDPOINT}/api/v1/inscribe/mrc20/transfer/pre`,
+    `${METASO_BASE_API}/v1/inscribe/mrc20/transfer/pre`,
     {
       method: "POST",
       data: params,
@@ -748,7 +749,7 @@ export async function transferMrc20Commit(
       commitTxId: string;
       revealTxId: string;
     }>
-  >(`${MARKET_ENDPOINT}/api/v1/inscribe/mrc20/transfer/commit`, {
+  >(`${METASO_BASE_API}/v1/inscribe/mrc20/transfer/commit`, {
     method: "POST",
     data: params,
     ...(options || {}),

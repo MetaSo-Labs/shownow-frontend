@@ -60,6 +60,9 @@
   "pnpm": {
     "patchedDependencies": {
       "@metaid/metaid@1.5.19": "patches/@metaid__metaid@1.5.19.patch"
+    },
+    "overrides": {
+      "elliptic": "^6.6.1"
     }
   }
 }
