@@ -18,7 +18,6 @@ import { InscribeData } from "node_modules/@metaid/metaid/dist/core/entity/btc";
 import * as crypto from 'crypto'
 import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, openWindowTarget, sleep } from "@/utils/utils";
 import { postPayBuzz, postVideo } from "@/utils/buzz";
-import { IBtcConnector } from "metaid/dist";
 import { getDeployList, getMRC20Info, getUserInfo } from "@/request/api";
 import defaultAvatar from '@/assets/avatar.svg'
 import UserAvatar from "../UserAvatar";
@@ -27,7 +26,6 @@ import NFTModal from "../NFTModal";
 import SelectChain from "./SelectChain";
 import { getBuzzSchemaWithCustomHost } from "@/entities/buzz";
 import { v4 as uuidv4 } from 'uuid';
-import { createPinWithAssist } from "@/utils/mvcCreatePin";
 const { TextArea } = Input;
 type Props = {
     show: boolean,
@@ -510,7 +508,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 <SelectChain chainNet={chainNet} setChainNet={setChainNet} />
                 <Col span={24}><Typography.Text strong><Trans>Public</Trans></Typography.Text></Col>
                 <Col span={24}>
-                    <TextArea rows={4} placeholder={isQuoted ? formatMessage("Add a comment") : formatMessage("post_placeholder")} value={content} onChange={(e) => setContent(e.target.value)} />
+                    <TextArea autoSize={{ minRows: 4, maxRows: 16 }} placeholder={isQuoted ? formatMessage("Add a comment") : formatMessage("post_placeholder")} value={content} onChange={(e) => setContent(e.target.value)} />
                 </Col>
 
                 {
@@ -522,7 +520,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                             } onClick={() => setLock(!lock)} />
                         </Col>
                         {
-                            lock && <Col span={24}><TextArea rows={4} placeholder={formatMessage("encrypt content")} value={encryptContent} onChange={(e) => setEncryptContent(e.target.value)} /></Col>
+                            lock && <Col span={24}><TextArea autoSize={{ minRows: 4, maxRows: 16 }} placeholder={formatMessage("encrypt content")} value={encryptContent} onChange={(e) => setEncryptContent(e.target.value)} /></Col>
                         }
                     </>
                 }
