@@ -195,19 +195,28 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                     <Input.Search
                                         size="large"
                                         prefix={
-                                            <EditOutlined style={{ color: showConf?.brandColor }} />
+                                            <EditOutlined style={{ color: showConf?.brandColor }} onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (!isLogin) {
+                                                    setShowConnect(true)
+                                                    return
+                                                }
+                                                const isPass = checkUserSetting();
+                                                if (!isPass) return;
+                                                setShowPost(true)
+                                            }} />
                                         }
                                         placeholder={formatMessage({
                                             id: 'Search'
                                         })}
                                         style={{
-                                            height:52
+                                            height: 52
                                         }}
                                         variant="borderless"
                                         className='searchInput'
                                         allowClear
                                         enterButton
-                                        
+
                                         onSearch={(value) => {
                                             setSearchWord(value)
                                         }}
@@ -404,7 +413,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                     setShowPost(false)
                 }} />
                 {
-                    !md && <FloatButton style={{ bottom: 100 }} icon={<EditOutlined />} onClick={() => {
+                    (!md || !showConf?.showSliderMenu) && <FloatButton style={{ bottom: 100 }} icon={<EditOutlined />} onClick={() => {
                         if (!isLogin) {
                             setShowConnect(true)
                             return

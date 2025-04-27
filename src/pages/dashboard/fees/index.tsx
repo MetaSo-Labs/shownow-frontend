@@ -9,6 +9,8 @@ import BlockList from "./blockList";
 import Introduction from "./introduction";
 import Airdrop from "./airdrop";
 import Assist from "./assist";
+import { isValidBitcoinAddress } from "@/utils/utils";
+import { curNetwork } from "@/config";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
@@ -215,9 +217,15 @@ export default () => {
                     children: <ProCard ghost gutter={8} >
                         <ProForm<{
                             domainName: string;
+                            host: string;
                         }>
                             onFinish={async (values) => {
                                 try {
+                                    // 检查host 是不是 正确的btc地址
+                                    const valid = isValidBitcoinAddress(values.host, curNetwork)
+                                    if (!valid) {
+                                        throw new Error('Please enter a valid btc address')
+                                    }
                                     await saveDomain(values);
                                     await updateFees();
                                     message.success('Save successfully');
@@ -287,11 +295,11 @@ export default () => {
                     label: 'Token Airdrop',
                     children: <Airdrop />
                 },
-                {
-                    key: '7',
-                    label: 'Assist',
-                    children: <Assist />
-                },
+                // {
+                //     key: '7',
+                //     label: 'Assist',
+                //     children: <Assist />
+                // },
             ],
             onChange: (key) => {
                 setActiveKey(key)
