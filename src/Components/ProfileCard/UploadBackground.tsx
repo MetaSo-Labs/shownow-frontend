@@ -56,7 +56,7 @@ const UploadBackground = (props: any) => {
     };
 
     const uploadButton = (
-        <Button block icon={<PlusOutlined />} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '240px', border: 'none' }} type='text'>
+        <Button block icon={<PlusOutlined />} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', border: 'none' }} type='text'>
             <Trans>Upload</Trans>
         </Button>
     );
@@ -71,14 +71,17 @@ const UploadBackground = (props: any) => {
 
             showUploadList={false}
             customRequest={handleUpload}
-            style={{ width: '100%', height: 240, padding: 0, boxSizing: 'border-box', overflow: 'hidden' }}
             className="setting-background-uploader"
 
         >
-            {imageUrl ? <div style={{ position: 'relative', width: '100%', height: 240, overflow: 'hidden',borderRadius: 8 }}>
-                <img src={imageUrl} alt="avatar" style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 8, overflow: 'hidden' }} />
-                <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} shape='circle' type='link' variant='link' icon={<FileImageFilled />}></Button>
-            </div> : uploadButton}
+            <div style={{ position: 'relative', width: '100%', height: 0, paddingBottom: '33.3333%', borderRadius: 10, overflow: 'hidden' }}>
+
+
+                {imageUrl ? <div style={{ position: 'absolute', width: '100%', height: '100%', overflow: 'hidden', borderRadius: 10 }}>
+                    <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 10, overflow: 'hidden' }} />
+                    <Button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 10, opacity: 0.7 }} shape='circle' type='primary' variant='link' icon={<FileImageFilled />}></Button>
+                </div> : uploadButton}
+            </div>
         </Upload.Dragger>
     );
 };

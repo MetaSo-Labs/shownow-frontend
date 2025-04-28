@@ -445,7 +445,7 @@ export default ({ show, onClose, quotePin }: Props) => {
             setNFTs([])
             onClose()
             queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
-            history.push('/home', { buzzId: new Date().getTime() })
+            history.push('/home/new', { buzzId: new Date().getTime() })
 
         } catch (error) {
             console.log('error', error);

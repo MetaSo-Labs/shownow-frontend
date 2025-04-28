@@ -45,14 +45,16 @@ export default ({ address }: Props) => {
     return (
         <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} bordered={false} cover={
             <div
-                style={{ height: 240, objectFit: 'cover', background: showConf?.gradientColor, borderRadius: 10 }}
-            // alt="example"
-            // src={defaultImg}
+                style={{ height: 0, position: 'relative', width: '100%', background: showConf?.gradientColor, borderRadius: 10, paddingBottom: '33.333%' }}
+
             >
-                {
-                    profileUserData?.data?.background &&
-                    <img src={`${BASE_MAN_URL}` + profileUserData?.data?.background} alt="example" style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 10 }} />
-                }
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: '10px 10px 0 0', overflow: 'hidden', width: '100%', height: '100%' }}>
+                    {
+                        profileUserData?.data?.background &&
+                        <img src={`${BASE_MAN_URL}` + profileUserData?.data?.background} alt="example" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    }
+                </div>
+
 
             </div>
         }>

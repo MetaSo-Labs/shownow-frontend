@@ -140,11 +140,15 @@ export default () => {
             >
                 <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} bordered={false} cover={
                     <div
-                        style={{ height: 240, objectFit: 'cover', borderRadius: 10 }}
+                        style={{ width: '100%', height: 0, paddingBottom: '33.333%', borderRadius: 10, position: 'relative' }}
                     >
-                        <Form.Item name='background' wrapperCol={{ span: 24 }} style={{ width: '100%' }}>
-                            <UploadBackground />
-                        </Form.Item>
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: '10px 10px 0 0', overflow: 'hidden', width: '100%', height: '100%' }}>
+                            <Form.Item name='background' wrapperCol={{ span: 24 }} style={{ width: '100%', height: '100%' }} noStyle>
+                                <UploadBackground />
+                            </Form.Item>
+                        </div>
+
+
 
                     </div>
                 }>
