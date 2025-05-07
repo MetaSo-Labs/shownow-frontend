@@ -238,6 +238,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 // finalBody.attachments = [...finalBody.attachments || [], 'metafile://video/' + fileTransactions[fileTransactions.length - 1].txComposer.getTxId() + 'i0']
             }
             if (!isEmpty(buzz.images)) {
+               
                 const fileOptions: CreateOptions[] = [];
                 for (const image of buzz.images) {
                     fileOptions.push({
@@ -248,7 +249,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                         path: `${showConf?.host || ''}/file`
                     });
                 }
-                if (chain === 'btc') {
+                if (chainNet === 'btc') {
                     const fileEntity = await btcConnector!.use('file');
                     const imageRes = await fileEntity.create({
                         dataArray: fileOptions,

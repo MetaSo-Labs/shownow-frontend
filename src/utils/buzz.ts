@@ -3,17 +3,18 @@ import {
   IMvcConnector,
   IMvcEntity,
   MvcTransaction,
-} from "@metaid/metaid";
+} from "@feiyangl1020/metaid";
 import { AttachmentItem, processFile } from "./file";
 import {
   decryptPayloadAES,
   encryptPayloadAES,
   generateAESKey,
   sha256sum,
+  sleep,
 } from "./utils";
 import { curNetwork, FLAG } from "@/config";
-import { IBtcConnector } from "metaid/dist";
-import { InscribeData } from "metaid/src/core/entity/btc";
+import { IBtcConnector } from "@feiyangl1020/metaid";
+import { InscribeData } from "@feiyangl1020/metaid/src/core/entity/btc";
 import Decimal from "decimal.js";
 import * as ecc from "@bitcoin-js/tiny-secp256k1-asmjs";
 import ECPairFactory, { ECPairInterface, SignerAsync } from "ecpair";
@@ -226,7 +227,7 @@ export const postVideo = async (
       // todo
     } else {
       const serialAction = (i + 1) % 4 === 0 ? "finish" : "combo";
-      const { transactions, txid, allTxid } = await mvcConnector!.createPin(
+      const { transactions, txid, txids } = await mvcConnector!.createPin(
         metaidData,
         {
           network: curNetwork,
@@ -235,12 +236,17 @@ export const postVideo = async (
           transactions: chunkTransactions,
         }
       );
+      console.log(txids, "txids");
+      console.log(txid, "txid");
+      if (serialAction === "finish") {
+        await sleep(20000);
+      }
 
-      if (allTxid || i === chunks.length - 1) {
-        if (allTxid) {
+      if (txids || i === chunks.length - 1) {
+        if (txids) {
           chunkList = [
             ...chunkList,
-            ...allTxid.map((txid: string) => {
+            ...txids.map((txid: string) => {
               return {
                 sha256: hash,
                 pinId: txid + "i0",

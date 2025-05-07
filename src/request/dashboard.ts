@@ -155,6 +155,23 @@ export async function uploadIcon(
   });
 }
 
+export async function uploadImage(
+  params: FormData,
+  options?: { [key: string]: any }
+) {
+  return request<any>(`${DASHBOARD_API}/users/upload`, {
+    method: "POST",
+    data: params,
+    ...(options || {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem(DASHBOARD_TOKEN),
+      },
+    }),
+  });
+}
+
+
+
 export async function setDistributionEnable(
   params: Pick<DB.LoginWithWallerDto, 'distribution'>,
   options?: { [key: string]: any }

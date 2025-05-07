@@ -24,6 +24,10 @@ declare namespace DB {
     like_service_fee_amount: number;
     checkLogin: boolean;
     tabs: string[];
+    banners: {
+      img: string;
+      link: string;
+    }[];
   };
 
   type LoginWithWallerDto = {

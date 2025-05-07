@@ -3,7 +3,7 @@ import { Avatar, Button, Card, Col, ColorPicker, ConfigProvider, Divider, Form, 
 import type { TabsProps } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
-import { DeleteOutlined, EditOutlined, LeftCircleFilled, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, LeftCircleFilled, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { useModel, history } from 'umi';
 import { fetchShowConfList, saveAndApply, saveConf } from '@/request/dashboard';
 import RcResizeObserver from 'rc-resize-observer';
@@ -15,6 +15,7 @@ import IndexPage from '@/pages/index';
 import './index.less'
 import { bitBuzzConf, showNowConf } from '@/models/dashboard';
 import SetIcon from './setIcon';
+import UploadImage from './UploadImage';
 
 const queryClient = new QueryClient()
 
@@ -444,6 +445,69 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
 
                     />
                 </div>
+                <Typography.Title level={5} style={{ marginTop: 24 }}>Banners</Typography.Title>
+                <Form
+
+                    name="banners"
+                    style={{ width: '100%' }}
+                    autoComplete="off"
+                    initialValues={{
+                        banners: styles?.banners
+                    }}
+                >
+                    <Form.List name="banners">
+                        {(fields, { add, remove }) => (
+                            <>
+                                {fields.map(({ key, name, ...restField }) => (
+                                    <div key={key} style={{ display: 'flex', marginBottom: 8, alignItems: 'center', gap: 8 }} >
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'img']}
+                                            rules={[{ required: true, message: 'Missing first name' }]}
+                                            noStyle
+                                        >
+                                            <UploadImage value={styles?.banners?.[name]?.img} onChange={(value) => {
+                                                if (styles) {
+                                                    const newBanners = [...(styles.banners ?? [])];
+                                                    newBanners[name] = { ...newBanners[name], img: value }
+                                                    setStyles({ ...styles, banners: newBanners });
+                                                }
+                                            }} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            {...restField}
+                                            name={[name, 'link']}
+                                            rules={[{ required: true, message: 'Missing last name' }]}
+                                            noStyle
+                                            style={{ flexGrow: 1 }}
+                                        >
+                                            <Input placeholder="Last Name" onChange={(value) => {
+                                                if (styles) {
+                                                    const newBanners = [...(styles.banners ?? [])];
+                                                    newBanners[name] = { ...newBanners[name], link: value.target.value }
+                                                    setStyles({ ...styles, banners: newBanners });
+                                                }
+                                            }} />
+                                        </Form.Item>
+                                        <MinusCircleOutlined onClick={() => {
+                                            if (styles) {
+                                                const newBanners = [...(styles.banners ?? [])];
+                                                newBanners.splice(name, 1);
+                                                setStyles({ ...styles, banners: newBanners });
+                                            }
+                                            remove(name)
+                                        }} />
+                                    </div>
+                                ))}
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Add Banner
+                                    </Button>
+                                </Form.Item>
+                            </>
+                        )}
+                    </Form.List>
+                </Form>
             </Space>,
         },
     ];
