@@ -147,10 +147,16 @@ export default ({
 
 
     const payBuzz = useMemo(() => {
-        let _summary = buzzItem!.content;
-        const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
-        const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
-        return isSummaryJson ? parseSummary : undefined;
+        try{
+            let _summary = buzzItem!.content;
+            const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
+            const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
+            return isSummaryJson ? parseSummary : undefined;
+        }catch(e){
+            console.error("Error parsing summary:", e);
+            return undefined;
+        }
+        
     }, [buzzItem]);
 
     const { data: accessControl } = useQuery({

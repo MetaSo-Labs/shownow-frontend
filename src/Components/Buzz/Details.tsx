@@ -169,10 +169,16 @@ export default ({
     }, [buzzItem, like, donate]);
 
     const payBuzz = useMemo(() => {
-        let _summary = buzzItem!.content;
-        const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
-        const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
-        return isSummaryJson ? parseSummary : undefined;
+        try{
+            let _summary = buzzItem!.content;
+            const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
+            const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
+            return isSummaryJson ? parseSummary : undefined;
+        }catch(e){
+            console.error("Error parsing buzz content:", e);
+            return undefined;
+        }
+        
     }, [buzzItem]);
 
     const isLiked = useMemo(() => {
@@ -268,12 +274,18 @@ export default ({
     };
     const quotePinId = useMemo(() => {
         if (isForward) return "";
-        let _summary = buzzItem!.content;
-        const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
-        const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
-        return isSummaryJson && !isEmpty(parseSummary?.quotePin ?? "")
-            ? parseSummary.quotePin
-            : "";
+        try{
+            let _summary = buzzItem!.content;
+            const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
+            const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
+            return isSummaryJson && !isEmpty(parseSummary?.quotePin ?? "")
+                ? parseSummary.quotePin
+                : "";
+        }catch(e){
+            console.error("Error parsing buzz content:", e);
+            return "";
+        }
+        
     }, [buzzItem, isForward]);
 
     const { isLoading: isQuoteLoading, data: quoteDetailData } = useQuery({

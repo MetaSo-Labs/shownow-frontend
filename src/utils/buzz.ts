@@ -516,8 +516,18 @@ export const decodePayBuzz = async (
   status: API.PayStatus;
 }> => {
   let _summary = buzzItem!.content;
-  const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
-  const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
+  
+  let isSummaryJson = _summary.startsWith('{') && _summary.endsWith('}');
+  // console.log("isjson", isSummaryJson);
+  // console.log("summary", summary);
+  let parseSummary = { content: '' };
+  try {
+    parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
+  } catch (e) {
+    console.log("parse summary error", e);
+    isSummaryJson = false;
+  }
+  // const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
   if (!isSummaryJson) {
     return {
       publicContent: _summary,

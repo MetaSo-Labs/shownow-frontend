@@ -42,10 +42,16 @@ const BuzzCard = ({
   // console.log('buzzitem', buzzItem);
   const isFromBtc = buzzItem?.chainName === 'btc';
   let summary = buzzItem!.contentSummary;
-  const isSummaryJson = summary.startsWith('{') && summary.endsWith('}');
+  let isSummaryJson = summary.startsWith('{') && summary.endsWith('}');
   // console.log("isjson", isSummaryJson);
   // console.log("summary", summary);
-  const parseSummary = isSummaryJson ? JSON.parse(summary) : {};
+  let parseSummary = { content: '' };
+  try {
+    parseSummary = isSummaryJson ? JSON.parse(summary) : {};
+  } catch (e) {
+    console.log("parse summary error", e);
+    isSummaryJson = false;
+  }
 
   summary = isSummaryJson ? parseSummary.content : summary;
 
@@ -551,7 +557,7 @@ const BuzzCard = ({
             className='flex flex-col gap-2'
             onClick={() => onBuzzDetail && onBuzzDetail(buzzItem.id)}
           >
-           
+
           </div>
           <div>
             {!attachData.pending &&
