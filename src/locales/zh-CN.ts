@@ -94,5 +94,6 @@ export default {
   'Gas Fee': '矿工费',
   'Fee Rate': '费率',
   'Trade Confirm': '交易确认',
+  'Reset': '重置',
 
 };

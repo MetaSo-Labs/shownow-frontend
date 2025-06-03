@@ -11,6 +11,7 @@ import Airdrop from "./airdrop";
 import Assist from "./assist";
 import { isValidBitcoinAddress } from "@/utils/utils";
 import { curNetwork } from "@/config";
+import Recommend from "./recommend";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
@@ -300,6 +301,11 @@ export default () => {
                 //     label: 'Assist',
                 //     children: <Assist />
                 // },
+                {
+                    key: '8',
+                    label: 'Recommend Users',
+                    children: <Recommend />
+                },
             ],
             onChange: (key) => {
                 setActiveKey(key)

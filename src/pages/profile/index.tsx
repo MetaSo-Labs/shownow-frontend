@@ -96,6 +96,7 @@ const Home = () => {
         <div style={{ paddingBottom: 12 }}>
             <ProfileCard address={address} />
         </div>
+        {isLoading && <Skeleton avatar paragraph={{ rows: 2 }} active />}
 
         <InfiniteScroll
             dataLength={tweets.length}

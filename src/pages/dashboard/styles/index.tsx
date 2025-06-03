@@ -424,6 +424,11 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                         options={
                             [
                                 {
+                                    label: 'For You',
+                                    value: 'recommend',
+                                    // disabled: true
+                                },
+                                {
                                     label: 'New',
                                     value: 'new',
                                 },
@@ -435,11 +440,11 @@ const Content = ({ showConf, onClose }: { showConf: DB.ShowConfDto, onClose: any
                                     label: 'Following',
                                     value: 'following',
                                 },
-                                {
-                                    label: 'For You',
-                                    value: 'recommend',
-                                    disabled: true
-                                },
+                                // {
+                                //     label: 'For You',
+                                //     value: 'recommend',
+                                //     // disabled: true
+                                // },
                             ]
                         }
 

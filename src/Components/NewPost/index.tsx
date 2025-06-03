@@ -26,6 +26,7 @@ import NFTModal from "../NFTModal";
 import SelectChain from "./SelectChain";
 import { getBuzzSchemaWithCustomHost } from "@/entities/buzz";
 import { v4 as uuidv4 } from 'uuid';
+import { clearDraftFiles, deleteDraftFile, getUploadDraftList, saveUploadItemsToDraft } from "@/utils/idb";
 const { TextArea } = Input;
 type Props = {
     show: boolean,
@@ -42,12 +43,12 @@ export default ({ show, onClose, quotePin }: Props) => {
 
     const isQuoted = !isNil(quotePin);
 
-    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting, isLogin } = useModel('user')
+    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting, isLogin, setMockBuzz } = useModel('user')
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
     const { showConf, fetchServiceFee, manPubKey, admin } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
-    const [video, setVideo] = useState<any>();
-    const [content, setContent] = useState('');
+    const [video, _setVideo] = useState<any>();
+    const [content, _setContent] = useState(localStorage.getItem('tmp_content') || '');
     const [encryptContent, setEncryptContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const queryClient = useQueryClient();
@@ -60,6 +61,21 @@ export default ({ show, onClose, quotePin }: Props) => {
     const [encryptFiles, setEncryptFiles] = useState<string[]>([]);
     const [showNFTModal, setShowNFTModal] = useState(false);
     const [nfts, setNFTs] = useState<API.NFT[]>([]);
+
+    // const setImages = (images: any[]) => {
+    //     images ? localStorage.setItem('tmp_images', JSON.stringify(images)) : localStorage.removeItem('tmp_images');
+    //     _setImages(images);
+    // }
+
+    const setContent = (content: string) => {
+        localStorage.setItem('tmp_content', content);
+        _setContent(content);
+    }
+
+    const setVideo = (video: any) => {
+        // video ? localStorage.setItem('tmp_video', JSON.stringify(video)) : localStorage.removeItem('tmp_video');
+        _setVideo(video);
+    }
 
     const handleBeforeUpload = (file: any) => {
         const isImage = file.type.startsWith('image/');
@@ -74,8 +90,24 @@ export default ({ show, onClose, quotePin }: Props) => {
         }
         const previewUrl = URL.createObjectURL(file);
         setImages((prevImages) => [...prevImages, { file, previewUrl }]);
+        saveUploadItemsToDraft([...images, { file, previewUrl }].map(item => ({
+            uid: item.file.uid,
+            file: item.file,
+            previewUrl: item.previewUrl
+        })));
         return false;
     };
+
+    const reset = () => {
+        setContent('')
+        setImages([])
+        setVideo(undefined)
+        setEncryptContent('')
+        setEncryptFiles([])
+        setNFTs([])
+        setLock(false)
+        clearDraftFiles()
+    }
 
     const handleVideoBeforeUpload = (file: any) => {
         const isVideo = file.type.startsWith('video/');
@@ -92,7 +124,9 @@ export default ({ show, onClose, quotePin }: Props) => {
         return false;
     }
     const handleRemoveImage = (index: number) => {
+        const image = images[index];
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+        deleteDraftFile(image.uid || image.file?.uid)
     };
     const handleRemoveVideo = () => {
         setVideo(undefined);
@@ -238,7 +272,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 // finalBody.attachments = [...finalBody.attachments || [], 'metafile://video/' + fileTransactions[fileTransactions.length - 1].txComposer.getTxId() + 'i0']
             }
             if (!isEmpty(buzz.images)) {
-               
+
                 const fileOptions: CreateOptions[] = [];
                 for (const image of buzz.images) {
                     fileOptions.push({
@@ -338,10 +372,62 @@ export default ({ show, onClose, quotePin }: Props) => {
                     // await sleep(5000);
                     queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
                     message.success(`${isQuoted ? 'repost' : 'create'} buzz successfully`);
-                    setContent('');
-                    setImages([]);
+                    reset()
                     onClose();
-                    history.push('/home', { buzzId: new Date().getTime() })
+                    setMockBuzz({
+                        chainName: chainNet,
+                        commentCount: 0,
+                        content: JSON.stringify(finalBody),
+                        creator: user.address,
+                        blocked: false,
+                        id: createRes?.revealTxIds[0] + 'i0',
+                        likeCount: 0,
+                        host: (showConf?.host || '').toLowerCase(),
+                        number: 0,
+                        donate: [],
+                        MogoID: '',
+                        address: user.address,
+                        contentBody: null,
+                        contentLength: 0,
+                        contentType: 'text/plain;utf-8',
+                        createMetaId: user.metaid,
+                        dataValue: 0,
+                        donateCount: 0,
+                        encryption: '0',
+                        genesisFee: 0,
+                        genesisHeight: 0,
+                        genesisTransaction: createRes?.revealTxIds[0],
+                        hot: 0,
+                        initialOwner: user.address,
+                        isTransfered: false,
+                        status: 0,
+                        timestamp: Math.floor(new Date().getTime() / 1000),
+                        operation: 'create',
+                        path: `/protocols/simplebuzz`,
+                        output: '',
+                        outputValue: 1,
+                        parentPath: '',
+                        pop: '',
+                        popLv: -1,
+                        preview: "",
+                        shareCount: 0,
+                        metaid: user.metaid,
+                        txIndex: 0,
+                        txInIndex: 0,
+                        offset: 0,
+                        location: '',
+                        originalPath: '',
+                        version: '1.0.0',
+                        contentTypeDetect: 'text/plain;utf-8',
+                        contentSummary: JSON.stringify(finalBody),
+                        originalId: '',
+                        mrc20MintId: [],
+                        like: []
+
+
+
+                    })
+                    history.push('/home/new', { buzzId: new Date().getTime() })
                 }
             } else {
                 const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity;
@@ -379,11 +465,63 @@ export default ({ show, onClose, quotePin }: Props) => {
                     // await sleep(5000);
                     queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] })
                     message.success(`${isQuoted ? 'repost' : 'create'} buzz successfully`)
-                    setContent('')
-                    setImages([])
+                    reset()
                     onClose();
                     setNFTs([])
-                    history.push('/home', { buzzId: new Date().getTime() })
+                    setMockBuzz({
+                        chainName: chainNet,
+                        commentCount: 0,
+                        content: JSON.stringify(finalBody),
+                        creator: user.address,
+                        blocked: false,
+                        id: createRes.txid + 'i0',
+                        likeCount: 0,
+                        host: (showConf?.host || '').toLowerCase(),
+                        number: 0,
+                        donate: [],
+                        MogoID: '',
+                        address: user.address,
+                        contentBody: null,
+                        contentLength: 0,
+                        contentType: 'text/plain;utf-8',
+                        createMetaId: user.metaid,
+                        dataValue: 0,
+                        donateCount: 0,
+                        encryption: '0',
+                        genesisFee: 0,
+                        genesisHeight: 0,
+                        genesisTransaction: createRes.txid,
+                        hot: 0,
+                        initialOwner: user.address,
+                        isTransfered: false,
+                        status: 0,
+                        timestamp: Math.floor(new Date().getTime() / 1000),
+                        operation: 'create',
+                        path: `/protocols/simplebuzz`,
+                        output: '',
+                        outputValue: 1,
+                        parentPath: '',
+                        pop: '',
+                        popLv: -1,
+                        preview: "",
+                        shareCount: 0,
+                        metaid: user.metaid,
+                        txIndex: 0,
+                        txInIndex: 0,
+                        offset: 0,
+                        location: '',
+                        originalPath: '',
+                        version: '1.0.0',
+                        contentTypeDetect: 'text/plain;utf-8',
+                        contentSummary: JSON.stringify(finalBody),
+                        originalId: '',
+                        mrc20MintId: [],
+                        like: []
+
+
+
+                    })
+                    history.push('/home/new', { buzzId: new Date().getTime() })
                 }
             }
 
@@ -421,7 +559,7 @@ export default ({ show, onClose, quotePin }: Props) => {
             if (payType === 'btc' && payAmount <= 0) {
                 throw new Error('Please input valid pay amount')
             }
-            await postPayBuzz({
+            const { payload, pid } = await postPayBuzz({
                 content: content,
                 encryptImages: await image2Attach(convertToFileList(encryptImages)),
                 publicImages: await image2Attach(convertToFileList(publicImages)),
@@ -441,11 +579,63 @@ export default ({ show, onClose, quotePin }: Props) => {
                 String(payType),
                 IdCoin
             )
-            setContent('')
-            setImages([])
-            setNFTs([])
+            reset()
             onClose()
             queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
+            // setMockBuzz({
+            //     chainName: chainNet,
+            //     commentCount: 0,
+            //     content: JSON.stringify(payload),
+            //     creator: user.address,
+            //     blocked: false,
+            //     id: pid,
+            //     likeCount: 0,
+            //     host: (showConf?.host || '').toLowerCase(),
+            //     number: 0,
+            //     donate: [],
+            //     MogoID: '',
+            //     address: user.address,
+            //     contentBody: null,
+            //     contentLength: 0,
+            //     contentType: 'text/plain;utf-8',
+            //     createMetaId: user.metaid,
+            //     dataValue: 0,
+            //     donateCount: 0,
+            //     encryption: '0',
+            //     genesisFee: 0,
+            //     genesisHeight: 0,
+            //     genesisTransaction: pid.substring(0, pid.length - 2),
+            //     hot: 0,
+            //     initialOwner: user.address,
+            //     isTransfered: false,
+            //     status: 0,
+            //     timestamp: Math.floor(new Date().getTime() / 1000),
+            //     operation: 'create',
+            //     path: `/protocols/paybuzz`,
+            //     output: '',
+            //     outputValue: 1,
+            //     parentPath: '',
+            //     pop: '',
+            //     popLv: -1,
+            //     preview: "",
+            //     shareCount: 0,
+            //     metaid: user.metaid,
+            //     txIndex: 0,
+            //     txInIndex: 0,
+            //     offset: 0,
+            //     location: '',
+            //     originalPath: '',
+            //     version: '1.0.0',
+            //     contentTypeDetect: 'text/plain;utf-8',
+            //     contentSummary: JSON.stringify(payload),
+            //     originalId: '',
+            //     mrc20MintId: [],
+            //     like: []
+
+
+
+            // })
+
             history.push('/home/new', { buzzId: new Date().getTime() })
 
         } catch (error) {
@@ -494,6 +684,19 @@ export default ({ show, onClose, quotePin }: Props) => {
             didCancel = true
         }
     }, [holdTokenID])
+
+    useEffect(() => {
+        if (show) {
+            getUploadDraftList().then((drafts) => {
+                console.log('drafts', drafts);
+                setImages(drafts || []);
+            })
+        }
+
+    }, [show])
+
+
+
 
 
     return <Popup onClose={onClose} show={show} modalWidth={640} closable title={!isQuoted ? <Trans>New Buzz</Trans> : <Trans>Repost</Trans>}>
@@ -740,9 +943,15 @@ export default ({ show, onClose, quotePin }: Props) => {
 
 
                 </Space>
-                <Button shape='round' style={{ background: showConf?.gradientColor, color: showConf?.colorButton }} loading={isAdding} onClick={onCreateSubmit}>
-                    <Trans>Post</Trans>
-                </Button>
+                <Space>
+                    <Button shape='round'  type='text' onClick={reset}>
+                        <Trans wrapper>Reset</Trans>
+                    </Button>
+                    <Button shape='round' style={{ background: showConf?.gradientColor, color: showConf?.colorButton }} loading={isAdding} onClick={onCreateSubmit}>
+                        <Trans>Post</Trans>
+                    </Button>
+                </Space>
+
             </div>
         </div>
         <NFTModal show={showNFTModal} onClose={() => { setShowNFTModal(false) }} nfts={nfts} setNFTs={setNFTs} />

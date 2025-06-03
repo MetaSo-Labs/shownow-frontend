@@ -169,16 +169,16 @@ export default ({
     }, [buzzItem, like, donate]);
 
     const payBuzz = useMemo(() => {
-        try{
+        try {
             let _summary = buzzItem!.content;
             const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
             const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
             return isSummaryJson ? parseSummary : undefined;
-        }catch(e){
+        } catch (e) {
             console.error("Error parsing buzz content:", e);
             return undefined;
         }
-        
+
     }, [buzzItem]);
 
     const isLiked = useMemo(() => {
@@ -274,18 +274,18 @@ export default ({
     };
     const quotePinId = useMemo(() => {
         if (isForward) return "";
-        try{
+        try {
             let _summary = buzzItem!.content;
             const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
             const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
             return isSummaryJson && !isEmpty(parseSummary?.quotePin ?? "")
                 ? parseSummary.quotePin
                 : "";
-        }catch(e){
+        } catch (e) {
             console.error("Error parsing buzz content:", e);
             return "";
         }
-        
+
     }, [buzzItem, isForward]);
 
     const { isLoading: isQuoteLoading, data: quoteDetailData } = useQuery({
@@ -549,7 +549,7 @@ export default ({
                     borderColor: isForward ? colorBorder : colorBorderSecondary,
                 },
                 body: {
-                    paddingTop:12,
+                    paddingTop: 12,
                 }
             }}
             title={
@@ -565,13 +565,16 @@ export default ({
                         className="avatar"
                         style={{ cursor: "pointer", position: "relative" }}
                     >
-                        <UserAvatar src={currentUserInfoData.data?.avatar} size={40} />
+                        <UserAvatar src={currentUserInfoData.data?.avatar} size={40} onClick={(e) => {
+                            e.stopPropagation();
+                            history.push(`/profile/${buzzItem.creator}`);
+                        }} />
                         <FollowIconComponent
                             metaid={currentUserInfoData.data?.metaid || ""}
                         />
                     </div>
                     <div
-                        style={{ display: "flex", flexDirection: "column", gap: 8 }}
+                        style={{ display: "flex", flexDirection: "column", gap: 8, cursor: "pointer" }}
                         onClick={(e) => {
                             e.stopPropagation();
                             history.push(`/profile/${buzzItem.creator}`);
@@ -596,7 +599,7 @@ export default ({
 
         >
             {
-                buzzItem.blocked && <Alert  message={
+                buzzItem.blocked && <Alert message={
                     <Trans>This Buzz has been blocked by the administrator.</Trans>
                 } type="warning" banner />
             }

@@ -195,6 +195,11 @@ export const postPayBuzz = async (
       transactions: [...transactions],
     });
   }
+
+  return {
+    payload: payload,
+    pid,
+  };
 };
 
 export const postVideo = async (
@@ -516,11 +521,11 @@ export const decodePayBuzz = async (
   status: API.PayStatus;
 }> => {
   let _summary = buzzItem!.content;
-  
-  let isSummaryJson = _summary.startsWith('{') && _summary.endsWith('}');
+
+  let isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
   // console.log("isjson", isSummaryJson);
   // console.log("summary", summary);
-  let parseSummary = { content: '' };
+  let parseSummary = { content: "" };
   try {
     parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
   } catch (e) {

@@ -1,12 +1,14 @@
 import { Tabs } from "antd";
 import { TabsProps } from "antd/lib";
-import { useMatch, useModel } from "umi";
+import { useLocation, useMatch, useModel, useSearchParams } from "umi";
 import FollowPanel from "./followPanel";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default () => {
-    const match = useMatch('/follow/:metaid');
-    const { btcConnector, user } = useModel('user');
+    const match = useMatch('/follow/:metaid')
+    const { search } = useLocation();
+    const [type, setType] = useState<string>();
+    const { user } = useModel('user');
     const metaid = useMemo(() => {
         if (!match || !match.params.metaid) {
             return user?.metaid || '';
@@ -14,8 +16,16 @@ export default () => {
             return match.params.metaid;
         }
     }, [match, user])
+
+    useEffect(() => {
+        const params = new URLSearchParams(search);
+        const type = params.get('type') || 'following';
+        setType(type);
+    }, [search])
     const onChange = (key: string) => {
-        console.log(key);
+       
+        setType(key);
+
     };
     const items: TabsProps['items'] = [
         {
@@ -29,5 +39,5 @@ export default () => {
             children: <FollowPanel metaid={metaid} type="follower" />,
         },
     ];
-    return <Tabs defaultActiveKey="following" items={items} onChange={onChange} />;
+    return <Tabs items={items} activeKey={type} onChange={onChange} />;
 }

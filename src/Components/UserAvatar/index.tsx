@@ -5,11 +5,13 @@ import defaultAvatar from '@/assets/defaultAvatar.svg'
 type Props = {
     src: string | null | undefined;
     size?: number;
+    onClick?: (e:any) => void;
 }
 export default (
     {
         src,
-        size = 40
+        size = 40,
+        onClick
     }: Props
 ) => {
     return <Avatar style={{
@@ -24,7 +26,7 @@ export default (
     }} src={src ? (src.startsWith('http') ? '' : BASE_MAN_URL) + src : defaultAvatar} onError={({ currentTarget }) => {
         currentTarget.onerror = null
         currentTarget.src = defaultAvatar;
-    }}></img>} size={size} >
+    }}></img>} size={size}  onClick={onClick} alt="avatar" >
 
     </Avatar>
 }

@@ -14,7 +14,7 @@ import Tweet, { TweetCard } from "../tweet";
 const { useBreakpoint } = Grid
 
 const Home = () => {
-    const { btcConnector, user } = useModel('user')
+    const { btcConnector, user, mockBuzz } = useModel('user')
     const [open, setOpen] = useState(false)
     const [currentBuzzId, setCurrentBuzzId] = useState('');
     const containerRef = useRef<any>();
@@ -41,10 +41,17 @@ const Home = () => {
         });
 
     const tweets = useMemo(() => {
-        return data ? data?.pages.reduce((acc, item) => {
+        const _list: API.Buzz[] = data ? data?.pages.reduce((acc, item) => {
             return [...acc || [], ...(item.data.list ?? []).filter(item => !item.blocked) || []]
-        }, []) : []
-    }, [data])
+        }, []) : [];
+
+        if (mockBuzz) {
+            const isContain = _list?.find(item => item.id === mockBuzz?.id)
+            return isContain ? _list : [mockBuzz, ..._list,]
+        }
+
+        return _list
+    }, [data, mockBuzz])
 
     // 数据更新后检查高度
     useEffect(() => {

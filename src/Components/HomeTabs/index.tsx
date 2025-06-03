@@ -24,7 +24,7 @@ const items: TabsProps['items'] = [
         key: 'recommend',
         label: <Trans>For You</Trans>,
         children: null,
-        disabled: true
+        // disabled: true
 
     },
 ];
@@ -35,16 +35,6 @@ export default () => {
     const [curMenu, setCurMenu] = useState<string>('home');
     const path = location.pathname;
     const { showConf } = useModel('dashboard')
-    useEffect(() => {
-        if (path === '/' || path === '/home') {
-            setCurMenu('new')
-        } else {
-            setCurMenu(path.split('/home/')[1])
-        }
-
-    }, [path])
-
-
     const items2: TabsProps['items'] = useMemo(() => {
         if (!showConf) return [items[0]];
         return showConf?.tabs.map((item) => {
@@ -53,6 +43,23 @@ export default () => {
             return _item
         }).filter(Boolean)
     }, [showConf, isLogin])
+    useEffect(() => {
+        if (path === '/' || path === '/home') {
+            // setCurMenu('new')
+            if (!items2) {
+                history.push('/home/new')
+            } else {
+                history.push(`/home/${items2[0].key}`)
+            }
+
+        } else {
+            setCurMenu(path.split('/home/')[1])
+        }
+
+    }, [path, items2])
+
+
+
     const onChange = (key: string) => {
         console.log(key);
     }

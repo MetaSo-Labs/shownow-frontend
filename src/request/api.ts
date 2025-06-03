@@ -353,6 +353,17 @@ export const fetchAllHotBuzzs = async (params: {
   });
 };
 
+export const fetchAllRecommendBuzzs = async (params: {
+  size: number;
+  lastId?: string;
+  userAddress?: string;
+}) => {
+  return request<API.BuzzListRet>(`${BASE_MAN_URL}/social/buzz/recommended`, {
+    method: "GET",
+    params,
+  });
+};
+
 export const searchBuzzs = async (params: {
   size: number;
   lastId?: string;
@@ -624,6 +635,24 @@ export const getBlockedList = async (params: {
   });
 };
 
+export const getRecommendedList = async (params: {
+  size: number;
+  cursor: number;
+}) => {
+  return request<{
+    code: number;
+    data: { list: API.BlockedItem[]; total: number };
+    message: string;
+  }>(`${BASE_MAN_URL}/metaso/settings/recommended/list`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+  });
+};
+
 export const addBlockedItem = async (params: {
   blockType: string;
   blockContent: string;
@@ -641,6 +670,23 @@ export const addBlockedItem = async (params: {
   });
 };
 
+export const addRecommendedItem = async (params: {
+  authorAddress: string;
+  authorName: string;
+}) => {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/metaso/settings/recommended/add`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+  });
+};
+
 export const deleteBlockedItem = async (params: {
   blockType: string;
   blockContent: string;
@@ -649,6 +695,22 @@ export const deleteBlockedItem = async (params: {
     code: number;
     message: string;
   }>(`${BASE_MAN_URL}/metaso/settings/blocked/delete`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+  });
+};
+
+export const deleteRecommendedItem = async (params: {
+  authorAddress: string;
+}) => {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/metaso/settings/recommended/delete`, {
     method: "GET",
     params,
     headers: {

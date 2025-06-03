@@ -19,11 +19,12 @@ export default defineConfig({
       wrappers: ["@/wrappers/auth"],
       layout: false,
       routes: [
-        { path: "", component: "@/pages/home" },
+        { path: "", redirect: "/home" },
         { path: "home", component: "@/pages/home" },
         { path: "home/new", component: "@/pages/home" },
         { path: "home/following", component: "@/pages/follow" },
         { path: "home/hot", component: "@/pages/hot" },
+        { path: "home/recommend", component: "@/pages/recommend" },
         { path: "search", component: "@/pages/search" },
         { path: "follow", component: "@/pages/followInfo" },
         { path: "follow/:address", component: "@/pages/followInfo" },

@@ -375,7 +375,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                             <Col span={24} md={showConf?.showRecommend ? 14 : 24} style={{ height: '100%', width: '100%', overflow: 'scroll', display: 'flex', flexDirection: 'column' }} >
                                 <div>
                                     {
-                                        ['/home', '/home/new', '/', '/home/following', '/home/hot', '/dashboard/styles'].includes(location.pathname) && <HomeTabs />
+                                        ['/home', '/home/new', '/', '/home/following', '/home/hot', '/home/recommend', '/dashboard/styles'].includes(location.pathname) && <HomeTabs />
                                     }
                                 </div>
                                 <div style={{ overflow: 'scroll', position: 'relative', flexGrow: 1 }}>
@@ -385,9 +385,10 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                         <Activity mode={location.pathname === '/' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         <Activity mode={location.pathname === '/home/new' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         <Activity mode={location.pathname === '/home/hot' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                        <Activity mode={location.pathname === '/home/recommend' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         <Activity mode={location.pathname === '/profile' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         {
-                                            !['/home', '/', '/profile', '/home/new', '/home/following', '/home/hot'].includes(location.pathname) && <Outlet />
+                                            !['/home', '/', '/profile', '/home/new', '/home/following', '/home/hot', '/home/recommend'].includes(location.pathname) && <Outlet />
                                         }
 
                                     </>}

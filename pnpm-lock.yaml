@@ -26,8 +26,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       '@feiyangl1020/metaid':
-        specifier: ^0.0.9
-        version: 0.0.9(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+        specifier: ^0.0.11
+        version: 0.0.11(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@ivliu/react-offscreen':
         specifier: ^1.0.8
         version: 1.0.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -82,6 +82,9 @@ importers:
       elliptic:
         specifier: ^6.6.1
         version: 6.6.1
+      idb:
+        specifier: ^8.0.3
+        version: 8.0.3
       lucide-react:
         specifier: ^0.454.0
         version: 0.454.0(react@18.3.1)
@@ -961,8 +964,8 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@feiyangl1020/metaid@0.0.9':
-    resolution: {integrity: sha512-kPyV3GUsqZFPOdOS1Qd/MSDHvh6zonCGK52o4Hk8GtZAVqbzOVVqtY65AgBat3Q5OMhnx7fP6oizhQaC7l/XvQ==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.9.tgz}
+  '@feiyangl1020/metaid@0.0.11':
+    resolution: {integrity: sha512-i6gmsVUfNE/Ziqwi7SunQhWXd4CxtoAeaRPta1vPFnoGzJPYwxSLPb/4TGfxkwXzpKkrSuLEnnC8VgpJIuZ+0A==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.11.tgz}
 
   '@floating-ui/core@0.6.2':
     resolution: {integrity: sha512-jktYRmZwmau63adUG3GKOAVCofBXkk55S/zQ94XOorAHhwqFIOFAy1rSp2N0Wp6/tGbe9V3u/ExlGZypyY17rg==, tarball: https://registry.npmjs.org/@floating-ui/core/-/core-0.6.2.tgz}
@@ -3582,6 +3585,9 @@ packages:
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
+
+  idb@8.0.3:
+    resolution: {integrity: sha512-LtwtVyVYO5BqRvcsKuB2iUMnHwPVByPCXFXOpuU96IZPPoPN6xjOGxZQ74pgSVVLQWtUOYgyeL4GE98BY5D3wg==, tarball: https://registry.npmjs.org/idb/-/idb-8.0.3.tgz}
 
   identity-obj-proxy@3.0.0:
     resolution: {integrity: sha512-00n6YnVHKrinT9t0d9+5yZC6UBNJANpYEQvL2LlX6Ab9lnmxzIRcEmTPuyGScvl1+jKuCICX1Z0Ab1pPKKdikA==, tarball: https://registry.npmjs.org/identity-obj-proxy/-/identity-obj-proxy-3.0.0.tgz}
@@ -7481,7 +7487,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@feiyangl1020/metaid@0.0.9(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
+  '@feiyangl1020/metaid@0.0.11(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
     dependencies:
       '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
       '@metaid/metaid': 1.5.19(patch_hash=pbjtkyked7jhqxoeahctdxqba4)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
@@ -10970,6 +10976,8 @@ snapshots:
   icss-utils@5.1.0(postcss@8.5.3):
     dependencies:
       postcss: 8.5.3
+
+  idb@8.0.3: {}
 
   identity-obj-proxy@3.0.0:
     dependencies:

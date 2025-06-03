@@ -75,6 +75,7 @@ export default () => {
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
   const [searchWord, setSearchWord] = useState("");
+  const [mockBuzz, setMockBuzz] = useState<API.Buzz>();
   const connectWallet = useCallback(async () => {
     const [isConnected, errMsg] = await checkWallet();
     if (!isConnected && !isEmpty(errMsg)) {
@@ -125,10 +126,10 @@ export default () => {
     const connector = chain === "btc" ? btcConnector : mvcConnector;
     setUser({
       avater: connector.user.avatar
-        ? `${getHostByNet(network)}${connector.user.avatar}`
+        ? `${BASE_MAN_URL}${connector.user.avatar}`
         : "",
       background: connector.user.background
-        ? `${getHostByNet(network)}${connector.user.background}`
+        ? `${BASE_MAN_URL}${connector.user.background}`
         : "",
       name: connector.user.name,
       metaid: connector.user.metaid,
@@ -335,5 +336,7 @@ export default () => {
     setShowProfileEdit,
     searchWord,
     setSearchWord,
+    setMockBuzz,
+    mockBuzz,
   };
 };

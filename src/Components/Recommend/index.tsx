@@ -6,10 +6,10 @@ import { openWindowTarget } from "@/utils/utils"
 import { curNetwork } from "@/config"
 import { useModel } from "umi"
 export default () => {
-    const { showConf } = useModel('dashboard');
-    console.log('showConf', showConf?.banners)
+    const { showConf, loading } = useModel('dashboard');
+    // console.log('showConf', showConf?.banners)
 
-    return <div className="recommand">
+    return <div className="recommend">
         {
             (showConf?.banners ?? []).map((item, index) => {
                 return <img key={index} src={item.img} alt="" onClick={() => {
@@ -18,11 +18,16 @@ export default () => {
             }
             )
         }
-        {/* <img src={banner1} alt="" onClick={() => {
-            window.open("https://www.metaso.network", openWindowTarget())
-        }} />
-        <img src={banner2} alt="" onClick={() => {
-            window.open(curNetwork === 'testnet' ? 'https://testnet.metaid.market/launch' : 'https://metaid.market/launch', openWindowTarget())
-        }} /> */}
+        {!loading && (showConf?.banners ?? []).length === 0 && <>
+            <img src={banner1} alt="" onClick={() => {
+                window.open("https://www.metaso.network", openWindowTarget())
+            }} />
+            <img src={banner2} alt="" onClick={() => {
+                window.open(curNetwork === 'testnet' ? 'https://testnet.metaid.market/launch' : 'https://metaid.market/launch', openWindowTarget())
+            }} />
+        </>}
+
+
+
     </div>
 }

@@ -1,7 +1,7 @@
 import { BASE_MAN_URL, curNetwork } from "@/config";
 import { fetchFollowDetailPin, fetchFollowerList, fetchFollowingList, getUserInfo } from "@/request/api";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, Avatar, Button, Card, Divider, Space, Typography } from "antd"
+import { Alert, Avatar, Button, Card, Divider, Space, theme, Typography } from "antd"
 import { F, isEmpty } from "ramda";
 import { useModel, history } from "umi";
 import { FollowButtonComponent } from "../Follow";
@@ -16,6 +16,9 @@ type Props = {
 export default ({ address }: Props) => {
     const { btcConnector, user } = useModel('user');
     const { showConf } = useModel('dashboard')
+    const {
+        token: { colorPrimary },
+    }=theme.useToken()
 
     const profileUserData = useQuery({
         queryKey: ['userInfo', address],
@@ -68,9 +71,16 @@ export default ({ address }: Props) => {
 
                     <div style={{ marginTop: 10 }}>
                         <h3>{profileUserData?.data?.name}</h3>
-                        <p>MetaID: <Typography.Text copyable={{
+                        <p>MetaID: <Typography.Link copyable={{
                             text: profileUserData?.data?.metaid,
-                        }}>{profileUserData?.data?.metaid.slice(0, 8)}</Typography.Text></p>
+                        }}
+                            target="_blank"
+                            underline
+                            href={`${curNetwork === 'mainnet' ? 'https://metaid.io/' : 'https://metaid-testnet.vercel.app/'}metaid-detail/${profileUserData?.data?.metaid}`}
+                        >{profileUserData?.data?.metaid.slice(0, 8)}</Typography.Link></p>
+                        <p>Address: <Typography.Text copyable={{
+                            text: address,
+                        }}>{address.slice(0, 8)}</Typography.Text></p>
                     </div>
 
 
@@ -86,13 +96,17 @@ export default ({ address }: Props) => {
                 </div>
 
                 <Space >
-                    <Space>
-                        <span>{followerListData?.total || 0}</span>
+                    <Space style={{ cursor: 'pointer' }} onClick={() => {
+                        history.push(`/follow/${profileUserData?.data?.metaid}?type=followers`)
+                    }}>
+                        <span style={{color:colorPrimary}}>{followerListData?.total || 0}</span>
                         <span><Trans>Followers</Trans> </span>
                     </Space>
                     <Divider type='vertical' />
-                    <Space>
-                        <span>{followingListData?.total || 0}</span>
+                    <Space style={{ cursor: 'pointer' }} onClick={() => {
+                        history.push(`/follow/${profileUserData?.data?.metaid}?type=following`)
+                    }}>
+                        <span style={{color:colorPrimary}}>{followingListData?.total || 0}</span>
                         <span><Trans>Following</Trans></span>
                     </Space>
                 </Space>
