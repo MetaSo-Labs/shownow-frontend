@@ -9,7 +9,7 @@ overrides:
 
 patchedDependencies:
   '@metaid/metaid@1.5.19':
-    hash: pbjtkyked7jhqxoeahctdxqba4
+    hash: c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb
     path: patches/@metaid__metaid@1.5.19.patch
 
 importers:
@@ -26,8 +26,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       '@feiyangl1020/metaid':
-        specifier: ^0.0.11
-        version: 0.0.11(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+        specifier: ^0.0.13
+        version: 0.0.13(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@ivliu/react-offscreen':
         specifier: ^1.0.8
         version: 1.0.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -36,7 +36,7 @@ importers:
         version: 3.0.0
       '@metaid/metaid':
         specifier: 1.5.19
-        version: 1.5.19(patch_hash=pbjtkyked7jhqxoeahctdxqba4)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+        version: 1.5.19(patch_hash=c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@tanstack/react-query':
         specifier: ^5.59.16
         version: 5.74.3(react@18.3.1)
@@ -964,8 +964,8 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@feiyangl1020/metaid@0.0.11':
-    resolution: {integrity: sha512-i6gmsVUfNE/Ziqwi7SunQhWXd4CxtoAeaRPta1vPFnoGzJPYwxSLPb/4TGfxkwXzpKkrSuLEnnC8VgpJIuZ+0A==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.11.tgz}
+  '@feiyangl1020/metaid@0.0.13':
+    resolution: {integrity: sha512-7SZkEzBJFx1A7EE3avRdIMfFzdSYsbenNoC9aXl8wVULCVQwCPpuyNaY8Me3v/DFdrYSK61hmhBl6CVRu1e7Ww==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.13.tgz}
 
   '@floating-ui/core@0.6.2':
     resolution: {integrity: sha512-jktYRmZwmau63adUG3GKOAVCofBXkk55S/zQ94XOorAHhwqFIOFAy1rSp2N0Wp6/tGbe9V3u/ExlGZypyY17rg==, tarball: https://registry.npmjs.org/@floating-ui/core/-/core-0.6.2.tgz}
@@ -7487,10 +7487,10 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@feiyangl1020/metaid@0.0.11(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
+  '@feiyangl1020/metaid@0.0.13(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
     dependencies:
       '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
-      '@metaid/metaid': 1.5.19(patch_hash=pbjtkyked7jhqxoeahctdxqba4)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+      '@metaid/metaid': 1.5.19(patch_hash=c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@metaid/metaid-cli': 0.0.2
       '@okxweb3/crypto-lib': 1.0.11
       '@scure/bip39': 1.5.4
@@ -7700,7 +7700,7 @@ snapshots:
     dependencies:
       inquirer: 9.3.7
 
-  '@metaid/metaid@1.5.19(patch_hash=pbjtkyked7jhqxoeahctdxqba4)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
+  '@metaid/metaid@1.5.19(patch_hash=c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
     dependencies:
       '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
       '@metaid/metaid-cli': 0.0.2

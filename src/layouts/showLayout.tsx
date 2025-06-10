@@ -39,7 +39,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
     const { showConf: __showConf } = useModel('dashboard')
-    const { user, chain, disConnect, feeRate, setFeeRate, connect, switchChain, checkUserSetting, isLogin, searchWord, setSearchWord } = useModel('user')
+    const { user, chain, disConnect, feeRate, setFeeRate, mvcFeeRate, setMvcFeeRate, connect, switchChain, checkUserSetting, isLogin, searchWord, setSearchWord } = useModel('user')
     const { md } = useBreakpoint();
     const { token: {
         colorPrimary,
@@ -305,9 +305,9 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                                                     {/* <Typography.Text type='secondary' style={{ lineHeight: 1 }}>Network</Typography.Text> */}
                                                                 </div>
                                                             </Space>
-                                                            <InputNumber value={feeRate} onChange={(_value) => {
+                                                            <InputNumber onClick={e=>e.stopPropagation()} value={feeRate} onChange={(_value) => {
                                                                 setFeeRate(Number(_value))
-                                                            }} controls={false} suffix={'sats'}
+                                                            }} controls={true} suffix={'sats'}
                                                                 precision={0}
                                                             >
                                                             </InputNumber>
@@ -315,11 +315,11 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
 
                                                     </Menu.Item>
-                                                    <Menu.Item key='2' disabled={chain === 'mvc'} onClick={() => {
+                                                    <Menu.Item key='2'  onClick={() => {
                                                         switchChain('mvc')
                                                     }}>
 
-                                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between", gap: 16, padding: 8 }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between", width: "100%", gap: 16, padding: 8 }}>
                                                             <Space>
                                                                 <img src={_mvc} alt="" style={{ width: 24, height: 24 }} />
                                                                 <div style={{
@@ -334,7 +334,9 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
                                                                 </div>
                                                             </Space>
-                                                            <InputNumber value={1} disabled variant='borderless' controls={false} suffix={'sats'}
+                                                            <InputNumber onClick={e=>e.stopPropagation()} value={mvcFeeRate} onChange={(_value) => {
+                                                                setMvcFeeRate(Number(_value))
+                                                            }} controls={true} suffix={'sats'}
                                                                 precision={0}
                                                             >
                                                             </InputNumber>
@@ -349,7 +351,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                             <Button shape='round' type='text' variant='filled' color='default' style={{ height: 34 }}>
                                                 <img src={chain === 'btc' ? _btc : _mvc} alt="" style={{ width: 24, height: 24 }} />
                                                 <Typography>
-                                                    <Typography.Text style={{ color: colorPrimary }}>{chain === 'btc' ? feeRate : 1} </Typography.Text>
+                                                    <Typography.Text style={{ color: colorPrimary }}>{chain === 'btc' ? feeRate : mvcFeeRate} </Typography.Text>
                                                     <Typography.Text type='secondary'> sats</Typography.Text>
                                                 </Typography>
                                                 <CaretDownOutlined style={{ color: colorTextSecondary }} />

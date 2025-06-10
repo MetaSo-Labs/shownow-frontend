@@ -304,6 +304,22 @@ export async function fetchFeeRate({
   return response.json();
 }
 
+export async function fetchMVCFeeRate({
+  netWork,
+}: {
+  netWork?: BtcNetwork;
+}): Promise<API.MVCFeeRateApi> {
+  const response = await fetch(
+    `https://www.metalet.space/wallet-api/v4/mvc/fee/summary?net=${
+      netWork === "mainnet" ? "livenet" : "testnet"
+    }`,
+    {
+      method: "get",
+    }
+  );
+  return response.json();
+}
+
 export async function getMetaidByAddress({
   address,
 }: {

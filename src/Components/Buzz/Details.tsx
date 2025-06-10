@@ -110,6 +110,7 @@ export default ({
         isLogin,
         connect,
         feeRate,
+        mvcFeeRate,
         chain,
         mvcConnector,
         checkUserSetting,
@@ -244,6 +245,7 @@ export default ({
                         network: curNetwork,
                         signMessage: "like buzz",
                         service: fetchServiceFee("like_service_fee_amount", "MVC"),
+                        feeRate: Number(mvcFeeRate),
                     },
                 });
                 console.log("likeRes", likeRes);

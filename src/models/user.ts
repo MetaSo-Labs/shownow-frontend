@@ -17,6 +17,7 @@ import {
 import {
   fetchFeeRate,
   fetchFollowingList,
+  fetchMVCFeeRate,
   getFollowList,
   getUserInfo,
 } from "@/request/api";
@@ -71,6 +72,7 @@ export default () => {
   const [network, setNetwork] = useState<API.Network>(curNetwork);
   const [initializing, setInitializing] = useState<boolean>(true);
   const [feeRate, setFeeRate] = useState<number>(1);
+  const [mvcFeeRate, setMvcFeeRate] = useState<number>(6);
   const [showSetting, setShowSetting] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
@@ -262,6 +264,14 @@ export default () => {
     try {
       const feeRateData = await fetchFeeRate({ netWork: curNetwork });
       setFeeRate(feeRateData?.fastestFee || 1);
+
+     
+    } catch (e) {
+      console.log(e);
+    }
+    try {
+      const mvcfeeRateData = await fetchMVCFeeRate({ netWork: curNetwork });
+      setMvcFeeRate(mvcfeeRateData.data.list[1]?.feeRate || 5);
     } catch (e) {
       console.log(e);
     }
@@ -321,6 +331,8 @@ export default () => {
     chain,
     feeRate,
     setFeeRate,
+    mvcFeeRate,
+    setMvcFeeRate,
     showConnect,
     setShowConnect,
     mvcConnector,

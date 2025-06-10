@@ -4,7 +4,7 @@ import { fetchFollowDetailPin } from '@/request/api';
 import { formatMessage, sleep } from '@/utils/utils';
 import { CheckCircleFilled, LoadingOutlined, PlusCircleFilled } from '@ant-design/icons';
 import { Button, message, theme } from 'antd';
-import { MvcEntity } from 'node_modules/@metaid/metaid/dist/core/entity/mvc';
+import { MvcEntity } from 'node_modules/@feiyangl1020/metaid/dist/core/entity/mvc';
 import { isNil } from 'ramda';
 import React, { useMemo, useState } from 'react';
 import { useModel } from 'umi';
@@ -22,7 +22,7 @@ type FollowProps = {
 const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
     return function FollowComponent(props: FollowProps) {
         const { metaid } = props;
-        const { followList, chain, btcConnector, mvcConnector, user, feeRate, setFollowList, fetchUserFollowingList, checkUserSetting, isLogin } = useModel('user');
+        const { followList, chain, btcConnector, mvcConnector, user, feeRate,mvcFeeRate, setFollowList, fetchUserFollowingList, checkUserSetting, isLogin } = useModel('user');
         const { fetchServiceFee, showConf } = useModel('dashboard');
         const [loading, setLoading] = useState(false);
 
@@ -78,6 +78,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                             network: curNetwork,
                             signMessage: 'Follow user',
                             service: fetchServiceFee('follow_service_fee_amount', 'MVC'),
+                            feeRate: Number(mvcFeeRate),
                         },
                     })
                     console.log('create res for inscribe', res)
@@ -163,6 +164,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                             network: curNetwork,
                             signMessage: 'Unfollow user',
                             service: fetchServiceFee('follow_service_fee_amount', 'MVC'),
+                            feeRate: Number(mvcFeeRate),
                         },
                     })
 

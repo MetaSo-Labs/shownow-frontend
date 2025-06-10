@@ -97,6 +97,7 @@ export default ({
         isLogin,
         connect,
         feeRate,
+        mvcFeeRate,
         chain,
         mvcConnector,
         checkUserSetting,
@@ -358,6 +359,7 @@ export default ({
                         flag: FLAG,
                         contentType: "text/plain;utf-8",
                         path: `${showConf?.host || ""}/protocols/simpledonate`,
+                        feeRate: Number(mvcFeeRate),
                     },
                     options: {
                         network: curNetwork,

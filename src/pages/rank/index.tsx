@@ -220,9 +220,9 @@ export default () => {
                     </Card>
                 </Col>
             </Row>
-            {/* {
+            {
                 isLogin && user?.address && <UserMetaSoReward address={user.address} host={admin!.host} />
-            } */}
+            }
             <Typography.Title level={5}>
                 <Trans>Rank</Trans>
             </Typography.Title>

@@ -122,6 +122,31 @@ declare namespace API {
     minimumFee: number;
   };
 
+  type MVCFeeRateApi = {
+    code: 0;
+    message: "success";
+    processingTime: 0;
+    data: {
+      list: [
+        {
+          title: "Fast";
+          desc: "About 10 minutes";
+          feeRate: 5;
+        },
+        {
+          title: "Avg";
+          desc: "About 30 minutes";
+          feeRate: 5;
+        },
+        {
+          title: "Slow";
+          desc: "About 1 hours";
+          feeRate: 2;
+        },
+      ];
+    };
+  };
+
   type Buzz = {
     blocked: boolean;
     host: string;

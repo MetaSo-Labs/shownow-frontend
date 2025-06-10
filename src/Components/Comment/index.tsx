@@ -20,7 +20,7 @@ type Props = {
 }
 export default ({ show, onClose, tweetId, refetch }: Props) => {
    
-    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting,isLogin } = useModel('user')
+    const { user, btcConnector, feeRate,mvcFeeRate, chain, mvcConnector, checkUserSetting,isLogin } = useModel('user')
     const { showConf, fetchServiceFee } = useModel('dashboard');
     const [content, setContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
@@ -80,6 +80,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
                         network: curNetwork,
                         signMessage: 'create comment',
                         service: fetchServiceFee('comment_service_fee_amount', 'MVC'),
+                        feeRate: Number(mvcFeeRate),
                     },
                 })
                 console.log('create res for inscribe', createRes)

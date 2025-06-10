@@ -16,7 +16,7 @@ type Props = {
 
 }
 export default () => {
-    const { showProfileEdit, setShowProfileEdit, chain, btcConnector, mvcConnector, feeRate, fetchUserInfo } = useModel('user')
+    const { showProfileEdit, setShowProfileEdit, chain, btcConnector, mvcConnector, feeRate, mvcFeeRate, fetchUserInfo } = useModel('user')
     const [chainNet, setChainNet] = useState<API.Chain>(chain);
     const [submitting, setSubmitting] = useState(false);
     const [form] = Form.useForm();
@@ -65,7 +65,7 @@ export default () => {
                         ...values
                     },
                     options: {
-                        feeRate: Number(feeRate),
+                        feeRate: chainNet === 'btc' ? Number(feeRate) : Number(mvcFeeRate),
                         network: curNetwork,
                     },
                 }).catch(e => {
@@ -92,7 +92,7 @@ export default () => {
                 const res = await connector!.createUserInfo({
                     userData: values,
                     options: {
-                        feeRate: Number(feeRate),
+                        feeRate: chainNet === 'btc' ? Number(feeRate) : Number(mvcFeeRate),
                         network: curNetwork,
                     },
                 }).catch(e => {

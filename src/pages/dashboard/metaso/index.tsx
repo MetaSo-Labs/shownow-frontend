@@ -9,7 +9,7 @@ export default () => {
     return <>
         <CoinSummary />
         <MyArea />
-        {/* <MyAllocation /> */}
+        <MyAllocation />
         <MetaBlockArea />
         <BrowseBlocks />
     </>

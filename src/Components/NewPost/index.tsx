@@ -43,7 +43,7 @@ export default ({ show, onClose, quotePin }: Props) => {
 
     const isQuoted = !isNil(quotePin);
 
-    const { user, btcConnector, feeRate, chain, mvcConnector, checkUserSetting, isLogin, setMockBuzz } = useModel('user')
+    const { user, btcConnector, feeRate, mvcFeeRate, chain, mvcConnector, checkUserSetting, isLogin, setMockBuzz } = useModel('user')
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
     const { showConf, fetchServiceFee, manPubKey, admin } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
@@ -310,6 +310,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                                 signMessage: 'upload image file',
                                 serialAction: 'combo',
                                 transactions: fileTransactions,
+                                feeRate: mvcFeeRate
                             },
                         })
 
@@ -442,6 +443,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                             serialAction: 'finish',
                             transactions: fileTransactions,
                             service: fetchServiceFee('post_service_fee_amount', 'MVC'),
+                            feeRate: mvcFeeRate
 
                         },
                     })
@@ -454,6 +456,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                             serialAction: 'finish',
                             transactions: fileTransactions,
                             service: fetchServiceFee('post_service_fee_amount', 'MVC'),
+                            feeRate: mvcFeeRate
                         },
                     })
                 }
@@ -944,7 +947,7 @@ export default ({ show, onClose, quotePin }: Props) => {
 
                 </Space>
                 <Space>
-                    <Button shape='round'  type='text' onClick={reset}>
+                    <Button shape='round' type='text' onClick={reset}>
                         <Trans wrapper>Reset</Trans>
                     </Button>
                     <Button shape='round' style={{ background: showConf?.gradientColor, color: showConf?.colorButton }} loading={isAdding} onClick={onCreateSubmit}>
