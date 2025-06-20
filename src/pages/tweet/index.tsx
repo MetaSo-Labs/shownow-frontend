@@ -34,7 +34,7 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
 
 
 
-    return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none' }} title={<>
+    return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none', paddingBottom: 100 }} title={<>
         {
             showConf?.showSliderMenu && <Button type="text" size='small' icon={<LeftOutlined />} onClick={onClose}>
 
@@ -55,7 +55,7 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
         {
             buzzDetail.data.blocked && buzzDetail.data.tweet.createMetaId !== user.metaid ? <BlockedBuzz /> :
                 <>
-                    <Buzz buzzItem={{...buzzDetail.data.tweet,blocked:buzzDetail.data.blocked}} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates} />
+                    <Buzz buzzItem={{ ...buzzDetail.data.tweet, blocked: buzzDetail.data.blocked }} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates} />
                     <Divider />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <UserAvatar src={user?.avater} size={48} />

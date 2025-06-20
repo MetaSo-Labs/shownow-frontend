@@ -48,7 +48,7 @@ export default () => {
                     }} optionType="button" buttonStyle="solid" size='large' style={{ color: '#000' }} />
                 </ConfigProvider>
 
-            </div> : <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: "flex-start", width: showConf?.contentSize, maxWidth: 'calc( 100vw - 24px )' }}>
+            </div> : <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: "flex-start", width: showConf?.contentSize + 200, maxWidth: 'calc( 100vw - 24px )' }}>
                 <Button type="text" size='large' onClick={() => history.back()} icon={<LeftOutlined />}>
                     <Trans>Back</Trans>
                 </Button>

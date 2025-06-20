@@ -169,3 +169,7 @@ export function isValidBitcoinAddress(
     return false;
   }
 }
+
+export function getEffectiveBTCFeerate(feeRate: number): number {
+  return feeRate === 1 ? 1.1 : feeRate;
+}

@@ -1,7 +1,7 @@
 import { curNetwork, FLAG } from '@/config';
 import followEntitySchema, { getFollowEntitySchemaWithCustomHost } from '@/entities/follow';
 import { fetchFollowDetailPin } from '@/request/api';
-import { formatMessage, sleep } from '@/utils/utils';
+import { formatMessage, getEffectiveBTCFeerate, sleep } from '@/utils/utils';
 import { CheckCircleFilled, LoadingOutlined, PlusCircleFilled } from '@ant-design/icons';
 import { Button, message, theme } from 'antd';
 import { MvcEntity } from 'node_modules/@feiyangl1020/metaid/dist/core/entity/mvc';
@@ -22,7 +22,7 @@ type FollowProps = {
 const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
     return function FollowComponent(props: FollowProps) {
         const { metaid } = props;
-        const { followList, chain, btcConnector, mvcConnector, user, feeRate,mvcFeeRate, setFollowList, fetchUserFollowingList, checkUserSetting, isLogin } = useModel('user');
+        const { followList, chain, btcConnector, mvcConnector, user, feeRate, mvcFeeRate, setFollowList, fetchUserFollowingList, checkUserSetting, isLogin } = useModel('user');
         const { fetchServiceFee, showConf } = useModel('dashboard');
         const [loading, setLoading] = useState(false);
 
@@ -51,7 +51,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                         ],
                         options: {
                             noBroadcast: 'no',
-                            feeRate: Number(feeRate),
+                            feeRate: getEffectiveBTCFeerate(Number(feeRate)),
                             service: fetchServiceFee('follow_service_fee_amount', 'BTC'),
 
                         },
@@ -128,7 +128,7 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                         ],
                         options: {
                             noBroadcast: 'no',
-                            feeRate: Number(feeRate),
+                            feeRate: getEffectiveBTCFeerate(Number(feeRate)),
                             service: fetchServiceFee('follow_service_fee_amount'),
                             // service: {
                             //     address: getServiceAddress(),

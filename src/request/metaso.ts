@@ -113,7 +113,6 @@ export async function claimPreUser(
       method: "POST",
       data: params,
       ...(options || {}),
-      
     }
   );
 }
@@ -248,9 +247,37 @@ export async function fetchUserCoinInfo(params: {
       lastMetaBlockShare: string;
       pendingReward: string;
       totalReward: string;
+      currentUserExpectedPendingReward: string;
+      claimableReward: string;
+      newlyAddedMetaBlockReward: string;
+      newlyAddedMetaBlockShare: string;
+      progressRemainBlockCount: number;
     }>
   >(`${METASO_BASE_API}/v1/metaso/coin/user/info`, {
     method: "GET",
     params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+  });
+}
+
+export async function fetchUserMetablockList(params: {
+  address: string;
+  host: string;
+}) {
+  return request<
+    MS.IRet<{
+      list: MS.MetaBlockListItem[];
+      total: 0;
+    }>
+  >(`${METASO_BASE_API}/v1/metaso/coin/user/metablock-list`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
   });
 }

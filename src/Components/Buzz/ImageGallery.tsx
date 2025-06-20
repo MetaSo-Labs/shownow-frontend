@@ -64,6 +64,7 @@ export default ({ decryptContent }: Props) => {
                 preview={{
                     onChange: (current, prev) => console.log(`current index: ${current}, prev index: ${prev}`),
                     getContainer: () => document.getElementById(container) as HTMLElement,
+                    movable: true,
                     onVisibleChange: (visible, prevVisible) => {
                         console.log(visible, prevVisible);
                         if (!visible) {

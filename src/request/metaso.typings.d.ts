@@ -102,4 +102,11 @@ declare namespace MS {
     tickId: string;
     txId: string;
   };
+
+  type MetaBlockListItem = {
+    metaBlockHeight: number;
+    metaBlockTime: number;
+    reward: string;
+    status: string;
+  };
 }

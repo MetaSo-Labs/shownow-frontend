@@ -1,7 +1,7 @@
 import { fetchAllBuzzs, fetchBuzzs, fetchFollowingList, fetchMyFollowingBuzzs, fetchMyFollowingTotal, getIndexTweet } from "@/request/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import './index.less'
-import { Grid, Col, Divider, List, Row, Skeleton } from "antd";
+import { Grid, Col, Divider, List, Row, Skeleton, Card } from "antd";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useModel } from "umi";
 import Buzz from "@/Components/Buzz";
@@ -32,7 +32,7 @@ const Home = () => {
             enabled: Boolean(user.metaid),
             queryFn: ({ pageParam }) =>
                 fetchAllBuzzs({
-                    size: 5,
+                    size: 10,
                     lastId: pageParam,
                     metaid: user.metaid,
                     followed: "1"
@@ -69,20 +69,21 @@ const Home = () => {
         style={{
             height: '100%',
             overflow: 'auto',
+            paddingBottom: 60
         }}
     >
-        {isLoading && <Skeleton avatar paragraph={{ rows: 2 }} active />}
         <InfiniteScroll
             dataLength={tweets.length}
             next={fetchNextPage}
             hasMore={hasNextPage}
-            loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+            loader={<Card><Skeleton avatar paragraph={{ rows: 1 }} active /></Card>}
             endMessage={<Divider plain><Trans>It is all, nothing more 🤐</Trans></Divider>}
             scrollableTarget="scrollableDiv2"
         >
             <List
                 ref={contentRef}
                 dataSource={tweets}
+                loading={isLoading}
                 renderItem={(item: API.Pin) => (
                     <List.Item key={item.id}>
                         <Buzz buzzItem={item} refetch={refetch} />

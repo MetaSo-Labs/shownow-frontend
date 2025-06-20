@@ -207,7 +207,8 @@ export const postVideo = async (
   host: string,
   chain: API.Chain,
   btcConnector: IBtcConnector | undefined,
-  mvcConnector: IMvcConnector | undefined
+  mvcConnector: IMvcConnector | undefined,
+  mvcFeeRate:number
 ) => {
   //TODO
 
@@ -239,6 +240,7 @@ export const postVideo = async (
           signMessage: "file chunk",
           serialAction: serialAction,
           transactions: chunkTransactions,
+          feeRate: mvcFeeRate,
         }
       );
       console.log(txids, "txids");
@@ -296,6 +298,7 @@ export const postVideo = async (
       signMessage: "file index",
       serialAction: "combo",
       transactions: [...(chunkTransactions ?? [])],
+      feeRate: mvcFeeRate,
     }
   );
   chunkTransactions = pinTransations as MvcTransaction[];

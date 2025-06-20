@@ -73,7 +73,7 @@ export default function HomePage() {
         </div>
         <div className="info">
           <Typography.Title >{showConf?.brandIntroMainTitle || 'Unbounded Creation Infinite Earnings'}</Typography.Title>
-          <Typography.Text>{showConf?.brandIntroSubTitle || 'At Show Now, post and create videos to turn your creativity and talent into interaction and revenue'}</Typography.Text>
+          <Typography.Text>{showConf?.brandIntroSubTitle || 'At MetaSo, post and create videos to turn your creativity and talent into interaction and revenue'}</Typography.Text>
           <Typography.Title level={3} style={{ marginTop: 113 }}>
             Get Started
           </Typography.Title>

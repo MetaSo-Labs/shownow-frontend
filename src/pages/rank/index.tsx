@@ -171,7 +171,16 @@ export default () => {
             render: (text, record, index) => <NumberFormat value={hostValue ? Number(text) / hostValue * 100 : '--'} suffix='%' precision={2} />,
         },
     ]
-    return <div className={`rankPage ${showConf?.theme}`}>
+    return <ConfigProvider
+                    theme={{
+                        components: {
+                            Table: {
+                                headerBg: 'transparent',
+                                headerSplitColor: 'transparent',
+                            },
+                        },
+                    }}
+                ><div className={`rankPage ${showConf?.theme}`}>
         <Card
             title={<Trans>Contribution value</Trans>}
             bordered={false}
@@ -236,21 +245,13 @@ export default () => {
                     }
                 }}
             >
-                <ConfigProvider
-                    theme={{
-                        components: {
-                            Table: {
-                                headerBg: 'transparent',
-                                headerSplitColor: 'transparent',
-                            },
-                        },
-                    }}
-                >
+               
                     <Table<API.MetaBlockValueListItem>
                         columns={columns}
                         dataSource={_listValue?.data.list}
                         loading={_listValueFetching}
                         pagination={false}
+                        size='small'
                         rowClassName={(record, index) => {
                             if (index < 3) {
                                 return 'ant-table-row-' + index
@@ -263,7 +264,7 @@ export default () => {
 
 
                     />
-                </ConfigProvider>
+               
             </Card>
 
 
@@ -300,4 +301,5 @@ export default () => {
         }
 
     </div >
+    </ConfigProvider>
 }

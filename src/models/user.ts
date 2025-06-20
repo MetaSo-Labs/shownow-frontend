@@ -11,6 +11,8 @@ import {
 import {
   BASE_MAN_URL,
   curNetwork,
+  DASHBOARD_ADMIN_PUBKEY,
+  DASHBOARD_SIGNATURE,
   DASHBOARD_TOKEN,
   getHostByNet,
 } from "@/config";
@@ -55,7 +57,7 @@ export default () => {
   const { setLogined } = useModel("dashboard");
   const [isLogin, setIsLogin] = useState(false);
   const [chain, setChain] = useState<API.Chain>(
-    (localStorage.getItem("show_chain") as API.Chain) || "mvc"
+    (localStorage.getItem("show_chain_v2") as API.Chain) || "btc"
   );
   const [showConnect, setShowConnect] = useState(false);
   const [user, setUser] = useState({
@@ -72,7 +74,10 @@ export default () => {
   const [network, setNetwork] = useState<API.Network>(curNetwork);
   const [initializing, setInitializing] = useState<boolean>(true);
   const [feeRate, setFeeRate] = useState<number>(1);
-  const [mvcFeeRate, setMvcFeeRate] = useState<number>(6);
+  const [mvcFeeRate, setMvcFeeRate] = useState<number>(5);
+  const [btcFeerateLocked, setBtcFeerateLocked] = useState<boolean>(false);
+  const [mvcFeerateLocked, setMvcFeerateLocked] = useState<boolean>(false);
+  const { showConf } = useModel("dashboard");
   const [showSetting, setShowSetting] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
@@ -116,28 +121,33 @@ export default () => {
     const btcConnector = await btcConnect({
       wallet: btcWallet,
       network: curNetwork,
-      host: BASE_MAN_URL,
+      host: getHostByNet(curNetwork),
     });
     setBtcConnector(btcConnector);
     const mvcConnector = await mvcConnect({
       wallet: mvcWallet,
       network: curNetwork,
-      host: BASE_MAN_URL,
+      host: getHostByNet(curNetwork),
     });
     setMvcConnector(mvcConnector);
     const connector = chain === "btc" ? btcConnector : mvcConnector;
     setUser({
       avater: connector.user.avatar
-        ? `${BASE_MAN_URL}${connector.user.avatar}`
+        ? `${getHostByNet(curNetwork)}${connector.user.avatar}`
         : "",
       background: connector.user.background
-        ? `${BASE_MAN_URL}${connector.user.background}`
+        ? `${getHostByNet(curNetwork)}${connector.user.background}`
         : "",
       name: connector.user.name,
       metaid: connector.user.metaid,
       notice: 0,
       address: connector.wallet.address,
     });
+    const publicKey = await window.metaidwallet.btc.getPublicKey();
+    const signature: any =
+      await window.metaidwallet.btc.signMessage("metaso.network");
+    localStorage.setItem(DASHBOARD_SIGNATURE, signature);
+    localStorage.setItem(DASHBOARD_ADMIN_PUBKEY, publicKey);
     setIsLogin(true);
   }, [chain]);
 
@@ -148,6 +158,8 @@ export default () => {
     setBtcConnector(undefined);
     setMvcConnector(undefined);
     localStorage.removeItem(DASHBOARD_TOKEN);
+    localStorage.removeItem(DASHBOARD_SIGNATURE);
+    localStorage.removeItem(DASHBOARD_ADMIN_PUBKEY);
     setLogined(false);
     setUser({
       avater: "",
@@ -193,6 +205,10 @@ export default () => {
         setInitializing(false);
         return;
       }
+      if (!localStorage.getItem(DASHBOARD_SIGNATURE)) {
+        setInitializing(false);
+        return;
+      }
       const btcAddress = await window.metaidwallet.btc.getAddress();
       const btcPub = await window.metaidwallet.btc.getPublicKey();
       const mvcAddress = await window.metaidwallet.getAddress();
@@ -206,26 +222,27 @@ export default () => {
         address: mvcAddress,
         xpub: mvcPub,
       });
+      console.log(BASE_MAN_URL, "BASE_MAN_URLBASE_MAN_URL");
       const btcConnector = await btcConnect({
         wallet: btcWallet,
         network: curNetwork,
-        host: BASE_MAN_URL,
+        host: getHostByNet(curNetwork),
       });
       setBtcConnector(btcConnector);
       const mvcConnector = await mvcConnect({
         wallet: mvcWallet,
         network: curNetwork,
-        host: BASE_MAN_URL,
+        host: getHostByNet(curNetwork),
       });
       setMvcConnector(mvcConnector);
       const connector = chain === "btc" ? btcConnector : mvcConnector;
       if (connector.user) {
         setUser({
           avater: connector.user.avatar
-            ? `${getHostByNet(network)}${connector.user.avatar}`
+            ? `${getHostByNet(curNetwork)}${connector.user.avatar}`
             : "",
           background: connector.user.background
-            ? `${getHostByNet(network)}${connector.user.background}`
+            ? `${getHostByNet(curNetwork)}${connector.user.background}`
             : "",
           name: connector.user.name,
           metaid: connector.user.metaid,
@@ -243,10 +260,10 @@ export default () => {
     const userInfo = await getUserInfo({ address: user.address });
     setUser({
       avater: userInfo.avatar
-        ? `${getHostByNet(network)}${userInfo.avatar}`
+        ? `${getHostByNet(curNetwork)}${userInfo.avatar}`
         : "",
       background: userInfo.background
-        ? `${getHostByNet(network)}${userInfo.background}`
+        ? `${getHostByNet(curNetwork)}${userInfo.background}`
         : "",
       name: userInfo.name,
       metaid: userInfo.metaid,
@@ -262,21 +279,28 @@ export default () => {
 
   const fetchFeeRateData = useCallback(async () => {
     try {
-      const feeRateData = await fetchFeeRate({ netWork: curNetwork });
-      setFeeRate(feeRateData?.fastestFee || 1);
-
-     
+      if (!btcFeerateLocked) {
+        fetchFeeRate({ netWork: curNetwork })
+          .then((feeRateData) => {
+            setFeeRate(feeRateData?.fastestFee || 1);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
     } catch (e) {
       console.log(e);
     }
     try {
-      const mvcfeeRateData = await fetchMVCFeeRate({ netWork: curNetwork });
-      setMvcFeeRate(mvcfeeRateData.data.list[1]?.feeRate || 5);
+      if (!mvcFeerateLocked) {
+        const mvcfeeRateData = await fetchMVCFeeRate({ netWork: curNetwork });
+        setMvcFeeRate(mvcfeeRateData?.fastestFee || 5);
+      }
     } catch (e) {
       console.log(e);
     }
-  }, []);
-  const updateFeeRate = useIntervalAsync(fetchFeeRateData, 60000);
+  }, [btcFeerateLocked, mvcFeerateLocked]);
+  const updateFeeRate = useIntervalAsync(fetchFeeRateData, 1000 * 60 * 5);
 
   const fetchUserFollowingList = useCallback(async () => {
     if (user.metaid) {
@@ -292,17 +316,17 @@ export default () => {
     const connector = chain === "btc" ? btcConnector : mvcConnector;
     setUser({
       avater: connector.user.avatar
-        ? `${getHostByNet(network)}${connector.user.avatar}`
+        ? `${BASE_MAN_URL}${connector.user.avatar}`
         : "",
       background: connector.user.background
-        ? `${getHostByNet(network)}${connector.user.background}`
+        ? `${BASE_MAN_URL}${connector.user.background}`
         : "",
       name: connector.user.name,
       metaid: connector.user.metaid,
       notice: 0,
       address: connector.wallet.address,
     });
-    localStorage.setItem("show_chain", chain);
+    localStorage.setItem("show_chain_v2", chain);
     setChain(chain);
   };
 
@@ -350,5 +374,9 @@ export default () => {
     setSearchWord,
     setMockBuzz,
     mockBuzz,
+    btcFeerateLocked,
+    setBtcFeerateLocked,
+    mvcFeerateLocked,
+    setMvcFeerateLocked,
   };
 };

@@ -1,7 +1,10 @@
 import {
   BASE_MAN_URL,
+  curNetwork,
   DASHBOARD_ADMIN_PUBKEY,
   DASHBOARD_SIGNATURE,
+  getHostByNet,
+  MAINNET_MAN_HOST_V1,
   MARKET_ENDPOINT,
   METASO_BASE_API,
 } from "@/config";
@@ -11,6 +14,8 @@ import { number } from "bitcoinjs-lib/src/script";
 import { UserInfo } from "node_modules/@metaid/metaid/dist/types";
 import { request } from "umi";
 export type BtcNetwork = "mainnet" | "testnet" | "regtest";
+
+const TMP_BASE_URL = "https://man.metaid.io";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export const getIndexTweet = async () => {
@@ -308,9 +313,9 @@ export async function fetchMVCFeeRate({
   netWork,
 }: {
   netWork?: BtcNetwork;
-}): Promise<API.MVCFeeRateApi> {
+}): Promise<API.FeeRateApi> {
   const response = await fetch(
-    `https://www.metalet.space/wallet-api/v4/mvc/fee/summary?net=${
+    `https://api.mvcscan.com/browser/v1/fees/recommended?net=${
       netWork === "mainnet" ? "livenet" : "testnet"
     }`,
     {
@@ -420,6 +425,7 @@ export const getDecryptContent = async (
   },
   manDomain: string
 ) => {
+  manDomain = manDomain === "show.now" ? "www.show.now" : manDomain;
   const Host = manDomain ? `https://${manDomain}/man` : BASE_MAN_URL;
   return request<{
     code: number;
@@ -438,7 +444,7 @@ export const getUserInfo = async (params: { address: string }) => {
   const ret = await request<{
     code: number;
     data: UserInfo;
-  }>(`${BASE_MAN_URL}/api/info/address/${params.address}`, {
+  }>(`${getHostByNet(curNetwork)}/api/info/address/${params.address}`, {
     method: "GET",
   });
   return ret.data ?? undefined;
@@ -448,7 +454,7 @@ export const getMRC20Info = async (params: { id?: string; tick?: string }) => {
   return request<{
     code: number;
     data: API.MRC20TickInfo;
-  }>(`${BASE_MAN_URL}/api/mrc20/tick/info`, {
+  }>(`${curNetwork === "testnet" ? BASE_MAN_URL : MAINNET_MAN_HOST_V1}/api/mrc20/tick/info`, {
     method: "GET",
     params,
   });
@@ -476,10 +482,13 @@ export const getDeployList = async (params: {
     code: number;
     data: API.IdCoin[];
     message: string;
-  }>(`${BASE_MAN_URL}/ft/mrc20/address/deploy-list`, {
-    method: "GET",
-    params,
-  });
+  }>(
+    `${curNetwork === "testnet" ? BASE_MAN_URL : MAINNET_MAN_HOST_V1}/ft/mrc20/address/deploy-list`,
+    {
+      method: "GET",
+      params,
+    }
+  );
 };
 
 export const getFollowList = async (params: { metaid: string }) => {
@@ -557,7 +566,7 @@ export const getMetaBlockHostValue = async (params: {
       total: number;
     };
     message: string;
-  }>(`${BASE_MAN_URL}/statistics/metablock/host/value`, {
+  }>(`${TMP_BASE_URL}/statistics/metablock/host/value`, {
     method: "GET",
     params,
   });
@@ -580,7 +589,7 @@ export const getMetaBlockHostUserValue = async (params: {
       total: number;
     };
     message: string;
-  }>(`${BASE_MAN_URL}/statistics/metablock/host/address/value`, {
+  }>(`${TMP_BASE_URL}/statistics/metablock/host/address/value`, {
     method: "GET",
     params,
   });
@@ -601,7 +610,7 @@ export const getMetaBlockHostUserList = async (params: {
       total: number;
     };
     message: string;
-  }>(`${BASE_MAN_URL}/statistics/metablock/host/address/list`, {
+  }>(`${TMP_BASE_URL}/statistics/metablock/host/address/list`, {
     method: "GET",
     params,
   });
@@ -612,7 +621,7 @@ export const getMetaBlockNewest = async () => {
     code: number;
     data: API.MetaBlockNewest;
     message: string;
-  }>(`${BASE_MAN_URL}/statistics/host/metablock/sync-newest`, {
+  }>(`${TMP_BASE_URL}/statistics/host/metablock/sync-newest`, {
     method: "GET",
   });
 };
@@ -626,7 +635,7 @@ export const getHostNDV = async (params: {
     code: number;
     data: API.MetaBlockValueListItem[];
     message: string;
-  }>(`${BASE_MAN_URL}/statistics/ndv`, {
+  }>(`${TMP_BASE_URL}/statistics/ndv`, {
     method: "GET",
     params,
   });
@@ -830,6 +839,130 @@ export async function transferMrc20Commit(
   >(`${METASO_BASE_API}/v1/inscribe/mrc20/transfer/commit`, {
     method: "POST",
     data: params,
+    ...(options || {}),
+  });
+}
+
+export async function getMetasoConf(options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    data: {
+      blockedHost: string[] | null;
+      chain: string;
+      initialHeight: {
+        btc: number;
+        mvc: number;
+      };
+      syncHost: string[] | null;
+    };
+    message: string;
+  }>(`${BASE_MAN_URL}/api/config/get`, {
+    method: "GET",
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+    ...(options || {}),
+  });
+}
+
+export async function setMetasoConfChain(
+  params: {
+    chain: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/api/config/chain`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+    ...(options || {}),
+  });
+}
+
+export async function setMetasoConfSyncHost(
+  params: {
+    host: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/api/config/syncHost`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+    ...(options || {}),
+  });
+}
+
+export async function setMetasoConfBlockedHost(
+  params: {
+    host: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/api/config/blockedHost`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+    ...(options || {}),
+  });
+}
+
+export async function setMetasoConfInitialHeight(
+  params: {
+    chain: string;
+    height: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/api/config/initialHeight`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
+    ...(options || {}),
+  });
+}
+
+export async function setMetasoConfPubkey(
+  params: {
+    key: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`${BASE_MAN_URL}/api/config/pubkey`, {
+    method: "GET",
+    params,
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
     ...(options || {}),
   });
 }

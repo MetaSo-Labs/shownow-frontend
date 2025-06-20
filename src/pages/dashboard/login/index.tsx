@@ -25,6 +25,8 @@ import _logo from '@/assets/dashboard/logo.svg'
 import _bg from '@/assets/dashboard/bg.png'
 import _metaletLogo from '@/assets/dashboard/metalet-logo.svg'
 import './index.less'
+import { getMetasoConf, setMetasoConfPubkey, setMetasoConfSyncHost } from '@/request/api';
+import { sleep } from '@/utils/utils';
 
 type LoginType = 'phone' | 'account';
 
@@ -103,6 +105,7 @@ const Page = () => {
       const publicKey = await window.metaidwallet.btc.getPublicKey();
       const mvcAddress = await window.metaidwallet.getAddress();
       const signature: any = await window.metaidwallet.btc.signMessage('metaso.network');
+      //
       if (signature.status) {
         throw new Error(signature.status);
       }
@@ -147,6 +150,20 @@ const Page = () => {
         localStorage.setItem(DASHBOARD_TOKEN, ret.access_token);
         localStorage.setItem(DASHBOARD_SIGNATURE, signature);
         localStorage.setItem(DASHBOARD_ADMIN_PUBKEY, publicKey);
+        // 登录成功后，设置pubkey；
+        try {
+          await setMetasoConfPubkey({ key: publicKey });
+          await sleep(1000)
+          const conf = await getMetasoConf();
+          const syncHost = conf.data.syncHost;
+          // 如果syncHost是null，则设置为当前登录节点的host
+          if (!syncHost) {
+            await setMetasoConfSyncHost({ host: admin ? admin.host : btcAddress })
+          }
+        } catch (err) {
+          console.error('set pubkey error', err);
+        }
+
         setLogined(true)
         setTimeout(() => {
           history.push('/dashboard/styles')

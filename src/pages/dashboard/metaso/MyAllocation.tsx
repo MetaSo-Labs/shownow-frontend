@@ -3,8 +3,10 @@ import { getDistribution, setDistribution } from "@/request/metaso"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { useQuery } from "@tanstack/react-query"
 import { Button, Card, message, Popover, Slider, Switch, theme, Tooltip, Typography } from "antd"
+import { SliderSingleProps } from "antd/lib"
 import { useEffect, useState } from "react"
 import { useModel } from "umi"
+const formatter: NonNullable<SliderSingleProps['tooltip']>['formatter'] = (value) => `${value}%`;
 
 export default () => {
     const { admin, fetchConfig } = useModel('dashboard')
@@ -60,7 +62,7 @@ export default () => {
         }} >
             Upon activation and allocation ratio configuration, the Metaso secondary distribution mechanism automatically triggers predefined incentive pool allocations based on real-time updated user contribution rankings, achieving intelligent mapping between contribution metrics and incentive values
         </div>} title="Metaso secondary distribution">
-            <Typography.Title level={4}>My Allocation <QuestionCircleOutlined /></Typography.Title>
+            <Typography.Title level={4}>Secondary Distribution <QuestionCircleOutlined /></Typography.Title>
         </Popover>
         <Card>
             <div style={{
@@ -70,19 +72,26 @@ export default () => {
                 background: colorBgLayout,
                 borderRadius: borderRadius
             }}>
-                <Typography.Text>Primary issuance</Typography.Text>
+                <Typography.Text>Enable Secondary Distribution</Typography.Text>
                 <Switch value={
                     admin?.distribution
                 } onChange={onChange} />
             </div>
 
             {
-                admin?.distribution && <div>
-                    <Slider value={distributionRate} disabled={isFetching} max={100} onChange={
-                        (value) => {
-                            setDistributionRate(value)
-                        }
-                    } />
+                admin?.distribution && <div style={{
+                    marginTop: 20
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
+                        <Slider style={{ flexGrow: 1 }} value={distributionRate} disabled={isFetching} max={100} tooltip={{ formatter }} onChange={
+                            (value) => {
+                                setDistributionRate(value)
+                            }
+                        } />
+                        <Typography.Text style={{ display: 'block' }} type='secondary'> {distributionRate}%</Typography.Text>
+                    </div>
+                    <Typography.Text style={{ display: 'block' }} type='danger'>The $METASO earned in this node will be automatically redistributed to users at a {distributionRate}% ratio based on their contribution value. </Typography.Text>
+
                     <div style={{
                         display: 'flex',
                         justifyContent: 'flex-end',

@@ -1,7 +1,7 @@
 import { fetchAllBuzzs } from "@/request/api";
 import { useEffect, useMemo, useRef, useState } from "react"
 import './index.less'
-import { Divider, List, Row, Skeleton, Grid, Drawer } from "antd";
+import { Divider, List, Row, Skeleton, Grid, Drawer, Empty, Card } from "antd";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useModel, useMatch, useRouteData, useLocation } from "umi";
 import Buzz from "@/Components/Buzz";
@@ -10,10 +10,12 @@ import Trans from "@/Components/Trans";
 
 import KeepAliveWrap from "@/Components/KeepAliveWrap";
 import Tweet, { TweetCard } from "../tweet";
+import InfiniteScrollV2 from "@/Components/InfiniteScrollV2";
 
 const { useBreakpoint } = Grid
 
 const Home = () => {
+
     const { btcConnector, user, mockBuzz } = useModel('user')
     const [open, setOpen] = useState(false)
     const [currentBuzzId, setCurrentBuzzId] = useState('');
@@ -24,17 +26,18 @@ const Home = () => {
     const targetBuzzId = useMemo(() => {
         return state?.buzzId
     }, [state])
-    const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
+    const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, refetch, isFetching } =
         useInfiniteQuery({
-            queryKey: ['homebuzzesnew', user.address],
+            queryKey: ['homebuzzesnew'],
             queryFn: ({ pageParam }) =>
                 fetchAllBuzzs({
-                    size: 5,
+                    size: 10,
                     lastId: pageParam,
                 }),
             initialPageParam: '',
             getNextPageParam: (lastPage, allPages) => {
-                const { data: { lastId } } = lastPage
+                // const { data: { lastId } } = lastPage
+                const lastId = lastPage?.data?.lastId
                 if (!lastId) return
                 return lastId;
             },
@@ -42,7 +45,7 @@ const Home = () => {
 
     const tweets = useMemo(() => {
         const _list: API.Buzz[] = data ? data?.pages.reduce((acc, item) => {
-            return [...acc || [], ...(item.data.list ?? []).filter(item => !item.blocked) || []]
+            return [...acc || [], ...(item.data?.list ?? []).filter(item => !item.blocked) || []]
         }, []) : [];
 
         if (mockBuzz) {
@@ -74,15 +77,16 @@ const Home = () => {
 
 
     return <div
-        id="scrollableDiv1"
+        // id="scrollableDiv1"
         ref={containerRef}
         style={{
             height: '100%',
             overflow: 'auto',
+            paddingBottom: 60
         }}
     >
-        {isLoading && <Skeleton avatar paragraph={{ rows: 2 }} active />}
-        <InfiniteScroll
+        {/* {isLoading && <Skeleton avatar paragraph={{ rows: 2 }} active />} */}
+        {/* <InfiniteScroll
             dataLength={(tweets ?? []).length}
             next={fetchNextPage}
             hasMore={hasNextPage}
@@ -91,33 +95,30 @@ const Home = () => {
             scrollThreshold={0.9}
             scrollableTarget="scrollableDiv1"
         >
-            <List
-                dataSource={tweets}
-                ref={contentRef}
-                renderItem={(item: API.Pin) => (
-                    <List.Item key={item.id} >
-                        <Buzz buzzItem={item} refetch={refetch} />
-                    </List.Item>
-                )}
-            />
-        </InfiniteScroll>
-        <Drawer
-            title=""
-            placement="right"
-            closable={true}
-            onClose={() => setOpen(false)}
-            open={open}
-            getContainer={false}
-            width='100%'
-            zIndex={99}
-            styles={{ header: { display: 'none' }, body: { padding: 0 }, content: { borderRadius: 8 }, mask: { backgroundColor: 'rgba(0,0,0,0)' } }}
-        >
-            {currentBuzzId && <TweetCard quotePinId={currentBuzzId} onClose={() => {
-                setOpen(false); history.pushState({}, '', '/home')
+            
+        </InfiniteScroll> */}
 
-            }} />}
-
-        </Drawer>
+        <List
+            loading={isLoading}
+            dataSource={tweets}
+            ref={contentRef}
+            renderItem={(item: API.Pin) => (
+                <List.Item key={item.id} >
+                    <Buzz buzzItem={item} refetch={refetch} />
+                </List.Item>
+            )}
+        />
+        <InfiniteScrollV2
+            id="mason_grid"
+            onMore={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage()
+                }
+            }}
+        />
+        {(isLoading || isFetchingNextPage) && <Card><Skeleton avatar paragraph={{ rows: 2 }} active /></Card>}
+        {(!isFetching && !hasNextPage) &&
+            <Divider plain><Trans>It is all, nothing more 🤐</Trans></Divider>}
     </div>
 
 

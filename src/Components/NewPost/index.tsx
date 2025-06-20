@@ -16,7 +16,7 @@ import _btc from '@/assets/btc.png'
 import _mvc from '@/assets/mvc.png'
 import { InscribeData } from "node_modules/@metaid/metaid/dist/core/entity/btc";
 import * as crypto from 'crypto'
-import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, openWindowTarget, sleep } from "@/utils/utils";
+import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, getEffectiveBTCFeerate, openWindowTarget, sleep } from "@/utils/utils";
 import { postPayBuzz, postVideo } from "@/utils/buzz";
 import { getDeployList, getMRC20Info, getUserInfo } from "@/request/api";
 import defaultAvatar from '@/assets/avatar.svg'
@@ -187,7 +187,7 @@ export default ({ show, onClose, quotePin }: Props) => {
             };
 
             if (video && chainNet === 'mvc') {
-                const { metafile, transactions } = await postVideo(video.file, showConf?.host || '', chainNet, btcConnector, mvcConnector);
+                const { metafile, transactions } = await postVideo(video.file, showConf?.host || '', chainNet, btcConnector, mvcConnector, mvcFeeRate);
                 fileTransactions = transactions as MvcTransaction[];
                 finalBody.attachments = [metafile]
                 // let chunkTransactions: MvcTransaction[] = [];
@@ -289,7 +289,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                         dataArray: fileOptions,
                         options: {
                             noBroadcast: 'no',
-                            feeRate: Number(feeRate),
+                            feeRate: getEffectiveBTCFeerate(Number(feeRate)),
                         },
                     });
 
@@ -359,7 +359,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     ],
                     options: {
                         noBroadcast: 'no',
-                        feeRate: Number(feeRate),
+                        feeRate: getEffectiveBTCFeerate(Number(feeRate)),
                         service: fetchServiceFee('post_service_fee_amount'),
                         // service: {
                         //     address: environment.service_address,
@@ -906,7 +906,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                                                                         window.open(curNetwork === 'testnet' ? 'https://testnet.metaid.market/launch' : 'https://metaid.market/launch', openWindowTarget())
                                                                     }} type="primary" key="console">
 
-                                                                        <Trans>Launch Me</Trans>
+                                                                        <Trans wrapper>Launch Me</Trans>
                                                                     </Button>
                                                                 }
                                                             />

@@ -654,7 +654,6 @@ const ThemeCard = ({ item, handleEdit }: { item: DB.ShowConfDto, handleEdit: any
         if (styles.colorButton) {
             components.Button.primaryColor = styles.colorButton
         }
-        console.log(components, 'components')
 
         themeTokens = {
             token: tokens,

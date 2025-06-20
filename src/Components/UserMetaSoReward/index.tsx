@@ -1,4 +1,4 @@
-import { Button, Card, Descriptions, message, Modal, notification, Space, theme, Typography } from "antd";
+import { Button, Card, Descriptions, Divider, message, Modal, notification, Space, theme, Typography } from "antd";
 import Trans from "../Trans";
 import { useQuery } from "@tanstack/react-query";
 import { claimCommit, claimCommitUser, claimPre, claimPreUser, fetchUserCoinInfo } from "@/request/metaso";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import { buildClaimPsbt } from "@/utils/metaso";
 import { curNetwork } from "@/config";
 import Decimal from "decimal.js";
+import MetablockList from "./MetablockList";
 
 
 type Props = {
@@ -23,7 +24,8 @@ export default ({ address, host }: Props) => {
     const { feeRate } = useModel('user')
     const {
         token: {
-            colorPrimary
+            colorPrimary,
+            colorText
         }
     } = theme.useToken()
     const { data, isFetching, refetch } = useQuery({
@@ -63,7 +65,7 @@ export default ({ address, host }: Props) => {
     const handleClaim = async () => {
         setCommiting(true)
         try {
-            if (Number(data?.data.pendingReward) <= 0) {
+            if (Number(data?.data.claimableReward) <= 0) {
                 throw new Error('No pending reward')
             }
 
@@ -77,7 +79,7 @@ export default ({ address, host }: Props) => {
                 receiveAddress: address,
                 host,
                 networkFeeRate: feeRate,
-                claimAmount: data!.data.pendingReward
+                claimAmount: data!.data.claimableReward
             },
                 {
                     headers: {
@@ -158,26 +160,71 @@ export default ({ address, host }: Props) => {
     }
 
     return <div>
-        <Typography.Title level={5}>
-            <Trans>Metaso</Trans>
-        </Typography.Title>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography.Title level={5}>
+                <Trans>Metaso</Trans>
+            </Typography.Title>
+            <Records />
+        </div>
+
         <Card loading={isFetching}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <div style={{ color: colorPrimary, fontSize: 20, fontWeight: 'bold' }}><NumberFormat value={data?.data.pendingReward} suffix=' $METASO' /></div>
-                    <Typography.Text type='secondary'>
-                        <Trans>Pending Rewards</Trans>
+                    <div style={{ color: colorPrimary, fontSize: 20, fontWeight: 'bold' }}><NumberFormat value={data?.data.claimableReward} suffix=' $METASO' /></div>
+                    <Typography.Text type='secondary' style={{ fontSize: 12 }}>
+                        <Trans>Claimable</Trans>
                     </Typography.Text>
                 </div>
                 <Space>
-                    <Button size='small' shape='round' type="primary" disabled={data?.data.pendingReward <= 0} onClick={handleClaim} loading={commiting}>
+                    <Button shape='round' color='primary' variant='filled' disabled={data?.data.claimableReward <= 0} onClick={handleClaim} loading={commiting}>
                         <Trans wrapper>Claim</Trans>
                     </Button>
-                    <Records />
+
                 </Space>
+            </div>
+            <Divider />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                <Typography.Text type='secondary' style={{ fontSize: 12 }}>
+                    <Trans>Pending(Estimated)</Trans>
+                </Typography.Text>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                    <div style={{ color: colorText, fontSize: 12, fontWeight: 'bold' }}>
+                        <NumberFormat value={data?.data.currentUserExpectedPendingReward||0} suffix=' $METASO' />
+                    </div>
+                    {data?.data.progressRemainBlockCount && <div style={{ color: '#FC7345', fontSize: 10 }}>You still need 144 + {data?.data.progressRemainBlockCount} btc blocks to claim it</div>}
+
+                </div>
+
+            </div>
+            <Divider />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                <Typography.Text type='secondary' style={{ fontSize: 12 }}>
+                    <Trans>Newly added</Trans>
+                </Typography.Text>
+                <div style={{ color: colorText, fontSize: 12, fontWeight: 'bold' }}>
+                    <NumberFormat value={data?.data.newlyAddedMetaBlockReward} suffix=' $METASO' prefix='+' />
+                </div>
+
+            </div>
+            <Divider />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                <Typography.Text type='secondary' style={{ fontSize: 12 }}>
+                    <Trans>Total</Trans>
+                </Typography.Text>
+                <div style={{ color: colorText, fontSize: 12, fontWeight: 'bold' }}>
+                    <NumberFormat value={data?.data.totalReward} suffix=' $METASO' prefix='+' />
+                </div>
+
             </div>
         </Card>
         {contextHolder}
         {contextHolder2}
+        <Typography.Title level={5}>
+            <Trans>Metablock</Trans>
+        </Typography.Title>
+        <MetablockList address={address} host={host} />
     </div>
 }

@@ -1,6 +1,6 @@
 import { Link, Outlet, useModel, history, useIntl, useLocation, useOutlet } from 'umi';
 import { Button, Col, ConfigProvider, Divider, Dropdown, FloatButton, Grid, Input, InputNumber, Layout, Menu, message, notification, Radio, Row, Segmented, Space, Tag, theme, Typography } from 'antd';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import './index.less';
 import Menus from './Menus';
 import { CaretDownOutlined, EditOutlined, EllipsisOutlined, LoginOutlined, PoweroffOutlined, ProjectOutlined, SearchOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
@@ -26,6 +26,7 @@ import UserSetting from '@/Components/UserSetting';
 import ConnectWallet from '@/Components/ConnectWallet';
 import ProfileSetting from '@/Components/ProfileSetting';
 import HomeTabs from '@/Components/HomeTabs';
+import { LockKeyhole, LockKeyholeOpen } from 'lucide-react';
 
 
 
@@ -39,7 +40,10 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     const queryClient = useQueryClient();
     const [collapsed, setCollapsed] = useState(false);
     const { showConf: __showConf } = useModel('dashboard')
-    const { user, chain, disConnect, feeRate, setFeeRate, mvcFeeRate, setMvcFeeRate, connect, switchChain, checkUserSetting, isLogin, searchWord, setSearchWord } = useModel('user')
+    const { user, chain, disConnect, feeRate, setFeeRate, mvcFeeRate, setMvcFeeRate, connect, switchChain, checkUserSetting, isLogin, btcFeerateLocked,
+        setBtcFeerateLocked,
+        mvcFeerateLocked,
+        setMvcFeerateLocked, setSearchWord } = useModel('user')
     const { md } = useBreakpoint();
     const { token: {
         colorPrimary,
@@ -72,6 +76,16 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
         }
 
     }, [checkUserSetting, location.pathname])
+
+    const locked = useMemo(() => {
+        if (chain === 'btc') {
+            return btcFeerateLocked
+        }
+        if (chain === 'mvc') {
+            return mvcFeerateLocked
+        }
+
+    }, [chain, btcFeerateLocked, mvcFeerateLocked])
 
     const openNotification = () => {
         const key = `open${Date.now()}`;
@@ -305,7 +319,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                                                     {/* <Typography.Text type='secondary' style={{ lineHeight: 1 }}>Network</Typography.Text> */}
                                                                 </div>
                                                             </Space>
-                                                            <InputNumber onClick={e=>e.stopPropagation()} value={feeRate} onChange={(_value) => {
+                                                            <InputNumber onClick={e => e.stopPropagation()} value={feeRate} onChange={(_value) => {
                                                                 setFeeRate(Number(_value))
                                                             }} controls={true} suffix={'sats'}
                                                                 precision={0}
@@ -315,7 +329,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
 
                                                     </Menu.Item>
-                                                    <Menu.Item key='2'  onClick={() => {
+                                                    <Menu.Item key='2' onClick={() => {
                                                         switchChain('mvc')
                                                     }}>
 
@@ -334,7 +348,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
                                                                 </div>
                                                             </Space>
-                                                            <InputNumber onClick={e=>e.stopPropagation()} value={mvcFeeRate} onChange={(_value) => {
+                                                            <InputNumber onClick={e => e.stopPropagation()} value={mvcFeeRate} onChange={(_value) => {
                                                                 setMvcFeeRate(Number(_value))
                                                             }} controls={true} suffix={'sats'}
                                                                 precision={0}
@@ -354,6 +368,24 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                                     <Typography.Text style={{ color: colorPrimary }}>{chain === 'btc' ? feeRate : mvcFeeRate} </Typography.Text>
                                                     <Typography.Text type='secondary'> sats</Typography.Text>
                                                 </Typography>
+
+                                                <Button type='text' size='small' style={{ color: colorTextSecondary, marginLeft: 8 }} onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (chain === 'btc') {
+                                                        setBtcFeerateLocked(!locked)
+                                                    } else {
+                                                        setMvcFeerateLocked(!locked)
+                                                    }
+
+                                                }}>
+                                                    {
+                                                        !locked ? <LockKeyholeOpen style={{ color: colorTextSecondary, width: 16 }} /> : <LockKeyhole style={{ color: colorPrimary,  width: 16 }} />
+                                                    }
+
+                                                </Button>
+
+
+
                                                 <CaretDownOutlined style={{ color: colorTextSecondary }} />
                                             </Button>
 

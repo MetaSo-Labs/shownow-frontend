@@ -5,11 +5,12 @@ import { useModel } from "umi"
 import { useState } from "react"
 import NumberFormat from "../NumberFormat"
 import { curNetwork } from "@/config"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, FileText } from "lucide-react"
 import dayjs from "dayjs"
 import { getClaimRecords, getUserClaimRecords } from "@/request/metaso"
 import _mataso from '@/assets/dashboard/mataso.svg'
 import './index.less'
+import { FileTextOutlined } from "@ant-design/icons"
 
 export default () => {
     const { admin } = useModel('dashboard');
@@ -27,8 +28,8 @@ export default () => {
         setIsModalOpen(false);
     };
     return <>
-        <Button size='small' color="primary" variant="filled" shape='round' onClick={showModal}>
-            <Trans>Records</Trans>
+        <Button size='small' type='text' onClick={showModal} icon={<FileText />}>
+
         </Button>
         <Modal title={<Trans>Historical Records</Trans>} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
             <ProList<MS.UserClaimRecord>

@@ -46,6 +46,7 @@ import {
     detectUrl,
     determineAddressInfo,
     formatMessage,
+    getEffectiveBTCFeerate,
     handleSpecial,
     openWindowTarget,
     sleep,
@@ -174,7 +175,7 @@ export default ({
             let _summary = buzzItem!.content;
             const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
             const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
-            return isSummaryJson ? parseSummary : undefined;
+            return parseSummary.publicContent ? parseSummary : undefined;
         } catch (e) {
             console.error("Error parsing buzz content:", e);
             return undefined;
@@ -219,7 +220,7 @@ export default ({
                     ],
                     options: {
                         noBroadcast: "no",
-                        feeRate: Number(feeRate),
+                        feeRate: getEffectiveBTCFeerate(Number(feeRate)),
                         service: fetchServiceFee("like_service_fee_amount", "BTC"),
                     },
                 });
@@ -297,9 +298,9 @@ export default ({
     });
 
     const { data: accessControl } = useQuery({
-        enabled: !isEmpty(payBuzz),
-        queryKey: ["buzzAccessControl", buzzItem!.id],
-        queryFn: () => getControlByContentPin({ pinId: buzzItem!.id }),
+        enabled: !isEmpty(payBuzz?.id),
+        queryKey: ["buzzAccessControl", payBuzz?.id],
+        queryFn: () => getControlByContentPin({ pinId: payBuzz?.id }),
     });
 
     const { data: decryptContent, refetch: refetchDecrypt } = useQuery({
@@ -454,7 +455,7 @@ export default ({
                     ],
                     options: {
                         noBroadcast: "no",
-                        feeRate: Number(feeRate),
+                        feeRate: getEffectiveBTCFeerate(Number(feeRate)),
                         outputs: [
                             {
                                 address: buzzItem.address,
@@ -693,55 +694,62 @@ export default ({
                         decryptContent && decryptContent.video[0] && <Video pid={decryptContent?.video[0]} />
                     }
                     {decryptContent?.buzzType === "pay" && (
-                        <Spin spinning={accessControl?.data.mempool === 1}>
+                        <Spin spinning={accessControl?.data?.mempool === 1}>
                             {accessControl?.data?.payCheck && (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "space-between",
-                                        marginBottom: 12,
-                                        background: "rgba(32, 32, 32, 0.06)",
-                                        borderRadius: 8,
-                                        padding: "4px 12px",
-                                    }}
-                                >
+                                <div>
                                     <div
-                                        style={{ display: "flex", alignItems: "center", gap: 8 }}
-                                    >
-                                        <Text type="warning" style={{ lineHeight: "16px" }}>
-                                            {accessControl?.data?.payCheck?.amount}
-                                        </Text>
-                                        <img src={_btc} alt="" width={16} height={16} />
-                                    </div>
-                                    <Button
-                                        shape="round"
-                                        size="small"
-                                        type="primary"
-                                        disabled={
-                                            decryptContent?.status === "purchased" ||
-                                            decryptContent?.status === "mempool"
-                                        }
-                                        onClick={async (e) => {
-                                            e.stopPropagation();
-                                            if (!isLogin) {
-                                                message.error(
-                                                    formatMessage("Please connect your wallet first")
-                                                );
-                                                return;
-                                            }
-                                            const isPass = checkUserSetting();
-                                            if (!isPass) return;
-                                            setShowUnlock(true);
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "space-between",
+                                            marginBottom: 12,
+                                            background: "rgba(32, 32, 32, 0.06)",
+                                            borderRadius: 8,
+                                            padding: "4px 12px",
                                         }}
-                                        loading={decryptContent?.status === "mempool"}
                                     >
-                                        <Trans wrapper>
-                                            {decryptContent.status === "unpurchased"
-                                                ? "Unlock"
-                                                : "Unlocked"}
-                                        </Trans>
-                                    </Button>
+                                        <div
+                                            style={{ display: "flex", alignItems: "center", gap: 8 }}
+                                        >
+                                            <Text type="warning" style={{ lineHeight: "16px" }}>
+                                                {accessControl?.data?.payCheck?.amount}
+                                            </Text>
+                                            <img src={_btc} alt="" width={16} height={16} />
+                                        </div>
+                                        <Button
+                                            shape="round"
+                                            size="small"
+                                            type="primary"
+                                            disabled={
+                                                decryptContent?.status === "purchased" ||
+                                                decryptContent?.status === "mempool"
+                                            }
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+                                                if (!isLogin) {
+                                                    message.error(
+                                                        formatMessage("Please connect your wallet first")
+                                                    );
+                                                    return;
+                                                }
+                                                const isPass = checkUserSetting();
+                                                if (!isPass) return;
+                                                setShowUnlock(true);
+                                            }}
+                                            loading={decryptContent?.status === "mempool"}
+                                        >
+                                            <Trans wrapper>
+                                                {decryptContent.status === "unpurchased"
+                                                    ? "Unlock"
+                                                    : "Unlocked"}
+                                            </Trans>
+                                        </Button>
+                                    </div>
+                                    {
+                                        decryptContent?.status === "mempool" && <Typography.Text type='warning' style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', lineHeight: '20px', paddingBottom: 12 }}>
+                                            <Trans>Waiting for transaction confirmation. Access will be available once confirmed.</Trans>
+                                        </Typography.Text>
+                                    }
                                 </div>
                             )}
                             {accessControl?.data?.holdCheck && (
@@ -974,7 +982,8 @@ export default ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 20,
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    padding: 20
                 }}>
                     <img src={_btc} alt="" width={60} height={60} />
                     <Typography.Title level={4}>{accessControl?.data?.payCheck?.amount} BTC</Typography.Title>
@@ -1005,6 +1014,6 @@ export default ({
                     </div>
                 </div>
             </Unlock>
-        </Card>
+        </Card >
     );
 };

@@ -5,7 +5,7 @@ import {
   address as libAddress,
   payments,
   initEccLib,
-  networks
+  networks,
 } from "bitcoinjs-lib";
 import mempoolJS from "@mempool/mempool.js";
 import { isTaprootInput } from "bitcoinjs-lib/src/psbt/bip371";
@@ -121,8 +121,8 @@ export function calcFee(psbt: Psbt, feeRate: number) {
   const outputs = psbt.txOutputs;
 
   const bytes = transactionBytes(inputs, outputs);
-  console.log({ bytes });
-  return new Decimal(bytes).mul(feeRate);
+
+  return new Decimal(bytes).mul(feeRate).add(10);
 }
 
 export async function buildTx<T>(
@@ -413,7 +413,6 @@ export const checkWalletAddress = async (address: string) => {
   }
   return { status: true };
 };
-
 
 export const getPkScriprt = (address: string, network: API.Network) => {
   initEccLib(ecc);

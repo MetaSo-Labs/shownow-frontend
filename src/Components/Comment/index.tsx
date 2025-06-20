@@ -9,7 +9,7 @@ import { curNetwork, FLAG } from "@/config";
 import { isNil } from "ramda";
 import { useQueryClient } from "@tanstack/react-query";
 import commentEntitySchema, { getCommentEntitySchemaWithCustomHost } from "@/entities/comment";
-import { formatMessage, sleep } from "@/utils/utils";
+import { formatMessage, getEffectiveBTCFeerate, sleep } from "@/utils/utils";
 import Trans from "../Trans";
 const { TextArea } = Input;
 type Props = {
@@ -19,14 +19,14 @@ type Props = {
     refetch?: () => Promise<any>
 }
 export default ({ show, onClose, tweetId, refetch }: Props) => {
-   
-    const { user, btcConnector, feeRate,mvcFeeRate, chain, mvcConnector, checkUserSetting,isLogin } = useModel('user')
+
+    const { user, btcConnector, feeRate, mvcFeeRate, chain, mvcConnector, checkUserSetting, isLogin } = useModel('user')
     const { showConf, fetchServiceFee } = useModel('dashboard');
     const [content, setContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const queryClient = useQueryClient();
     const handleAddComment = async () => {
-        if(!isLogin){
+        if (!isLogin) {
             message.error(formatMessage('Please connect your wallet first'))
             return
         }
@@ -57,7 +57,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
                     ],
                     options: {
                         noBroadcast: 'no',
-                        feeRate: Number(feeRate),
+                        feeRate: getEffectiveBTCFeerate(Number(feeRate)),
                         service: fetchServiceFee('comment_service_fee_amount', 'BTC'),
                         network: curNetwork,
                     },
@@ -65,7 +65,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
 
                 console.log('create res for inscribe', createRes);
                 if (!isNil(createRes?.revealTxIds[0])) {
-                    await sleep(6000);
+                    await sleep(500);
                     refetch && refetch();
                     message.success('comment successfully');
                     setContent('');
@@ -86,7 +86,7 @@ export default ({ show, onClose, tweetId, refetch }: Props) => {
                 console.log('create res for inscribe', createRes)
 
                 if (!isNil(createRes?.txid)) {
-                    await sleep(6000);
+                    await sleep(500);
                     refetch && refetch();
                     message.success('comment successfully')
                     setContent('')

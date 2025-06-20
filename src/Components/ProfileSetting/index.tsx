@@ -9,6 +9,7 @@ import { getUserInfo } from "@/request/api"
 import { BASE_MAN_URL, curNetwork } from "@/config"
 import { image2Attach } from "@/utils/file"
 import UploadAvatar from "../ProfileCard/UploadAvatar"
+import { getEffectiveBTCFeerate } from "@/utils/utils"
 
 type Props = {
     show: boolean
@@ -30,7 +31,7 @@ export default () => {
     }, [chainNet, btcConnector, mvcConnector])
 
     const profileUserData = useQuery({
-        queryKey: ['userInfo', 'edit', connector?.user.address],
+        queryKey: ['userInfo', 'edit', connector?.user?.address],
         enabled: Boolean(connector && showProfileEdit),
         queryFn: () => getUserInfo({ address: connector!.user.address }),
     });
@@ -65,7 +66,7 @@ export default () => {
                         ...values
                     },
                     options: {
-                        feeRate: chainNet === 'btc' ? Number(feeRate) : Number(mvcFeeRate),
+                        feeRate: chainNet === 'btc' ? getEffectiveBTCFeerate(Number(feeRate)) : Number(mvcFeeRate),
                         network: curNetwork,
                     },
                 }).catch(e => {
@@ -92,7 +93,7 @@ export default () => {
                 const res = await connector!.createUserInfo({
                     userData: values,
                     options: {
-                        feeRate: chainNet === 'btc' ? Number(feeRate) : Number(mvcFeeRate),
+                        feeRate: chainNet === 'btc' ? getEffectiveBTCFeerate(Number(feeRate)) : Number(mvcFeeRate),
                         network: curNetwork,
                     },
                 }).catch(e => {

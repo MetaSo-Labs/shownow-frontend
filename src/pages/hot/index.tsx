@@ -1,7 +1,7 @@
 import { fetchAllBuzzs, fetchAllHotBuzzs, fetchBuzzs, fetchFollowingList, fetchMyFollowingBuzzs, fetchMyFollowingTotal, getIndexTweet } from "@/request/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import './index.less'
-import { Grid, Col, Divider, List, Row, Skeleton } from "antd";
+import { Grid, Col, Divider, List, Row, Skeleton, Card } from "antd";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useModel } from "umi";
 import Buzz from "@/Components/Buzz";
@@ -19,7 +19,7 @@ const Home = () => {
             queryKey: ['homebuzzhot',],
             queryFn: ({ pageParam }) =>
                 fetchAllHotBuzzs({
-                    size: 5,
+                    size: 30,
                     lastId: pageParam,
                 }),
             initialPageParam: '',
@@ -28,6 +28,7 @@ const Home = () => {
                 if (!lastId) return
                 return lastId;
             },
+            refetchInterval: 1000 * 60 * 3, // 每3分钟刷新一次
         });
 
     const tweets = useMemo(() => {
@@ -54,19 +55,21 @@ const Home = () => {
         style={{
             height: '100%',
             overflow: 'auto',
+            paddingBottom: 60
         }}
     >
-        {isLoading && <Skeleton avatar paragraph={{ rows: 2 }} active />}
+        {isLoading && <Card><Skeleton avatar paragraph={{ rows: 2 }} active /></Card>}
         <InfiniteScroll
             dataLength={tweets.length}
             next={fetchNextPage}
             hasMore={hasNextPage}
-            loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+            loader={<Card><Skeleton avatar paragraph={{ rows: 2 }} active /></Card>}
             endMessage={<Divider plain><Trans>It is all, nothing more 🤐</Trans></Divider>}
             scrollableTarget="scrollableDivHot"
         >
             <List
                 ref={contentRef}
+                loading={isLoading}
                 dataSource={tweets}
                 renderItem={(item: API.Pin) => (
                     <List.Item key={item.id}>

@@ -1,7 +1,7 @@
 import { fetchAllBuzzs, fetchAllHotBuzzs, fetchAllRecommendBuzzs, fetchBuzzs, fetchFollowingList, fetchMyFollowingBuzzs, fetchMyFollowingTotal, getIndexTweet } from "@/request/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import './index.less'
-import { Grid, Col, Divider, List, Row, Skeleton } from "antd";
+import { Grid, Col, Divider, List, Row, Skeleton, Card } from "antd";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useModel } from "umi";
 import Buzz from "@/Components/Buzz";
@@ -21,7 +21,7 @@ const Home = () => {
 
             queryFn: async ({ pageParam: [lastId1, lastId2] }) => {
                 const recommend = fetchAllRecommendBuzzs({
-                    size: 5,
+                    size: 10,
                     lastId: lastId1,
                     userAddress: user.address || '',
                 });
@@ -91,19 +91,20 @@ const Home = () => {
         style={{
             height: '100%',
             overflow: 'auto',
+            paddingBottom:60
         }}
     >
-        {isLoading && <Skeleton avatar paragraph={{ rows: 2 }} active />}
         <InfiniteScroll
             dataLength={tweets.length}
             next={fetchNextPage}
             hasMore={hasNextPage}
-            loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+            loader={<Card><Skeleton avatar paragraph={{ rows: 1 }} active /></Card>}
             endMessage={<Divider plain><Trans>It is all, nothing more 🤐</Trans></Divider>}
             scrollableTarget="scrollableDivrecommend"
         >
             <List
                 ref={contentRef}
+                loading={isLoading}
                 dataSource={tweets}
                 renderItem={(item: API.Pin) => (
                     <List.Item key={item.id}>

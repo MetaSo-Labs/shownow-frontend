@@ -12,6 +12,7 @@ import Assist from "./assist";
 import { isValidBitcoinAddress } from "@/utils/utils";
 import { curNetwork } from "@/config";
 import Recommend from "./recommend";
+import MetasoConf from "./MetasoConf";
 
 export default () => {
     const [activeKey, setActiveKey] = useState('1');
@@ -43,6 +44,11 @@ export default () => {
             items: [
                 {
                     key: '1',
+                    label: 'Metaso Conf',
+                    children: <MetasoConf />
+                },
+                {
+                    key: '10',
                     label: 'Fee',
                     children: <ProCard
                         split="vertical"
@@ -90,7 +96,7 @@ export default () => {
                                             name="follow_service_fee_amount"
                                             label="Follow Service Fee Amount"
                                             placeholder="Enter the fee amount for follow actions"
-                                            fieldProps={{ precision: 0, suffix: 'SAT' }}
+                                            fieldProps={{ precision: 0, suffix: 'SAT', min: 546 }}
 
                                         />
                                         <ProFormDigit
@@ -98,14 +104,14 @@ export default () => {
                                             name="post_service_fee_amount"
                                             label="Post Service Fee Amount"
                                             placeholder="Enter the fee amount for post actions"
-                                            fieldProps={{ precision: 0, suffix: 'SAT' }}
+                                            fieldProps={{ precision: 0, suffix: 'SAT', min: 546 }}
                                         />
                                         <ProFormDigit
                                             width="md"
                                             name="comment_service_fee_amount"
                                             label="Comment Service Fee Amount"
                                             placeholder="Enter the fee amount for comment actions"
-                                            fieldProps={{ precision: 0, suffix: 'SAT' }}
+                                            fieldProps={{ precision: 0, suffix: 'SAT', min: 546 }}
                                         />
 
                                         <ProFormDigit
@@ -113,14 +119,14 @@ export default () => {
                                             name="like_service_fee_amount"
                                             label="Like Service Fee Amount"
                                             placeholder="Enter the fee amount for like actions"
-                                            fieldProps={{ precision: 0, suffix: 'SAT' }}
+                                            fieldProps={{ precision: 0, suffix: 'SAT', min: 546 }}
                                         />
                                         <ProFormDigit
                                             width="md"
                                             name="donate_service_fee_amount"
                                             label="Donate Service Fee Amount"
                                             placeholder="Enter the fee amount for Donate actions"
-                                            fieldProps={{ precision: 0, suffix: 'SAT' }}
+                                            fieldProps={{ precision: 0, suffix: 'SAT', min: 546 }}
                                         />
 
 

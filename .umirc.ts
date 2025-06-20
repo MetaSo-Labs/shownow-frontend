@@ -76,7 +76,7 @@ export default defineConfig({
   favicons: [
     "/ico/favicon.ico",
     "/favicon.ico"],
-  title: "ShowNow",
+  title: "MetaSo",
   define: {
     "process.env.BUILD_ENV": process.env.BUILD_ENV,
   },
