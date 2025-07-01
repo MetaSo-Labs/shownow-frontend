@@ -1,6 +1,5 @@
-import { BASE_MAN_URL } from "@/config";
+import { AVATAR_BASE_URL, BASE_MAN_URL, DEFAULT_AVATAR } from "@/config";
 import { Avatar } from "antd";
-import defaultAvatar from '@/assets/defaultAvatar.svg'
 
 type Props = {
     src: string | null | undefined;
@@ -23,9 +22,9 @@ export default (
     }} src={<img style={{
 
         objectFit: 'cover',
-    }} src={src ? (src.startsWith('http') ? '' : BASE_MAN_URL) + src : defaultAvatar} onError={({ currentTarget }) => {
+    }} src={src ? (src.startsWith('http') ? '' : AVATAR_BASE_URL) + src : DEFAULT_AVATAR} onError={({ currentTarget }) => {
         currentTarget.onerror = null
-        currentTarget.src = defaultAvatar;
+        currentTarget.src = DEFAULT_AVATAR;
     }}></img>} size={size}  onClick={onClick} alt="avatar" >
 
     </Avatar>

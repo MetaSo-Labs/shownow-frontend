@@ -1,7 +1,7 @@
 import UploadAvatar from "@/Components/ProfileCard/UploadAvatar";
 import UploadBackground from "@/Components/ProfileCard/UploadBackground";
 import Trans from "@/Components/Trans";
-import { BASE_MAN_URL, curNetwork } from "@/config";
+import { AVATAR_BASE_URL, BASE_MAN_URL, curNetwork } from "@/config";
 import { getUserInfo } from "@/request/api";
 import { image2Attach } from "@/utils/file";
 import { formatMessage } from "@/utils/utils";
@@ -32,8 +32,8 @@ export default () => {
     useEffect(() => {
         form.setFieldsValue({
             name: profileUserData.data?.name,
-            avatar: profileUserData.data?.avatar ? `${BASE_MAN_URL}${profileUserData.data?.avatar}` : '',
-            background: profileUserData.data?.background ? `${BASE_MAN_URL}${profileUserData.data?.background}` : '',
+            avatar: profileUserData.data?.avatar ? `${AVATAR_BASE_URL}${profileUserData.data?.avatar}` : '',
+            background: profileUserData.data?.background ? `${AVATAR_BASE_URL}${profileUserData.data?.background}` : '',
         })
     }, [profileUserData.data])
 

@@ -18,13 +18,16 @@ export const curNetwork: API.Network =
     : "mainnet";
 // window.METAID_MARKET_NETWORK || "mainnet";
 
+export const AVATAR_BASE_URL =
+  curNetwork === "testnet" ? TESTNET_CONTENT_HOST : MAINNET_CONTENT_HOST;
+
 export const TYPED_NETWORK: Network =
   curNetwork === "testnet" ? networks.testnet : networks.bitcoin;
 
 export const METASO_BASE_API =
   curNetwork === "testnet"
     ? "https://www.metaso.network/api-base-testnet"
-    : "https://www.metaso.network/api-base";
+    : "https://www.metaso.network/api-base-grey";
 
 // export const DASHBOARD_API = "https://www.show.now/api";
 // export const DASHBOARD_API = "http://127.0.0.1:3000/api";

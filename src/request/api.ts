@@ -299,9 +299,7 @@ export async function fetchFeeRate({
   netWork?: BtcNetwork;
 }): Promise<API.FeeRateApi> {
   const response = await fetch(
-    `https://mempool.space/${
-      netWork === "mainnet" ? "" : "testnet/"
-    }api/v1/fees/recommended`,
+    `https://api.mvcscan.com/browser/v1/fees/recommended?chain=btc`,
     {
       method: "get",
     }
@@ -454,10 +452,13 @@ export const getMRC20Info = async (params: { id?: string; tick?: string }) => {
   return request<{
     code: number;
     data: API.MRC20TickInfo;
-  }>(`${curNetwork === "testnet" ? BASE_MAN_URL : MAINNET_MAN_HOST_V1}/api/mrc20/tick/info`, {
-    method: "GET",
-    params,
-  });
+  }>(
+    `${curNetwork === "testnet" ? BASE_MAN_URL : MAINNET_MAN_HOST_V1}/api/mrc20/tick/info`,
+    {
+      method: "GET",
+      params,
+    }
+  );
 };
 
 // export const getIDCoinInfo = async (params: {

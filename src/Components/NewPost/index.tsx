@@ -19,7 +19,6 @@ import * as crypto from 'crypto'
 import { checkImageSize, encryptPayloadAES, formatMessage, generateAESKey, getEffectiveBTCFeerate, openWindowTarget, sleep } from "@/utils/utils";
 import { postPayBuzz, postVideo } from "@/utils/buzz";
 import { getDeployList, getMRC20Info, getUserInfo } from "@/request/api";
-import defaultAvatar from '@/assets/avatar.svg'
 import UserAvatar from "../UserAvatar";
 import Trans from "../Trans";
 import NFTModal from "../NFTModal";

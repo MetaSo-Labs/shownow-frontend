@@ -9,6 +9,7 @@ import {
 } from "@feiyangl1020/metaid";
 
 import {
+  AVATAR_BASE_URL,
   BASE_MAN_URL,
   curNetwork,
   DASHBOARD_ADMIN_PUBKEY,
@@ -222,7 +223,6 @@ export default () => {
         address: mvcAddress,
         xpub: mvcPub,
       });
-      console.log(BASE_MAN_URL, "BASE_MAN_URLBASE_MAN_URL");
       const btcConnector = await btcConnect({
         wallet: btcWallet,
         network: curNetwork,
@@ -239,10 +239,10 @@ export default () => {
       if (connector.user) {
         setUser({
           avater: connector.user.avatar
-            ? `${getHostByNet(curNetwork)}${connector.user.avatar}`
+            ? `${AVATAR_BASE_URL}${connector.user.avatar}`
             : "",
           background: connector.user.background
-            ? `${getHostByNet(curNetwork)}${connector.user.background}`
+            ? `${AVATAR_BASE_URL}${connector.user.background}`
             : "",
           name: connector.user.name,
           metaid: connector.user.metaid,
@@ -260,10 +260,10 @@ export default () => {
     const userInfo = await getUserInfo({ address: user.address });
     setUser({
       avater: userInfo.avatar
-        ? `${getHostByNet(curNetwork)}${userInfo.avatar}`
+        ? `${AVATAR_BASE_URL}${userInfo.avatar}`
         : "",
       background: userInfo.background
-        ? `${getHostByNet(curNetwork)}${userInfo.background}`
+        ? `${AVATAR_BASE_URL}${userInfo.background}`
         : "",
       name: userInfo.name,
       metaid: userInfo.metaid,
@@ -316,10 +316,10 @@ export default () => {
     const connector = chain === "btc" ? btcConnector : mvcConnector;
     setUser({
       avater: connector.user.avatar
-        ? `${BASE_MAN_URL}${connector.user.avatar}`
+        ? `${AVATAR_BASE_URL}${connector.user.avatar}`
         : "",
       background: connector.user.background
-        ? `${BASE_MAN_URL}${connector.user.background}`
+        ? `${AVATAR_BASE_URL}${connector.user.background}`
         : "",
       name: connector.user.name,
       metaid: connector.user.metaid,
