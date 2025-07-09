@@ -35,6 +35,7 @@ export default defineConfig({
         { path: "setting", component: "@/pages/setting" },
         { path: "about", component: "@/pages/about" },
         { path: "rank", component: "@/pages/rank" },
+        {path: "notification", component: "@/pages/notification" },
       ],
     },
     {

@@ -2,8 +2,8 @@
 import { useIntl, useModel, history } from "umi"
 import Popup from "../ResponPopup"
 import UserInfo from "../UserInfo"
-import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumber, message, Radio, Result, Row, Segmented, Space, Tag, Typography, Upload, UploadFile, UploadProps } from "antd";
-import { CloseOutlined, FileImageOutlined, LockOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumber, message, Radio, Result, Row, Segmented, Select, Space, Tag, Typography, Upload, UploadFile, UploadProps } from "antd";
+import { CheckCircleOutlined, CloseOutlined, ExclamationCircleOutlined, FileImageOutlined, LoadingOutlined, LockOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { AttachmentItem, convertToFileList, image2Attach, processFile } from "@/utils/file";
 import { CreateOptions, IBtcEntity, IMvcEntity, MvcTransaction } from "@feiyangl1020/metaid";
@@ -26,6 +26,7 @@ import SelectChain from "./SelectChain";
 import { getBuzzSchemaWithCustomHost } from "@/entities/buzz";
 import { v4 as uuidv4 } from 'uuid';
 import { clearDraftFiles, deleteDraftFile, getUploadDraftList, saveUploadItemsToDraft } from "@/utils/idb";
+import MRC20Icon from "../MRC20Icon";
 const { TextArea } = Input;
 type Props = {
     show: boolean,
@@ -54,6 +55,7 @@ export default ({ show, onClose, quotePin }: Props) => {
     const [lock, setLock] = useState(false);
     const [payType, setPayType] = useState<string>('mrc20');
     const [payAmount, setPayAmount] = useState(0.00001);
+    const [payMrc20Amount, setPayMrc20Amount] = useState(1);
     const [holdTokenID, setHoldTokenID] = useState<string>('');
     const [mrc20, setMrc20] = useState<API.MRC20TickInfo>();
     const [checkTokenID, setCheckTokenID] = useState<string>('');
@@ -561,6 +563,19 @@ export default ({ show, onClose, quotePin }: Props) => {
             if (payType === 'btc' && payAmount <= 0) {
                 throw new Error('Please input valid pay amount')
             }
+            if (payType === 'paymrc20' && !mrc20) {
+                throw new Error('Please input valid MRC20 token ID or tick')
+            }
+            if (payType === 'paymrc20' && checkTokenID !== 'success') {
+                throw new Error('Please input valid MRC20 token ID or tick')
+            }
+            if (payType === 'paymrc20' && payMrc20Amount <= 0) {
+                throw new Error('Please input valid MRC20 token amount')
+            }
+            if (payType === 'holdmrc20' && !mrc20) {
+                throw new Error('Please input valid MRC20 token ID or tick')
+            }
+
             const { payload, pid } = await postPayBuzz({
                 content: content,
                 encryptImages: await image2Attach(convertToFileList(encryptImages)),
@@ -579,7 +594,10 @@ export default ({ show, onClose, quotePin }: Props) => {
                 manPubKey || '',
                 fetchServiceFee('post_service_fee_amount', chainNet === 'btc' ? 'BTC' : "MVC"),
                 String(payType),
-                IdCoin
+                IdCoin,
+                mrc20,
+                String(payMrc20Amount),
+
             )
             reset()
             onClose()
@@ -852,15 +870,21 @@ export default ({ show, onClose, quotePin }: Props) => {
                 </Col>
                 {
                     !isQuoted && lock && <>
-                        <Col span={24} style={{ justifyContent: 'space-between', display: 'flex', alignItems: "center" }}>
+                        <Col span={24} style={{ justifyContent: 'space-between', display: 'flex', alignItems: "center", flexWrap: 'wrap', gap: 20 }}>
                             <Typography.Text strong><Trans>Payment method</Trans></Typography.Text>
                             <Segmented<string>
                                 options={[{
                                     label: <Trans>Pay With BTC</Trans>,
                                     value: 'btc'
                                 }, {
+                                    label: <Trans>Pay With MRC20</Trans>,
+                                    value: 'paymrc20'
+                                }, {
                                     label: <Trans>Hold ID Coin</Trans>,
                                     value: 'mrc20'
+                                }, {
+                                    label: <Trans>Hold MRC20</Trans>,
+                                    value: 'holdmrc20'
                                 }]}
                                 value={payType}
                                 onChange={(value) => {
@@ -874,6 +898,24 @@ export default ({ show, onClose, quotePin }: Props) => {
                                     lock && payType === 'btc' && <InputNumber variant='filled' value={payAmount} onChange={(value) => {
                                         setPayAmount(value)
                                     }} style={{ flexGrow: 1, width: '100%' }} suffix={<img src={_btc} style={{ height: 20, width: 20 }}></img>} />
+                                }
+                                {
+                                    lock && payType === 'paymrc20' && <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                        <Input prefix={mrc20 ? <MRC20Icon size={20} tick={mrc20.tick} metadata={mrc20.metadata} /> : <></>} value={holdTokenID} style={{ flexGrow: 1, }} onChange={(e) => {
+                                            setHoldTokenID(e.target.value)
+                                        }} status={!mrc20 ? 'warning' : ''} suffix={
+                                            checkTokenID === 'validating' ? <LoadingOutlined /> :
+                                                checkTokenID === 'error' ? <ExclamationCircleOutlined style={{ color: 'red' }} /> :
+                                                    checkTokenID === 'success' ? <CheckCircleOutlined style={{ color: 'green' }} /> : <></>
+                                        }
+                                            placeholder={formatMessage("please input mrc20 id or tick")}
+                                        >
+
+                                        </Input>
+                                        <InputNumber controls={false} variant='filled' value={payMrc20Amount} onChange={(value) => {
+                                            setPayMrc20Amount(value)
+                                        }} style={{ flexGrow: 1, width: '100%' }} suffix={mrc20 ? <MRC20Icon size={20} tick={mrc20.tick} metadata={mrc20.metadata} /> : <></>} />
+                                    </div>
                                 }
                                 {
                                     lock && payType === 'mrc20' && <>
@@ -911,6 +953,27 @@ export default ({ show, onClose, quotePin }: Props) => {
                                                             />
                                                     }
                                                 </>
+                                        }
+                                    </>
+                                }
+
+                                {
+                                    lock && payType === 'holdmrc20' && <>
+                                        {
+
+
+                                            <Input prefix={mrc20 ? <MRC20Icon size={20} tick={mrc20.tick} metadata={mrc20.metadata} /> : <></>} value={holdTokenID} style={{ flexGrow: 1, }} onChange={(e) => {
+                                                setHoldTokenID(e.target.value)
+                                            }} status={!mrc20 ? 'warning' : ''} suffix={
+                                                checkTokenID === 'validating' ? <LoadingOutlined /> :
+                                                    checkTokenID === 'error' ? <ExclamationCircleOutlined style={{ color: 'red' }} /> :
+                                                        checkTokenID === 'success' ? <CheckCircleOutlined style={{ color: 'green' }} /> : <></>
+                                            }
+                                                placeholder={formatMessage("please input mrc20 id or tick")}
+                                            >
+
+                                            </Input>
+
                                         }
                                     </>
                                 }

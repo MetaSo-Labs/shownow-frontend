@@ -104,4 +104,5 @@ export default {
   'State': "状态",
   'Metaso': "Metaso",
   'Pending(Estimated)': "待领取（预估值）",
+  'Notifications': "通知",
 };

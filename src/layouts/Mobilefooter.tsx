@@ -6,9 +6,9 @@ import _profile from '@/assets/nav/user-alt.svg'
 import _profileActive from '@/assets/nav/user-alt-active.svg'
 import _setting from '@/assets/nav/gear.svg'
 import _settingActive from "@/assets/nav/gear-active.svg"
-import { useLocation, history } from 'umi'
+import { useLocation, history, useModel } from 'umi'
 import { useEffect, useState } from 'react'
-import { Dropdown, theme } from 'antd'
+import { Badge, Dropdown, theme } from 'antd'
 import LinearIcon from '@/Components/Icon'
 import { menus } from './Menus'
 import { EllipsisOutlined } from '@ant-design/icons'
@@ -17,11 +17,13 @@ import Trans from '@/Components/Trans'
 
 
 export default () => {
+    const { unreadNotificationCount } = useModel('user');
     const location = useLocation();
     const path = location.pathname;
     const [curMenu, setCurMenu] = useState<string>('home');
     const { token: {
-        colorPrimary
+        colorPrimary,
+        colorTextSecondary
     } } = theme.useToken()
     useEffect(() => {
         if (path === '/') {
@@ -40,8 +42,11 @@ export default () => {
                 setCurMenu(item.key)
                 history.push(`/${item.key}`)
             }} >
+                {item.key === 'notification' ? <Badge count={unreadNotificationCount}>
+                    <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : colorTextSecondary} />
+                </Badge> : <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : colorTextSecondary} />}
 
-                <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : '#333'} />
+
 
 
                 <span className='text'>{item.label}</span>
@@ -52,10 +57,14 @@ export default () => {
             items: menus.slice(4).map(item => ({
                 key: item.key,
                 label: <span style={{
-                    color: curMenu === item.key ? colorPrimary : '#333',
-                    paddingLeft:12
+                    color: curMenu === item.key ? colorPrimary : colorTextSecondary,
+                    paddingLeft: 12
                 }}>{item.label}</span>,
-                icon: <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : '#333'} />,
+                icon:
+                    item.key === 'notification' ? <Badge count={5}>
+                        <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : colorTextSecondary} />
+                    </Badge> : <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : colorTextSecondary} />
+                ,
             })),
             onClick: (item) => {
                 setCurMenu(item.key)
@@ -63,14 +72,14 @@ export default () => {
             }
         }} placement="topRight">
             <div className={`item `} style={{
-                color: '#333'
+                color: colorTextSecondary
             }}  >
 
 
                 <EllipsisOutlined style={{
                     fontSize: 24,
                     verticalAlign: 'middle',
-                    color: '#333'
+                    color: colorTextSecondary
                 }} />
 
                 <span className='text'><Trans>More</Trans></span>

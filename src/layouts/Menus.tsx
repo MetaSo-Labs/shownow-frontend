@@ -6,15 +6,16 @@ import _profile from '@/assets/nav/user-alt.svg'
 import _profileActive from '@/assets/nav/user-alt-active.svg'
 import _setting from '@/assets/nav/gear.svg'
 import _settingActive from "@/assets/nav/gear-active.svg"
-import { useLocation, history } from 'umi'
+import { useLocation, history, useModel } from 'umi'
 import { useEffect, useState } from 'react'
-import { theme } from 'antd'
+import { Badge, theme } from 'antd'
 import LinearIcon from '@/Components/Icon'
 import Trans from '@/Components/Trans'
 
 export const menus = [
     { key: 'home', icon: _home, activeIcon: _homeActive, label: <Trans>Home</Trans> },
     { key: 'follow', icon: _follow, activeIcon: _followActive, label: <Trans>Follow</Trans> },
+    { key: 'notification', icon: _follow, activeIcon: _followActive, label: <Trans>Notifications</Trans> },
     { key: 'profile', icon: _profile, activeIcon: _profileActive, label: <Trans>Profile</Trans> },
     { key: 'setting', icon: _setting, activeIcon: _settingActive, label: <Trans>Setting</Trans> },
     { key: 'about', icon: _setting, activeIcon: _settingActive, label: <Trans>About</Trans> },
@@ -22,6 +23,7 @@ export const menus = [
 ]
 
 export default () => {
+    const { unreadNotificationCount } = useModel('user');
     const location = useLocation();
     const path = location.pathname;
     const [curMenu, setCurMenu] = useState<string>('home');
@@ -46,7 +48,10 @@ export default () => {
                 setCurMenu(item.key)
                 history.push(`/${item.key}`)
             }} >
-                <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : colorTextSecondary} />
+                {item.key === 'notification' ? <Badge count={unreadNotificationCount}>
+                    <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : colorTextSecondary} />
+                </Badge> : <LinearIcon name={item.key} color={curMenu === item.key ? colorPrimary : colorTextSecondary} />}
+
                 <span>{item.label}</span>
             </div>
         })

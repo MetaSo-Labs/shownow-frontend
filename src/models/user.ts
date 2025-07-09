@@ -23,10 +23,12 @@ import {
   fetchMVCFeeRate,
   getFollowList,
   getUserInfo,
+  getUserNotify,
 } from "@/request/api";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
-import { isEmpty, set } from "ramda";
+import { add, isEmpty, set } from "ramda";
 import { useModel } from "umi";
+import { NotificationStore } from "@/utils/NotificationStore";
 const checkExtension = () => {
   if (!window.metaidwallet) {
     window.open(
@@ -84,6 +86,7 @@ export default () => {
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
   const [searchWord, setSearchWord] = useState("");
   const [mockBuzz, setMockBuzz] = useState<API.Buzz>();
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const connectWallet = useCallback(async () => {
     const [isConnected, errMsg] = await checkWallet();
     if (!isConnected && !isEmpty(errMsg)) {
@@ -259,9 +262,7 @@ export default () => {
   const fetchUserInfo = useCallback(async () => {
     const userInfo = await getUserInfo({ address: user.address });
     setUser({
-      avater: userInfo.avatar
-        ? `${AVATAR_BASE_URL}${userInfo.avatar}`
-        : "",
+      avater: userInfo.avatar ? `${AVATAR_BASE_URL}${userInfo.avatar}` : "",
       background: userInfo.background
         ? `${AVATAR_BASE_URL}${userInfo.background}`
         : "",
@@ -271,6 +272,28 @@ export default () => {
       address: userInfo.address,
     });
   }, [user]);
+
+  const _fetchNotification = useCallback(async () => {
+    if (!user.address) {
+      setUnreadNotificationCount(0);
+      return;
+    }
+    try {
+      const userAddress =  user.address;
+      const store = new NotificationStore();
+      const lastId = await store.getLastNotificationId(userAddress);
+      const newNotis = await getUserNotify({
+        address: userAddress,
+        lastId: lastId || 0,
+        size: 100,
+      });
+      await store.save(newNotis.data, userAddress);
+      const unreadCount = await store.getUnreadCount(userAddress);
+      setUnreadNotificationCount(unreadCount);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [user.address]);
   useEffect(() => {
     setTimeout(() => {
       init();
@@ -301,6 +324,8 @@ export default () => {
     }
   }, [btcFeerateLocked, mvcFeerateLocked]);
   const updateFeeRate = useIntervalAsync(fetchFeeRateData, 1000 * 60 * 5);
+
+  const updateNotify = useIntervalAsync(_fetchNotification, 1000 * 60 * 5);
 
   const fetchUserFollowingList = useCallback(async () => {
     if (user.metaid) {
@@ -378,5 +403,7 @@ export default () => {
     setBtcFeerateLocked,
     mvcFeerateLocked,
     setMvcFeerateLocked,
+    unreadNotificationCount,
+    updateNotify
   };
 };

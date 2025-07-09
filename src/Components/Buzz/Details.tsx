@@ -63,6 +63,7 @@ import Decimal from "decimal.js";
 import Unlock from "../Unlock";
 import Video from "./Video";
 import BuzzOrigin from "./components/BuzzOrigin";
+import MRC20Icon from "../MRC20Icon";
 
 // TODO: use metaid manage state
 
@@ -354,6 +355,24 @@ export default ({
         queryFn: async () => {
             const { data } = await getMRC20Info({
                 tick: accessControl!.data.holdCheck.ticker,
+            });
+            if (data.mrc20Id) {
+                const userInfo = await getUserInfo({ address: data.address });
+                return {
+                    ...data,
+                    deployerUserInfo: userInfo,
+                };
+            }
+            return Promise.resolve(null);
+        },
+    });
+
+    const { data: payMrc20 } = useQuery({
+        enabled: Boolean(accessControl?.data?.payCheck?.ticker === 'mrc20'),
+        queryKey: ["mrc20", accessControl],
+        queryFn: async () => {
+            const { data } = await getMRC20Info({
+                tick: accessControl!.data.payCheck.ticker,
             });
             if (data.mrc20Id) {
                 const userInfo = await getUserInfo({ address: data.address });
@@ -714,7 +733,8 @@ export default ({
                                             <Text type="warning" style={{ lineHeight: "16px" }}>
                                                 {accessControl?.data?.payCheck?.amount}
                                             </Text>
-                                            <img src={_btc} alt="" width={16} height={16} />
+                                            {accessControl?.data?.payCheck.ticker === 'mrc20' ? (payMrc20 && <MRC20Icon size={20} tick={payMrc20.tick} metadata={payMrc20.metadata} />) : <img src={_btc} alt="" width={16} height={16} />}
+
                                         </div>
                                         <Button
                                             shape="round"
@@ -771,10 +791,13 @@ export default ({
                                             {`Hold ${accessControl?.data?.holdCheck?.amount} ${accessControl?.data?.holdCheck?.ticker}`}
                                         </Text>
                                         {mrc20 && (
-                                            <UserAvatar
-                                                src={mrc20.deployerUserInfo.avatar}
-                                                size={20}
-                                            />
+                                            mrc20.metadata ?
+                                                <MRC20Icon size={20} tick={mrc20.tick} metadata={mrc20.metadata} /> :
+                                                <UserAvatar
+                                                    src={mrc20.deployerUserInfo?.avatar}
+                                                    size={20}
+                                                /> 
+                                                
                                         )}
                                     </div>
                                     <Button

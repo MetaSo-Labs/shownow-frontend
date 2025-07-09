@@ -8,6 +8,7 @@ import {
   MARKET_ENDPOINT,
   METASO_BASE_API,
 } from "@/config";
+import { Notification } from "@/utils/NotificationStore";
 import { IBtcConnector } from "@metaid/metaid";
 import axios from "axios";
 import { number } from "bitcoinjs-lib/src/script";
@@ -967,3 +968,39 @@ export async function setMetasoConfPubkey(
     ...(options || {}),
   });
 }
+
+export const getUserNotify = async (params: {
+  address: string;
+  lastId: number;
+  size?: number;
+}) => {
+  const ret = await request<{
+    code: number;
+    data: Notification[];
+  }>(`${getHostByNet(curNetwork)}/api/notifcation/list`, {
+    method: "GET",
+    params,
+  });
+  return ret;
+};
+
+export const getReplyContent = async (params: { pinId: string }) => {
+  const ret = await request<{
+    code: number;
+    data: Notification[];
+  }>(`${getHostByNet(curNetwork)}/content/${params.pinId}`, {
+    method: "GET",
+  });
+  return ret;
+};
+
+export const getRewardContent = async (params: { pinId: string }) => {
+  const ret = await request<{
+    coinType: 'mvc'|'btc';
+    amount: number;
+    message: string;
+  }>(`${getHostByNet(curNetwork)}/content/${params.pinId}`, {
+    method: "GET",
+  });
+  return ret;
+};

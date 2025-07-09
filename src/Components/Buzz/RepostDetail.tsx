@@ -70,12 +70,22 @@ import BlockedBuzz from "./BlockedBuzz";
 type Props = {
     buzzItem: API.Buzz;
     loading?: boolean;
+    bordered?: boolean;
+    backgeround?: string;
+    showHeader?: boolean;
+    panding?: number
+
 
 };
 
 export default ({
     buzzItem,
-    loading
+    loading,
+    bordered = true,
+    backgeround,
+    showHeader = true,
+    panding = 24
+
 }: Props) => {
     const {
         token: { colorBorderSecondary, colorBorder, colorBgBlur, colorBgContainer },
@@ -413,14 +423,21 @@ export default ({
             style={{
                 width: "100%",
                 borderColor: colorBorder,
+                background: backgeround || colorBgContainer,
+                boxShadow: "none",
+
             }}
             styles={{
                 header: {
                     height: 40,
-                    borderColor: colorBorder,
+                    borderColor: bordered ? colorBorder : 'transparent',
                 },
+                body: {
+                    padding: panding
+                }
             }}
-            title={
+            bordered={bordered}
+            title={showHeader ?
                 <div
                     style={{
                         height: "100%",
@@ -456,7 +473,7 @@ export default ({
                             <BuzzOrigin host={buzzItem.host} />
                         </div>
                     </div>
-                </div>
+                </div> : null
             }
         >
             {

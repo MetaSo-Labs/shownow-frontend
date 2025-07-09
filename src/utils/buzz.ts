@@ -63,7 +63,9 @@ export const postPayBuzz = async (
       }
     | undefined,
   payType?: string,
-  payTicker?: API.IdCoin
+  payTicker?: API.IdCoin,
+  payMrc20?: API.MRC20TickInfo | undefined,
+  payMrc20Amount?: number | undefined
 ) => {
   let transactions: MvcTransaction[] = [];
   const randomKey = generateAESKey();
@@ -160,6 +162,19 @@ export const postPayBuzz = async (
       ticker: payTicker.tick,
       amount: "1",
     };
+  } else if (payType === "paymrc20" && payMrc20 && payMrc20Amount) {
+    contorlPayload.payCheck = {
+      type: "mrc20",
+      ticker: payMrc20.tick,
+      amount: payMrc20Amount,
+      payTo: address,
+    };
+  } else if (payType === "holdmrc20" && payMrc20) {
+    contorlPayload.holdCheck = {
+      type: "mrc20",
+      ticker: payMrc20.tick,
+      amount: "1",
+    };
   } else {
     contorlPayload.payCheck = {
       type: "chainCoin",
@@ -208,7 +223,7 @@ export const postVideo = async (
   chain: API.Chain,
   btcConnector: IBtcConnector | undefined,
   mvcConnector: IMvcConnector | undefined,
-  mvcFeeRate:number
+  mvcFeeRate: number
 ) => {
   //TODO
 
