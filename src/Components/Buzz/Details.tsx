@@ -38,7 +38,7 @@ import ForwardTweet from "./ForwardTweet";
 import { IMvcEntity } from "@metaid/metaid";
 import { FollowIconComponent } from "../Follow";
 import dayjs from "dayjs";
-import { buildAccessPass, decodePayBuzz } from "@/utils/buzz";
+import { buildAccessPass, buildMRc20AccessPass, decodePayBuzz } from "@/utils/buzz";
 import { getMvcBalance, getUtxoBalance } from "@/utils/psbtBuild";
 const { Paragraph, Text } = Typography;
 import _btc from "@/assets/btc.png";
@@ -176,7 +176,7 @@ export default ({
             let _summary = buzzItem!.content;
             const isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
             const parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
-            return parseSummary.publicContent ? parseSummary : undefined;
+            return parseSummary.publicContent ? buzzItem : undefined;
         } catch (e) {
             console.error("Error parsing buzz content:", e);
             return undefined;
@@ -297,14 +297,13 @@ export default ({
         queryKey: ["buzzDetail", quotePinId],
         queryFn: () => fetchBuzzDetail({ pinId: quotePinId }),
     });
-
     const { data: accessControl } = useQuery({
         enabled: !isEmpty(payBuzz?.id),
         queryKey: ["buzzAccessControl", payBuzz?.id],
         queryFn: () => getControlByContentPin({ pinId: payBuzz?.id }),
     });
 
-    const { data: decryptContent, refetch: refetchDecrypt } = useQuery({
+    const { data: decryptContent, refetch: refetchDecrypt, isLoading: decryptLoading } = useQuery({
         queryKey: ["buzzdecryptContent", buzzItem!.id, chain, user.address],
         queryFn: () => decodePayBuzz(buzzItem, manPubKey!, isLogin),
     });
@@ -321,15 +320,28 @@ export default ({
             if (accessControl && accessControl.data) {
                 const { data } = accessControl;
                 const { payCheck } = data;
-                await buildAccessPass(
-                    data.pinId,
-                    showConf?.host || "",
-                    btcConnector!,
-                    feeRate,
-                    payCheck.payTo,
-                    payCheck.amount
-                );
-                await sleep(2000);
+                if (payCheck.type !== 'mrc20') {
+                    await buildAccessPass(
+                        data.pinId,
+                        showConf?.host || "",
+                        btcConnector!,
+                        feeRate,
+                        payCheck.payTo,
+                        payCheck.amount
+                    );
+                } else {
+                    await buildMRc20AccessPass(
+                        data.pinId,
+                        showConf?.host || "",
+                        btcConnector!,
+                        feeRate,
+                        payCheck.payTo,
+                        payCheck.amount,
+                        payMrc20!
+                    )
+                }
+
+                await sleep(1000);
                 refetchDecrypt();
                 message.success(
                     "Pay successfully, please wait for the transaction to be confirmed!"
@@ -368,7 +380,7 @@ export default ({
     });
 
     const { data: payMrc20 } = useQuery({
-        enabled: Boolean(accessControl?.data?.payCheck?.ticker === 'mrc20'),
+        enabled: Boolean(accessControl?.data?.payCheck?.type === 'mrc20'),
         queryKey: ["mrc20", accessControl],
         queryFn: async () => {
             const { data } = await getMRC20Info({
@@ -560,7 +572,7 @@ export default ({
     return (
         <Card
             className="tweet"
-            loading={loading}
+            loading={loading || decryptLoading}
             style={{
                 width: "100%",
                 borderColor: isForward ? colorBorder : colorBorderSecondary,
@@ -733,7 +745,7 @@ export default ({
                                             <Text type="warning" style={{ lineHeight: "16px" }}>
                                                 {accessControl?.data?.payCheck?.amount}
                                             </Text>
-                                            {accessControl?.data?.payCheck.ticker === 'mrc20' ? (payMrc20 && <MRC20Icon size={20} tick={payMrc20.tick} metadata={payMrc20.metadata} />) : <img src={_btc} alt="" width={16} height={16} />}
+                                            {accessControl?.data?.payCheck?.type === 'mrc20' ? (payMrc20 && <><Typography.Text>{payMrc20.tick}</Typography.Text><MRC20Icon size={20} tick={payMrc20.tick} metadata={payMrc20.metadata} /></>) : <img src={_btc} alt="" width={16} height={16} />}
 
                                         </div>
                                         <Button
@@ -796,8 +808,8 @@ export default ({
                                                 <UserAvatar
                                                     src={mrc20.deployerUserInfo?.avatar}
                                                     size={20}
-                                                /> 
-                                                
+                                                />
+
                                         )}
                                     </div>
                                     <Button
@@ -1008,8 +1020,9 @@ export default ({
                     flexDirection: 'column',
                     padding: 20
                 }}>
-                    <img src={_btc} alt="" width={60} height={60} />
-                    <Typography.Title level={4}>{accessControl?.data?.payCheck?.amount} BTC</Typography.Title>
+                    {accessControl?.data?.payCheck?.type === 'mrc20' ? (payMrc20 && <MRC20Icon size={60} tick={payMrc20?.tick} metadata={payMrc20?.metadata} />) : <img src={_btc} alt="" width={60} height={60} />}
+
+                    <Typography.Title level={4}>{accessControl?.data?.payCheck?.amount} {accessControl?.data?.payCheck?.type === 'mrc20' ? payMrc20?.tick : 'BTC'}</Typography.Title>
 
                     <div style={{
                         display: 'flex',

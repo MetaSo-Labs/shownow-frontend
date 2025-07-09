@@ -22,6 +22,7 @@ import * as bitcoin from "bitcoinjs-lib";
 import { dec, isEmpty } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 import {
+  broadcast,
   getControlByContentPin,
   getDecryptContent,
   getNFTItem,
@@ -520,6 +521,61 @@ export const buildAccessPass = async (
   if (res.status) throw new Error(res.status);
 };
 
+export const buildMRc20AccessPass = async (
+  pid: string,
+  host: string,
+  btcConnector: IBtcConnector | undefined,
+  feeRate: number,
+  payAddress: string,
+  payAmount: string,
+  payMrc20: API.MRC20TickInfo
+) => {
+  const body = JSON.stringify([
+    {
+      amount: String(payAmount),
+      vout: 1,
+      id: payMrc20.mrc20Id,
+    },
+  ]);
+  const payload = {
+    accessControlID: pid,
+  };
+  const path = `${host || ""}/metaaccess/accesspass`;
+  const metaidData: InscribeData = {
+    operation: "create",
+    body: JSON.stringify(payload),
+    path,
+    contentType: "text/plain",
+    flag: "metaid",
+  };
+  if (!window.metaidwallet.btc.transferMRC20WithInscribe) {
+    throw new Error(
+      "transferMRC20WithInscribe is not supported in this wallet"
+    );
+  }
+  const { commitTx, revealTx } = await window.metaidwallet.btc
+    .transferMRC20WithInscribe({
+      body,
+      amount: payAmount,
+      mrc20TickId: payMrc20.mrc20Id,
+      flag: "metaid",
+      commitFeeRate: feeRate,
+      revealFeeRate: feeRate,
+      inscribeMetaIdData: metaidData,
+    })
+    .catch((e) => {
+      throw new Error(e);
+    });
+  if (!commitTx || !revealTx) {
+    throw new Error("build mrc20 access pass failed");
+  }
+  console.log(commitTx, revealTx, "commitTx, revealTx");
+  await broadcast(commitTx.rawTx, "btc");
+  await sleep(1000);
+  await broadcast(revealTx.rawTx, "btc");
+  return { commitTx, revealTx };
+};
+
 function sha256ToHex(input: string): string {
   return crypto.createHash("sha256").update(input).digest("hex");
 }
@@ -719,19 +775,25 @@ export const decodePayBuzz = async (
     const timestamp = Math.floor(Date.now() / 1000);
     const _signStr = `${sharedSecret}${timestamp}${btcAddress}`;
     const sign = sha256ToHex(_signStr);
-    const decryptRet = await getDecryptContent(
-      {
-        publickey: ecdhPubKey,
-        address: btcAddress,
-        sign: sign,
-        timestamp,
-        pinId: buzzItem!.id,
-        controlPath: "",
-        controlPinId: controlPin.pinId,
-      },
-      controlPin.manDomain
-    );
-    const { data } = decryptRet;
+    let data;
+    try {
+      const decryptRet = await getDecryptContent(
+        {
+          publickey: ecdhPubKey,
+          address: btcAddress,
+          sign: sign,
+          timestamp,
+          pinId: buzzItem!.id,
+          controlPath: "",
+          controlPinId: controlPin.pinId,
+        },
+        controlPin.manDomain
+      );
+      data = decryptRet.data;
+    } catch (e) {
+      console.error("getDecryptContent error", e);
+    }
+
     if (!data) {
       return {
         publicContent: parseSummary.publicContent,

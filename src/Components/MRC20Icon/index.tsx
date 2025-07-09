@@ -13,7 +13,6 @@ export default ({ size = 40, tick, metadata = '' }: Props) => {
     const [err, setErr] = useState(false)
     const src = useMemo(() => {
         if (metadata && !err) {
-            console.log(metadata,'data')
             try {
                 const data = JSON.parse(metadata);
                
