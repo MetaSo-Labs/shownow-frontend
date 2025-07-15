@@ -281,3 +281,19 @@ export async function fetchUserMetablockList(params: {
     },
   });
 }
+
+export async function metasoBroadcast(
+  params: {
+    txHex: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<{
+    message: string;
+    txId: string;
+  }>(`${METASO_BASE_API}/v1/common/btc/broadcast`, {
+    method: "POST",
+    data: params,
+    ...(options || {}),
+  });
+}

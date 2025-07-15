@@ -207,16 +207,18 @@ declare namespace API {
     };
   };
 
+  type BuzzDetailData = {
+    blocked: boolean;
+    tweet: Buzz;
+    like: LikeRes[];
+    donates: DonateRes[];
+    comments: CommentRes[];
+  };
+
   type BuzzDetailRet = {
     code: number;
     message: string;
-    data: {
-      blocked: boolean;
-      tweet: Buzz;
-      like: LikeRes[];
-      donates: DonateRes[];
-      comments: CommentRes[];
-    };
+    data: BuzzDetailData;
   };
 
   type AccessControl = {

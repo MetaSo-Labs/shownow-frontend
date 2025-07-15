@@ -105,4 +105,8 @@ export default {
   'Metaso': "Metaso",
   'Pending(Estimated)': "待领取（预估值）",
   'Notifications': "通知",
+  'Mint': "铸造",
+  'All': "全部",
+  'Reward': "奖励",
+  'Domain is not configured for the original node.': "原始节点未配置域名。",
 };

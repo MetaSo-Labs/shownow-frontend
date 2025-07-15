@@ -19,7 +19,9 @@ export default ({ address, size = 34 }: Props) => {
     return isFetching ? <Skeleton.Input active size='small' style={{
         maxWidth: 100
     }} /> :
-        <Typography.Text strong>
+        <Typography.Text strong style={{ cursor: 'pointer' }} onClick={() => {
+            history.push(`/profile/${address}`)
+        }}>
             {profileUserData?.name || address?.slice(0, 6) + '...'}
         </Typography.Text>
 

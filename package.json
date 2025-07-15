@@ -15,7 +15,7 @@
     "@ant-design/icons": "^5.5.1",
     "@ant-design/pro-components": "^2.8.1",
     "@bitcoin-js/tiny-secp256k1-asmjs": "^2.2.3",
-    "@feiyangl1020/metaid": "^0.0.14",
+    "@feiyangl1020/metaid": "^0.0.15",
     "@ivliu/react-offscreen": "^1.0.8",
     "@mempool/mempool.js": "^3.0.0",
     "@metaid/metaid": "1.5.19",

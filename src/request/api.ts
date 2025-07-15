@@ -1,4 +1,5 @@
 import {
+  AVATAR_BASE_URL,
   BASE_MAN_URL,
   curNetwork,
   DASHBOARD_ADMIN_PUBKEY,
@@ -8,6 +9,7 @@ import {
   MARKET_ENDPOINT,
   METASO_BASE_API,
 } from "@/config";
+import { PayBuzz, SimpleBuzz } from "@/utils/buzz";
 import { Notification } from "@/utils/NotificationStore";
 import { IBtcConnector } from "@metaid/metaid";
 import axios from "axios";
@@ -191,7 +193,7 @@ export async function fetchFollowingList({
 }): Promise<{ list: any; total: number }> {
   try {
     const data = await axios
-      .get(`${BASE_MAN_URL}/api/metaid/followingList/${metaid}`, {
+      .get(`${AVATAR_BASE_URL}/api/metaid/followingList/${metaid}`, {
         params,
       })
       .then((res) => res.data);
@@ -436,6 +438,9 @@ export const getDecryptContent = async (
   }>(`${Host + "/api/access/decrypt"}`, {
     method: "POST",
     data: params,
+    headers:{
+      "content-type": "text/plain",
+    }
   });
 };
 
@@ -971,7 +976,7 @@ export async function setMetasoConfPubkey(
 
 export const getUserNotify = async (params: {
   address: string;
-  lastId: number;
+  lastId: string;
   size?: number;
 }) => {
   const ret = await request<{
@@ -1036,3 +1041,12 @@ export async function broadcast(
       throw new Error(e);
     });
 }
+
+export const fetchBuzzContent = async (params: { pinId: string }) => {
+  return request<SimpleBuzz | PayBuzz>(
+    `${getHostByNet(curNetwork)}/content/${params.pinId}`,
+    {
+      method: "GET",
+    }
+  );
+};

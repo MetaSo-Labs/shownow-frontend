@@ -1,41 +1,50 @@
 .tweet {
-   
-    .avatar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+  .avatar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-      img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-      }
-      
-    }
-    .content {
-      flex-grow: 1;
-    }
-    .actions{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 12px;
-      color:#666666;
-      .item{
-          cursor: pointer;
-      }
-    }
-    #image-container{
-      .ant-image-preview-root{
-        display: none;
-      }
-      .ant-image-preview-operations-wrapper{
-        display: none;
-      }
-    }
-    .hover-bg-button {
-      &:hover {
-        background: rgba(0, 0, 0, 0.06);
-      }
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
     }
   }
+  .content {
+    flex-grow: 1;
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    color: #666666;
+    .item {
+      cursor: pointer;
+    }
+  }
+  #image-container {
+    .ant-image-preview-root {
+      display: none;
+    }
+    .ant-image-preview-operations-wrapper {
+      display: none;
+    }
+  }
+  .hover-bg-button {
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .buzzPayContent {
+    background-image: url("@/assets/payBg.png");
+    border-radius: 12px;
+    .payContent {
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      -webkit-backdrop-filter: blur(10px);
+    }
+  }
+}

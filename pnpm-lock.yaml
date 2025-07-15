@@ -26,8 +26,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       '@feiyangl1020/metaid':
-        specifier: ^0.0.14
-        version: 0.0.14(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+        specifier: ^0.0.15
+        version: 0.0.15(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@ivliu/react-offscreen':
         specifier: ^1.0.8
         version: 1.0.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -967,8 +967,8 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@feiyangl1020/metaid@0.0.14':
-    resolution: {integrity: sha512-Pk2FjYL8kA/B2NAFtoXbSehffZwtmaHO95J7FS0HOcqe5M6S1hsefoRvicgv4/0ShDGwFNJC7x2kZXehqQjSTQ==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.14.tgz}
+  '@feiyangl1020/metaid@0.0.15':
+    resolution: {integrity: sha512-TingkNfKotS/YeJC0C0yP2+5RBFt3kiz8WXcrwb9Tduqmqdsj8vIG9kQy/Xl71DXNz1LaP02yZKxLChgkYmo8g==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.15.tgz}
 
   '@floating-ui/core@0.6.2':
     resolution: {integrity: sha512-jktYRmZwmau63adUG3GKOAVCofBXkk55S/zQ94XOorAHhwqFIOFAy1rSp2N0Wp6/tGbe9V3u/ExlGZypyY17rg==, tarball: https://registry.npmjs.org/@floating-ui/core/-/core-0.6.2.tgz}
@@ -7490,7 +7490,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@feiyangl1020/metaid@0.0.14(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
+  '@feiyangl1020/metaid@0.0.15(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
     dependencies:
       '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
       '@metaid/metaid': 1.5.19(patch_hash=c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))

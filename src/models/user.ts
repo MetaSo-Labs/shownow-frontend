@@ -31,9 +31,7 @@ import { useModel } from "umi";
 import { NotificationStore } from "@/utils/NotificationStore";
 const checkExtension = () => {
   if (!window.metaidwallet) {
-    window.open(
-      "https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao"
-    );
+    window.open("https://www.metalet.space/");
     return false;
   }
   return true;
@@ -279,15 +277,20 @@ export default () => {
       return;
     }
     try {
-      const userAddress =  user.address;
+      const userAddress = user.address;
       const store = new NotificationStore();
       const lastId = await store.getLastNotificationId(userAddress);
       const newNotis = await getUserNotify({
         address: userAddress,
-        lastId: lastId || 0,
+        lastId: lastId || "0",
         size: 100,
       });
-      await store.save(newNotis.data, userAddress);
+      console.log("newNotis", newNotis);
+      const _newNotis = (newNotis.data ?? []).map((item) => {
+        item.notifcationId = item.notifcationId.toString();
+        return item;
+      });
+      await store.save(_newNotis, userAddress);
       const unreadCount = await store.getUnreadCount(userAddress);
       setUnreadNotificationCount(unreadCount);
     } catch (e) {
@@ -404,6 +407,6 @@ export default () => {
     mvcFeerateLocked,
     setMvcFeerateLocked,
     unreadNotificationCount,
-    updateNotify
+    updateNotify,
   };
 };

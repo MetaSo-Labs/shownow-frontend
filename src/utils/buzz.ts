@@ -139,6 +139,7 @@ export const postPayBuzz = async (
         serialAction: "combo",
         transactions: [...transactions],
         service: serviceFee,
+        feeRate: feeRate,
       }
     );
     transactions = pinTransations as MvcTransaction[];
@@ -209,6 +210,7 @@ export const postPayBuzz = async (
       signMessage: "create accesscontrol",
       serialAction: "finish",
       transactions: [...transactions],
+      feeRate: feeRate,
     });
   }
 
@@ -561,6 +563,7 @@ export const buildMRc20AccessPass = async (
       flag: "metaid",
       commitFeeRate: feeRate,
       revealFeeRate: feeRate,
+      revealAddr: payAddress,
       inscribeMetaIdData: metaidData,
     })
     .catch((e) => {
@@ -580,11 +583,72 @@ function sha256ToHex(input: string): string {
   return crypto.createHash("sha256").update(input).digest("hex");
 }
 
-export const decodePayBuzz = async (
-  buzzItem: API.Buzz,
-  manPubKey: string,
-  isLogin: boolean
-): Promise<{
+export type SimpleBuzz = {
+  content: string;
+  attachments: string[];
+};
+
+export type PayBuzz = {
+  publicContent: string;
+  encryptContent: string;
+  publicFiles: string[];
+  encryptFiles: string[];
+};
+
+export const formatSimpleBuzz = async (parseSummary: {
+  content: string;
+  attachments: string[];
+}): Promise<FormatBuzz> => {
+  const _publicFiles: string[] = [];
+  const _nfts: API.NFT[] = [];
+  const _videos: string[] = [];
+  if (parseSummary.attachments && Array.isArray(parseSummary.attachments[0])) {
+    parseSummary.attachments = parseSummary.attachments[0];
+  }
+  for (let i = 0; i < (parseSummary.attachments ?? []).length; i++) {
+    if (parseSummary.attachments[i].startsWith("metafile://nft/mrc721/")) {
+      const _nftId = parseSummary.attachments[i].split(
+        "metafile://nft/mrc721/"
+      )[1];
+      try {
+        const nft = await getNFTItem({ pinId: _nftId });
+        parseSummary.attachments[i] = JSON.parse(
+          atob(nft.data.content)
+        ).attachment[0].content;
+        _nfts.push({
+          ...nft.data,
+          previewImage: parseSummary.attachments[i],
+        });
+      } catch (e) {}
+    } else {
+      if (parseSummary.attachments[i].startsWith("metafile://video/")) {
+        _videos.push(parseSummary.attachments[i].split("metafile://video/")[1]);
+      } else {
+        if (parseSummary.attachments[i].startsWith("metafile://")) {
+          parseSummary.attachments[i] =
+            parseSummary.attachments[i].split("metafile://")[1];
+        }
+        _publicFiles.push(parseSummary.attachments[i]);
+      }
+    }
+  }
+
+  return {
+    publicContent: parseSummary.content,
+    encryptContent: "",
+    publicFiles: _publicFiles,
+    nfts: _nfts,
+    encryptFiles: [],
+    video: _videos,
+    buzzType: "normal",
+    status: "unpurchased",
+  };
+};
+
+export const formatPayBuzz = async (
+  parseSummary: API.Buzz
+): Promise<FormatBuzz> => {};
+export type FormatBuzz = {
   publicContent: string;
   encryptContent: string;
   publicFiles: string[];
@@ -593,13 +657,18 @@ export const decodePayBuzz = async (
   video: string[];
   buzzType: "normal" | "pay";
   status: API.PayStatus;
-}> => {
+};
+export const decodePayBuzz = async (
+  buzzItem: API.Buzz,
+  manPubKey: string,
+  isLogin: boolean
+): Promise<FormatBuzz> => {
   let _summary = buzzItem!.content;
 
   let isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
   // console.log("isjson", isSummaryJson);
   // console.log("summary", summary);
-  let parseSummary = { content: "" };
+  let parseSummary: SimpleBuzz | PayBuzz = { content: "", attachments: [] };
   try {
     parseSummary = isSummaryJson ? JSON.parse(_summary) : {};
   } catch (e) {
@@ -620,53 +689,8 @@ export const decodePayBuzz = async (
     };
   }
 
-  if (!isEmpty(parseSummary?.attachments ?? [])) {
-    const _publicFiles: string[] = [];
-    const _nfts: API.NFT[] = [];
-    const _videos: string[] = [];
-    if (Array.isArray(parseSummary.attachments[0])) {
-      parseSummary.attachments = parseSummary.attachments[0];
-    }
-    for (let i = 0; i < parseSummary.attachments.length; i++) {
-      if (parseSummary.attachments[i].startsWith("metafile://nft/mrc721/")) {
-        const _nftId = parseSummary.attachments[i].split(
-          "metafile://nft/mrc721/"
-        )[1];
-        try {
-          const nft = await getNFTItem({ pinId: _nftId });
-          parseSummary.attachments[i] = JSON.parse(
-            atob(nft.data.content)
-          ).attachment[0].content;
-          _nfts.push({
-            ...nft.data,
-            previewImage: parseSummary.attachments[i],
-          });
-        } catch (e) {}
-      } else {
-        if (parseSummary.attachments[i].startsWith("metafile://video/")) {
-          _videos.push(
-            parseSummary.attachments[i].split("metafile://video/")[1]
-          );
-        } else {
-          if (parseSummary.attachments[i].startsWith("metafile://")) {
-            parseSummary.attachments[i] =
-              parseSummary.attachments[i].split("metafile://")[1];
-          }
-          _publicFiles.push(parseSummary.attachments[i]);
-        }
-      }
-    }
-
-    return {
-      publicContent: parseSummary.content,
-      encryptContent: "",
-      publicFiles: _publicFiles,
-      nfts: _nfts,
-      encryptFiles: [],
-      video: _videos,
-      buzzType: "normal",
-      status: "unpurchased",
-    };
+  if (!isEmpty((parseSummary as SimpleBuzz)?.attachments ?? [])) {
+    return formatSimpleBuzz(parseSummary as SimpleBuzz);
   }
 
   if (

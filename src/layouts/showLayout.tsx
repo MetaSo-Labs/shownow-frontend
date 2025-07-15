@@ -93,7 +93,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
             <Space>
                 <Button type="primary" style={{ background: showConf?.brandColor }} size="small" onClick={() => {
                     window.open(
-                        "https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao"
+                        "https://www.metalet.space/"
                     );
                     api.destroy()
                 }}>

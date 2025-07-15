@@ -586,7 +586,7 @@ export default ({ show, onClose, quotePin }: Props) => {
             },
                 String(payAmount),
                 user.address,
-                feeRate,
+                chainNet === 'btc' ? feeRate : mvcFeeRate,
                 showConf?.host || '',
                 chainNet,
                 btcConnector,

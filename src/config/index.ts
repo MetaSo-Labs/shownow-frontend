@@ -27,7 +27,7 @@ export const TYPED_NETWORK: Network =
 export const METASO_BASE_API =
   curNetwork === "testnet"
     ? "https://www.metaso.network/api-base-testnet"
-    : "https://www.metaso.network/api-base-grey";
+    : "https://www.metaso.network/api-base";
 
 // export const DASHBOARD_API = "https://www.show.now/api";
 // export const DASHBOARD_API = "http://127.0.0.1:3000/api";
