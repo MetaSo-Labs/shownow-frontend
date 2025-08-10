@@ -39,5 +39,5 @@ export default () => {
             children: <FollowPanel metaid={metaid} type="follower" />,
         },
     ];
-    return <Tabs items={items} activeKey={type} onChange={onChange} />;
+    return <Tabs items={items} activeKey={type} onChange={onChange} style={{ marginBottom: 100 }} />;
 }

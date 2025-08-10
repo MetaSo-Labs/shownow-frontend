@@ -39,17 +39,22 @@ type PostParams = {
   encryptContent: string;
   nfts: string[];
   manDomain?: string;
+  quotePin?: string;
+  mentions: Record<string, string>;
 };
 export const postPayBuzz = async (
   {
     content,
+    mentions,
     encryptImages,
     publicImages,
     encryptContent,
     nfts,
     manDomain = "",
+    quotePin = "",
   }: PostParams,
   price: string,
+
   address: string,
   feeRate: number,
   host: string,
@@ -101,13 +106,17 @@ export const postPayBuzz = async (
   );
   transactions = encryptFileTransactions;
 
-  const payload = {
+  const payload: any = {
     publicContent,
     encryptContent: _encryptContent,
     contentType: "text/plain",
     publicFiles: [...nfts, ...attachments],
     encryptFiles: encryptAttachments,
+    // mentions,
   };
+  if (quotePin) {
+    payload.quotePin = quotePin;
+  }
   const path = `${host || ""}/protocols/paybuzz`;
   const metaidData: InscribeData = {
     operation: "create",
@@ -598,6 +607,7 @@ export type PayBuzz = {
 export const formatSimpleBuzz = async (parseSummary: {
   content: string;
   attachments: string[];
+  mentions?: Record<string, string>;
 }): Promise<FormatBuzz> => {
   const _publicFiles: string[] = [];
   const _nfts: API.NFT[] = [];
@@ -638,6 +648,7 @@ export const formatSimpleBuzz = async (parseSummary: {
     encryptContent: "",
     publicFiles: _publicFiles,
     nfts: _nfts,
+    mentions: parseSummary.mentions ?? {},
     encryptFiles: [],
     video: _videos,
     buzzType: "normal",
@@ -655,6 +666,7 @@ export type FormatBuzz = {
   encryptFiles: string[];
   nfts: API.NFT[];
   video: string[];
+  mentions?: Record<string, string>;
   buzzType: "normal" | "pay";
   status: API.PayStatus;
 };
@@ -664,7 +676,7 @@ export const decodePayBuzz = async (
   isLogin: boolean
 ): Promise<FormatBuzz> => {
   let _summary = buzzItem!.content;
-
+  let mentions: Record<string, string> = {};
   let isSummaryJson = _summary.startsWith("{") && _summary.endsWith("}");
   // console.log("isjson", isSummaryJson);
   // console.log("summary", summary);
@@ -682,6 +694,7 @@ export const decodePayBuzz = async (
       encryptContent: "",
       publicFiles: [],
       encryptFiles: [],
+      mentions: {},
       nfts: [],
       video: [],
       buzzType: "normal",
@@ -733,6 +746,7 @@ export const decodePayBuzz = async (
         publicFiles: _publicFiles,
         encryptFiles: [],
         video: [],
+        mentions: parseSummary.mentions ?? {},
         nfts: _nfts,
         buzzType: "normal",
         status: "unpurchased",
@@ -745,6 +759,7 @@ export const decodePayBuzz = async (
         publicFiles: _publicFiles,
         encryptFiles: parseSummary.encryptFiles,
         nfts: _nfts,
+        mentions: parseSummary.mentions ?? {},
         video: [],
         buzzType: "pay",
         status: "unpurchased",
@@ -786,6 +801,7 @@ export const decodePayBuzz = async (
         publicFiles: _publicFiles,
         nfts: _nfts,
         video: [],
+        mentions: parseSummary.mentions ?? {},
         encryptFiles: decryptFiles,
         buzzType: "pay",
         status: "purchased",
@@ -826,6 +842,7 @@ export const decodePayBuzz = async (
         nfts: _nfts,
         encryptFiles: parseSummary.encryptFiles,
         buzzType: "pay",
+        mentions: parseSummary.mentions ?? {},
         video: [],
         status: "unpurchased",
       };
@@ -836,6 +853,7 @@ export const decodePayBuzz = async (
         data.status === "purchased" ? data.contentResult || "" : "",
       publicFiles: _publicFiles,
       nfts: _nfts,
+      mentions: parseSummary.mentions ?? {},
       video: [],
       encryptFiles:
         data.status === "purchased"
@@ -849,6 +867,7 @@ export const decodePayBuzz = async (
   return {
     publicContent: parseSummary.content,
     encryptContent: "",
+    mentions: parseSummary.mentions ?? {},
     publicFiles: [],
     encryptFiles: [],
     video: [],

@@ -66,7 +66,6 @@ export default ({ decryptContent }: Props) => {
                     getContainer: () => document.getElementById(container) as HTMLElement,
                     movable: true,
                     onVisibleChange: (visible, prevVisible) => {
-                        console.log(visible, prevVisible);
                         if (!visible) {
                             setContainer('image-container')
                         }
@@ -79,7 +78,7 @@ export default ({ decryptContent }: Props) => {
                         return <Image
                             key={pid}
                             style={{ objectFit: 'cover', height: '100%', maxHeight: 400, display: index > 8 ? 'none' : 'block', borderRadius: borderRadiusLG, }}
-                            src={`${AVATAR_BASE_URL}/content/${pid ?? ''.replace('metafile://', '')}`}
+                            src={`${BASE_MAN_URL}/content/${pid ?? ''.replace('metafile://', '')}`}
                             fallback={FallbackImage}
                             className="image-item"
 

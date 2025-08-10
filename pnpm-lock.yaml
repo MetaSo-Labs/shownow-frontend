@@ -7,11 +7,6 @@ settings:
 overrides:
   elliptic: ^6.6.1
 
-patchedDependencies:
-  '@metaid/metaid@1.5.19':
-    hash: c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb
-    path: patches/@metaid__metaid@1.5.19.patch
-
 importers:
 
   .:
@@ -26,8 +21,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       '@feiyangl1020/metaid':
-        specifier: ^0.0.15
-        version: 0.0.15(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+        specifier: 0.0.22
+        version: 0.0.22(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@ivliu/react-offscreen':
         specifier: ^1.0.8
         version: 1.0.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -36,7 +31,7 @@ importers:
         version: 3.0.0
       '@metaid/metaid':
         specifier: 1.5.19
-        version: 1.5.19(patch_hash=c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+        version: 1.5.19(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@tanstack/react-query':
         specifier: ^5.59.16
         version: 5.74.3(react@18.3.1)
@@ -82,9 +77,15 @@ importers:
       elliptic:
         specifier: ^6.6.1
         version: 6.6.1
+      emoji-picker-react:
+        specifier: ^4.13.2
+        version: 4.13.2(react@18.3.1)
       idb:
         specifier: ^8.0.3
         version: 8.0.3
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       lucide-react:
         specifier: ^0.454.0
         version: 0.454.0(react@18.3.1)
@@ -128,6 +129,9 @@ importers:
       '@types/elliptic':
         specifier: ^6.4.18
         version: 6.4.18
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
       '@types/md5':
         specifier: ^2.3.5
         version: 2.3.5
@@ -967,8 +971,8 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@feiyangl1020/metaid@0.0.15':
-    resolution: {integrity: sha512-TingkNfKotS/YeJC0C0yP2+5RBFt3kiz8WXcrwb9Tduqmqdsj8vIG9kQy/Xl71DXNz1LaP02yZKxLChgkYmo8g==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.15.tgz}
+  '@feiyangl1020/metaid@0.0.22':
+    resolution: {integrity: sha512-eF2BoUPpiHfYuJxKD1ilRmKxNrfuonIuVBfR5/Ot80+r83Eyks7fYqbqnkTqSRS6+ea5Y2to5g7yB19pnEzPHA==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.22.tgz}
 
   '@floating-ui/core@0.6.2':
     resolution: {integrity: sha512-jktYRmZwmau63adUG3GKOAVCofBXkk55S/zQ94XOorAHhwqFIOFAy1rSp2N0Wp6/tGbe9V3u/ExlGZypyY17rg==, tarball: https://registry.npmjs.org/@floating-ui/core/-/core-0.6.2.tgz}
@@ -1547,6 +1551,9 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==, tarball: https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz}
+
+  '@types/lodash@4.17.20':
+    resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==, tarball: https://registry.npmjs.org/@types/lodash/-/lodash-4.17.20.tgz}
 
   '@types/md5@2.3.5':
     resolution: {integrity: sha512-/i42wjYNgE6wf0j2bcTX6kuowmdL/6PE4IVitMpm2eYKBUuYCprdcWVK+xEF0gcV6ufMCRhtxmReGfc6hIK7Jw==, tarball: https://registry.npmjs.org/@types/md5/-/md5-2.3.5.tgz}
@@ -2959,6 +2966,12 @@ packages:
   elliptic@6.6.1:
     resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==, tarball: https://registry.npmjs.org/elliptic/-/elliptic-6.6.1.tgz}
 
+  emoji-picker-react@4.13.2:
+    resolution: {integrity: sha512-azaJQLTshEOZVhksgU136izJWJyZ4Clx6xQ6Vctzk1gOdPPAUbTa/JYDwZJ8rh97QxnjpyeftXl99eRlYr3vNA==, tarball: https://registry.npmjs.org/emoji-picker-react/-/emoji-picker-react-4.13.2.tgz}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==, tarball: https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz}
 
@@ -3272,6 +3285,9 @@ packages:
 
   find-yarn-workspace-root@2.0.0:
     resolution: {integrity: sha512-1IMnbjt4KzsQfnhnzNd8wUEgXZ44IzZaZmnLYx7D5FZlaHt2gW20Cri8Q+E/t5tIj4+epTBub+2Zxu/vNILzqQ==, tarball: https://registry.npmjs.org/find-yarn-workspace-root/-/find-yarn-workspace-root-2.0.0.tgz}
+
+  flairup@1.0.0:
+    resolution: {integrity: sha512-IKlE+pNvL2R+kVL1kEhUYqRxVqeFnjiIvHWDMLFXNaqyUdFXQM2wte44EfMYJNHkW16X991t2Zg8apKkhv7OBA==, tarball: https://registry.npmjs.org/flairup/-/flairup-1.0.0.tgz}
 
   flat-cache@3.2.0:
     resolution: {integrity: sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==, tarball: https://registry.npmjs.org/flat-cache/-/flat-cache-3.2.0.tgz}
@@ -7490,10 +7506,10 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@feiyangl1020/metaid@0.0.15(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
+  '@feiyangl1020/metaid@0.0.22(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
     dependencies:
       '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
-      '@metaid/metaid': 1.5.19(patch_hash=c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+      '@metaid/metaid': 1.5.19(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@metaid/metaid-cli': 0.0.2
       '@okxweb3/crypto-lib': 1.0.11
       '@scure/bip39': 1.5.4
@@ -7703,7 +7719,7 @@ snapshots:
     dependencies:
       inquirer: 9.3.7
 
-  '@metaid/metaid@1.5.19(patch_hash=c873955d562a570a73e4612740425c07f6ad7d71254355c4f4e47cb1d6ad72bb)(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
+  '@metaid/metaid@1.5.19(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
     dependencies:
       '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
       '@metaid/metaid-cli': 0.0.2
@@ -8184,6 +8200,8 @@ snapshots:
       '@types/istanbul-lib-report': 3.0.3
 
   '@types/json-schema@7.0.15': {}
+
+  '@types/lodash@4.17.20': {}
 
   '@types/md5@2.3.5': {}
 
@@ -10098,6 +10116,11 @@ snapshots:
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
 
+  emoji-picker-react@4.13.2(react@18.3.1):
+    dependencies:
+      flairup: 1.0.0
+      react: 18.3.1
+
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
@@ -10626,6 +10649,8 @@ snapshots:
   find-yarn-workspace-root@2.0.0:
     dependencies:
       micromatch: 4.0.8
+
+  flairup@1.0.0: {}
 
   flat-cache@3.2.0:
     dependencies:

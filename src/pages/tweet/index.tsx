@@ -10,7 +10,7 @@ import { ArrowLeftOutlined, LeftOutlined } from "@ant-design/icons"
 import { useQuery } from "@tanstack/react-query"
 import { Alert, Avatar, Button, Card, Col, Divider, Input, message, Row } from "antd"
 import { isEmpty } from "ramda"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useIntl, useMatch, useModel } from "umi"
 type Props = {
     quotePinId: string
@@ -24,12 +24,20 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
 
     const [refetchNum, setRefetchNum] = useState(0);
     const [reLoading, setReLoading] = useState(false)
-    const [showComment, setShowComment] = useState(false)
+    const [showComment, setShowComment] = useState(false);
+    const [commentData, setCommentData] = useState<API.CommentRes[]>([]);
     const { isLoading: isQuoteLoading, data: buzzDetail, refetch } = useQuery({
         enabled: !isEmpty(quotePinId),
         queryKey: ['buzzDetail', quotePinId, user.address],
         queryFn: () => fetchBuzzDetail({ pinId: quotePinId! }),
     })
+
+    useEffect(() => {
+        if (buzzDetail?.data?.tweet) {
+            setCommentData(buzzDetail.data.comments || [])
+        }
+
+    }, [buzzDetail])
 
     if (!buzzDetail) return null;
 
@@ -67,7 +75,7 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
                             <Buzz buzzItem={{ ...buzzDetail.data.tweet, blocked: buzzDetail.data.blocked }} showActions={true} padding={0} reLoading={reLoading} refetch={refetch} like={buzzDetail.data.like} donate={buzzDetail.data.donates} />
                             <Divider />
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <UserAvatar src={user?.avater} size={48} />
+                                <UserAvatar src={user?.avatar} size={48} />
                                 <Input value={''} placeholder={formatMessage({ id: "What's happening?" })} variant='borderless' style={{ flexGrow: 1 }} onClick={() => {
                                     if (!isLogin) {
                                         message.error(formatMessage({ id: 'Please connect your wallet first' }))
@@ -93,13 +101,15 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
                                     {formatMessage({ id: "Comment" })}
                                 </Button>
                             </div>
-                            <Comment tweetId={quotePinId ?? ''} refetch={refetch} onClose={() => {
-                                setShowComment(false);
-                                setRefetchNum(refetchNum + 1);
-                                setReLoading(!reLoading)
+                            <Comment tweetId={quotePinId ?? ''} onClose={(mockComment?: API.CommentRes) => {
+                                setShowComment(false)
+                                if (mockComment) {
+                                    console.log(mockComment, 'mockComment')
+                                    setCommentData([...commentData, mockComment])
+                                }
                             }} show={showComment} />
                             <Divider />
-                            <CommentPanel tweetId={quotePinId ?? ''} refetchNum={refetchNum} commentData={buzzDetail?.data.comments} />
+                            <CommentPanel tweetId={quotePinId ?? ''} refetchNum={refetchNum} commentData={commentData} />
                         </>
                 }
             </>
@@ -112,9 +122,5 @@ export default () => {
     const match = useMatch('/buzz/:id')
     const match2 = useMatch('/tweet/:id')
     const quotePinId = match?.params.id || match2?.params.id
-
     return <TweetCard quotePinId={quotePinId!} />
-
-
-
 }

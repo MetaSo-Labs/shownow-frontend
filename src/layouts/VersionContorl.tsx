@@ -26,6 +26,7 @@ export default () => {
 
 
     const showNotioce = useCallback(() => {
+        return
         if (!data) return
         if (!data.data) return;
         if (data.data.curNo < data.data.lastNo) {

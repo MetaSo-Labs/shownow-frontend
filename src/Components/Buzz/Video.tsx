@@ -89,27 +89,30 @@ export default ({ pid }: {
         height: '300px',
         '--plyr-color-main': showConf?.brandColor,
     } as React.CSSProperties} className="video">
-        <Plyr
-            source={{
-                type: "video",
-                // @ts-ignore
-                sources: [{ src: videoSrc, }],
-            }}
+        {
+            videoSrc && <Plyr
+                source={{
+                    type: "video",
+                    // @ts-ignore
+                    sources: [{ src: videoSrc, }],
+                }}
 
-            options={{
-                controls: [
-                    "play-large",
-                    "play",
-                    "progress",
-                    "current-time",
-                    "mute",
-                    "fullscreen"
-                ],
-                captions: { active: true, language: "auto", update: true },
-                previewThumbnails: { enabled: false, src: "" }
-            }}
+                options={{
+                    controls: [
+                        "play-large",
+                        "play",
+                        "progress",
+                        "current-time",
+                        "mute",
+                        "fullscreen"
+                    ],
+                    captions: { active: true, language: "auto", update: true },
+                    previewThumbnails: { enabled: false, src: "" }
+                }}
 
-        />
+            />
+        }
+
 
     </div>
     </Spin>

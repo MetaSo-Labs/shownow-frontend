@@ -4,7 +4,7 @@ import Trans from "@/Components/Trans";
 import { AVATAR_BASE_URL, BASE_MAN_URL, curNetwork } from "@/config";
 import { getUserInfo } from "@/request/api";
 import { image2Attach } from "@/utils/file";
-import { formatMessage } from "@/utils/utils";
+import { formatMessage, sleep } from "@/utils/utils";
 import { PlusOutlined } from "@ant-design/icons"
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, Button, Card, Form, Input, message, Upload } from "antd"
@@ -23,19 +23,16 @@ export default () => {
     const [submitting, setSubmitting] = useState(false);
     const [form] = Form.useForm();
     const connector = chain === 'btc' ? btcConnector : mvcConnector;
-    const profileUserData = useQuery({
-        queryKey: ['userInfo', user.address],
-        enabled: Boolean(user.address && connector),
-        queryFn: () => getUserInfo({ address: user.address }),
-    });
+
 
     useEffect(() => {
         form.setFieldsValue({
-            name: profileUserData.data?.name,
-            avatar: profileUserData.data?.avatar ? `${AVATAR_BASE_URL}${profileUserData.data?.avatar}` : '',
-            background: profileUserData.data?.background ? `${AVATAR_BASE_URL}${profileUserData.data?.background}` : '',
+            name: user?.name,
+            avatar: user?.avatar || '',
+            background: user?.background || '',
+            bio: user?.bio,
         })
-    }, [profileUserData.data])
+    }, [user])
 
     const updateUser = async () => {
         if (!isLogin) {
@@ -73,12 +70,14 @@ export default () => {
                 if (!res) {
                     message.error('Update Failed')
                 } else {
-                    const { avatarRes, backgroundRes, nameRes } = res;
-                    if (avatarRes || backgroundRes || nameRes) {
+                    const { avatarRes, backgroundRes, nameRes, bioRes } = res;
+                    if (avatarRes || backgroundRes || nameRes || bioRes) {
                         const nameStatus = nameRes?.status ?? '';
                         const avatarStatus = avatarRes?.status ?? '';
                         const backgroundStatus = backgroundRes?.status ?? '';
-                        if (!nameStatus && !avatarStatus && !backgroundStatus) {
+                        const bioStatus = bioRes?.status ?? '';
+                        if (!nameStatus && !avatarStatus && !backgroundStatus && !bioStatus) {
+                            await sleep(2000)
                             message.success('Update Successfully')
                         } else {
                             message.error('User Canceled')
@@ -106,6 +105,7 @@ export default () => {
                         const avatarStatus = avatarRes?.status ?? '';
                         const backgroundStatus = backgroundRes?.status ?? '';
                         if (!nameStatus && !avatarStatus && !backgroundStatus) {
+                            await sleep(2000)
                             message.success('Create Successfully')
                         } else {
                             message.error('User Canceled')
@@ -115,6 +115,11 @@ export default () => {
 
                 }
             }
+            sessionStorage.setItem(`${user.address}_profile`, JSON.stringify({
+                ...user,
+                ...values,
+            }))
+            
             fetchUserInfo()
         } catch (e) {
             console.log(e, 'error');
@@ -122,7 +127,7 @@ export default () => {
         }
         setSubmitting(false);
     }
-    return <div>
+    return <div style={{marginBottom:100}}>
         <Button shape='round' style={{ color: showConf?.colorButton, background: showConf?.gradientColor }}>
             <Trans>Account</Trans>
         </Button>
@@ -133,7 +138,7 @@ export default () => {
         }>
             <Form
                 labelCol={{ span: 4 }}
-                wrapperCol={{ span: 14 }}
+                wrapperCol={{ span: 20 }}
                 layout="horizontal"
 
                 form={form}
@@ -176,8 +181,12 @@ export default () => {
 
 
 
-                <Form.Item style={{ marginTop: 20 }} label={<Trans>Name</Trans>} name='name'>
-                    <Input />
+                <Form.Item style={{ marginTop: 20 }} label={<Trans>Name</Trans>} name='name' >
+                    <Input size='large' />
+                </Form.Item>
+
+                <Form.Item style={{ marginTop: 20 }} label={<Trans>Bio</Trans>} name='bio'>
+                    <Input.TextArea maxLength={160} style={{ height: 120, resize: 'none' }} size='large' showCount />
                 </Form.Item>
 
 

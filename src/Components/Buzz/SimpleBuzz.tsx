@@ -87,7 +87,9 @@ export const SimpleBuzzContent = ({ buzzId, host = '' }: Props) => {
 }
 export default ({ buzzId, userAddress, host }: Props) => {
     const { token: { colorBgLayout } } = theme.useToken();
-    return <Card style={{ padding: 0, marginBottom: 12, boxShadow: "none", border: 'none', background: colorBgLayout }} >
+    return <Card style={{ padding: 0, marginBottom: 12, boxShadow: "none", border: 'none', background: colorBgLayout }} styles={{
+        body: { paddingBottom: 0 }
+    }} >
         <div style={{ display: 'flex', gap: 8 }}>
             <PendingUserAvatar address={userAddress!} size={34} />
             <SimpleBuzzContent buzzId={buzzId} host={host} />

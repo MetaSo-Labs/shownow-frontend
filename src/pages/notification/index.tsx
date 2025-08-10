@@ -1,10 +1,12 @@
 import Trans from "@/Components/Trans"
 import { Avatar, Button, Card, Divider, List, Skeleton } from "antd"
 import './index.less'
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Notification, NotificationStore } from "@/utils/NotificationStore";
 import { useModel } from "umi";
 import NotificationItem from "@/Components/NotificationItem";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import InfiniteScrollV2 from "@/Components/InfiniteScrollV2";
 
 
 const PAGE_SIZE = 10;
@@ -12,7 +14,6 @@ export default () => {
     const { user, updateNotify } = useModel('user');
     const [initLoading, setInitLoading] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState<Notification[]>([]);
     const [list, setList] = useState<Notification[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -33,61 +34,59 @@ export default () => {
         },
     ];
 
-    const fetchData = async (currentPage: number, _activeTabKey?: string) => {
-        if (!user.address) {
-            return Promise.resolve([]);
-        }
-        const store = new NotificationStore();
-
-        const currentAddress = user.address;
-        await store.markAllAsRead(currentAddress)
-        await updateNotify()
-        const data = await store.getAllNotifications(currentAddress, {
-            offset: (currentPage - 1) * PAGE_SIZE,
-            limit: PAGE_SIZE,
-            notifcationType: _activeTabKey === 'reward' ? '/protocols/simpledonate' : undefined,
-        })
-        return data
-
-    };
 
     useEffect(() => {
-        fetchData(page, activeTabKey).then((res) => {
-            const results = Array.isArray(res) ? res : [];
-            setInitLoading(false);
-            setData(results);
-            setList(results);
-            setLoading(false);
-            if (results.length < PAGE_SIZE) {
-                setHasMore(false);
+        const fetchData = async () => {
+            if (!user.address) {
+                return
             }
-        });
-    }, [page, activeTabKey]);
+            const store = new NotificationStore();
 
-    const onLoadMore = () => {
-        setLoading(true);
-        setList(data.concat(Array.from({ length: PAGE_SIZE }).map(() => ({ loading: true }))));
-        const nextPage = page + 1;
-        setPage(nextPage);
+            const currentAddress = user.address;
+            await store.markAllAsRead(currentAddress)
+            await updateNotify()
 
-    };
+        };
+        fetchData();
 
-    const loadMore =
-        !initLoading && !loading ? (
-            <div
-                style={{
-                    textAlign: 'center',
-                    marginTop: 12,
-                    height: 32,
-                    lineHeight: '32px',
-                }}
-            >
-                {
-                    hasMore ? <Button onClick={onLoadMore}>loading more</Button> : <Divider plain><Trans>It is all, nothing more 🤐</Trans></Divider>
+    }, [user.address]);
+
+
+    const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, refetch, isFetching } =
+        useInfiniteQuery({
+            queryKey: ['notifications', user.address, activeTabKey],
+            enabled: !!user.address,
+            initialPageParam: 1,
+            queryFn: async ({ pageParam }) => {
+                const store = new NotificationStore();
+                const data = await store.getAllNotifications(user.address, {
+                    offset: (pageParam - 1) * PAGE_SIZE,
+                    limit: PAGE_SIZE,
+                    notifcationType: activeTabKey === 'reward' ? '/protocols/simpledonate' : undefined,
+                })
+                return {
+                    list: data,
+                    page: pageParam,
+                    hasMore: data.length === PAGE_SIZE,
                 }
+            },
+            getNextPageParam: (lastPage, allPages) => {
+                if (!lastPage.hasMore) return undefined;
+                return lastPage.page + 1;
+            },
+        });
 
-            </div>
-        ) : null;
+
+    const notifications: Notification[] = useMemo(() => {
+        return data ? data?.pages?.reduce((acc: Notification[], item) => {
+            return [...acc || [], ...(item.list ?? [])]
+        }, []) as Notification[] : []
+    }, [data])
+
+
+
+
+
     return <Card title={<Trans>Notifications</Trans>} bordered={false} className="notificationPage" tabList={tabList}
         activeTabKey={activeTabKey}
         onTabChange={(key) => {
@@ -101,21 +100,26 @@ export default () => {
         }}>
 
         <List
-            className="notifications-list"
-            loading={initLoading}
-            itemLayout="horizontal"
-            loadMore={loadMore}
-            dataSource={list}
-            renderItem={(item) => (
-                <List.Item
-
-                >
-                    <Skeleton avatar title={false} loading={item.loading} active>
-                        <NotificationItem notification={item} address={user.address} />
-                    </Skeleton>
+            loading={isLoading}
+            dataSource={notifications}
+            renderItem={(item: Notification) => (
+                <List.Item key={item.fromPinId} >
+                    <NotificationItem notification={item} address={user.address} />
                 </List.Item>
             )}
         />
+
+        <InfiniteScrollV2
+            id="notifications"
+            onMore={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage()
+                }
+            }}
+        />
+        {(isLoading || isFetchingNextPage) && <Card><Skeleton avatar paragraph={{ rows: 2 }} active /></Card>}
+        {(!isFetching && !hasNextPage && notifications.length > 0) &&
+            <Divider plain><Trans>It is all, nothing more 🤐</Trans></Divider>}
 
     </Card>
 }

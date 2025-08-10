@@ -66,6 +66,7 @@ import BuzzOrigin from "./components/BuzzOrigin";
 import BlockedBuzz from "./BlockedBuzz";
 import MRC20Icon from "../MRC20Icon";
 import PayContent from "./components/PayContent";
+import TextContent from "./TextContent";
 
 // TODO: use metaid manage state
 
@@ -450,18 +451,7 @@ export default ({
                                 transition: "max-height 0.3s ease",
                             }}
                         >
-                            {(textContent ?? "")
-                                .split("\n")
-                                .map((line: string, index: number) => (
-                                    <span key={index} style={{}}>
-                                        <div
-                                            style={{ minHeight: 22 }}
-                                            dangerouslySetInnerHTML={{
-                                                __html: handleSpecial(detectUrl(line)),
-                                            }}
-                                        />
-                                    </span>
-                                ))}
+                            <TextContent textContent={textContent} />
 
                             <Button
                                 type="link"
@@ -546,7 +536,7 @@ export default ({
                                 bordered={false}
                                 color={buzzItem.chainName === "mvc" ? "blue" : "orange"}
                             >
-                                {buzzItem.chainName}
+                                {buzzItem.chainName.toUpperCase()}
                             </Tag>
                             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                                 {dayjs.unix(buzzItem.timestamp).format("YYYY-MM-DD HH:mm:ss")}

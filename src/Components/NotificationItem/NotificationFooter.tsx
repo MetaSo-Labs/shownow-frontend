@@ -36,7 +36,7 @@ export default ({ item }: Props) => {
             bordered={false}
             color={item.fromPinChain === "mvc" ? "blue" : "orange"}
         >
-            {item.fromPinChain}
+            {item.fromPinChain.toUpperCase()}
         </Tag>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
             {dayjs.unix(item.notifcationTime).format("YYYY-MM-DD HH:mm:ss")}

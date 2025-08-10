@@ -4,7 +4,7 @@ import UserAvatar from "../UserAvatar"
 
 type Props = {
     user: {
-        avater: string,
+        avatar: string,
         name: string,
         metaid: string
     }
@@ -13,7 +13,7 @@ type Props = {
 export default ({ user }: Props) => {
 
     return <div className="userInfo">
-        <UserAvatar src={user.avater} />
+        <UserAvatar src={user.avatar} />
         <div className='desc'>
             <div className="name">
                 <Typography.Text>{user.name}</Typography.Text>

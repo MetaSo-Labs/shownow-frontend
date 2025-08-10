@@ -97,6 +97,20 @@ export const detectUrl = (summary: string) => {
   return summary;
 };
 
+export const detectMentions = (
+  summary: string,
+  mentions: Record<string, string>
+) => {
+  for (const [key, value] of Object.entries(mentions)) {
+    const mentionReg = new RegExp(`@${key} `, "g");
+    summary = summary.replace(
+      mentionReg,
+      `<a href="/user/${key}"   >@${key} </a>`
+    );
+  }
+  return summary;
+};
+
 export const openWindowTarget = () => {
   if (window.innerWidth > 768) {
     return "_blank";

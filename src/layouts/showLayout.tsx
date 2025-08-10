@@ -27,6 +27,9 @@ import ConnectWallet from '@/Components/ConnectWallet';
 import ProfileSetting from '@/Components/ProfileSetting';
 import HomeTabs from '@/Components/HomeTabs';
 import { LockKeyhole, LockKeyholeOpen } from 'lucide-react';
+import RecommendFollow from '@/Components/ProfileSetting/RecommendFollow';
+import FirstPost from '@/Components/ProfileSetting/FirstPost';
+import InstallModal from '@/Components/InstallModal';
 
 
 
@@ -56,6 +59,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
     const showConf = _showConf || __showConf
 
     const [followMode, setFollowMode] = useState('hide')
+    const [showInstallModal, setShowInstallModal] = useState(false);
 
     useEffect(() => {
         if (location.pathname === '/follow') {
@@ -111,7 +115,8 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
     const setShowConnect = async (_show: boolean) => {
         if (_show && !window.metaidwallet) {
-            openNotification();
+            // openNotification();
+            setShowInstallModal(true);
             return
         }
         try {
@@ -281,14 +286,16 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                             }
                                         }  >
                                             <div className="user" >
-                                                <UserAvatar src={user.avater} />
+                                                <UserAvatar src={user.avatar} />
                                                 <div className='desc'>
+                                                    
                                                     <Typography.Text className="name">
                                                         {user.name || 'Unnamed'}
                                                     </Typography.Text>
                                                     <Typography.Text className="metaid" style={{ whiteSpace: 'nowrap' }}>
                                                         MetaID:{user.metaid.slice(0, 8)}
                                                     </Typography.Text>
+                                                   
                                                 </div>
                                             </div>
                                         </Dropdown> : <Button type="primary" shape='round' onClick={() => {
@@ -297,6 +304,8 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                             <Trans wrapper>Connect</Trans>
                                         </Button  >
                                     }
+
+                                    
 
                                     <div className="actions">
 
@@ -379,7 +388,7 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
 
                                                 }}>
                                                     {
-                                                        !locked ? <LockKeyholeOpen style={{ color: colorTextSecondary, width: 16 }} /> : <LockKeyhole style={{ color: colorPrimary,  width: 16 }} />
+                                                        !locked ? <LockKeyholeOpen style={{ color: colorTextSecondary, width: 16 }} /> : <LockKeyhole style={{ color: colorPrimary, width: 16 }} />
                                                     }
 
                                                 </Button>
@@ -420,9 +429,9 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                                         <Activity mode={location.pathname === '/home/new' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         <Activity mode={location.pathname === '/home/hot' ? 'visible' : 'hidden'}><Outlet /></Activity>
                                         <Activity mode={location.pathname === '/home/recommend' ? 'visible' : 'hidden'}><Outlet /></Activity>
-                                        <Activity mode={location.pathname === '/profile' ? 'visible' : 'hidden'}><Outlet /></Activity>
+                                       
                                         {
-                                            !['/home', '/', '/profile', '/home/new', '/home/following', '/home/hot', '/home/recommend'].includes(location.pathname) && <Outlet />
+                                            !['/home', '/', '/home/new', '/home/following', '/home/hot', '/home/recommend'].includes(location.pathname) && <Outlet />
                                         }
 
                                     </>}
@@ -465,8 +474,11 @@ export default function ShowLayout({ children, _showConf }: { children?: React.R
                 }
                 <UserSetting />
                 <ProfileSetting />
+                <RecommendFollow />
+                <FirstPost />
             </Layout>
             {contextHolder}
+            <InstallModal visible={showInstallModal} onClose={() => setShowInstallModal(false)} />
         </div>
 
     );

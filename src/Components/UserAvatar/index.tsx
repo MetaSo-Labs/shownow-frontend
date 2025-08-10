@@ -13,6 +13,7 @@ export default (
         onClick
     }: Props
 ) => {
+    
     return <Avatar style={{
         minHeight: size,
         minWidth: size,
@@ -20,7 +21,6 @@ export default (
         maxWidth: size,
         border: "1px solid rgba(0, 0, 0, 0.06)"
     }} src={<img style={{
-
         objectFit: 'cover',
     }} src={src ? (src.startsWith('http') ? '' : AVATAR_BASE_URL) + src : DEFAULT_AVATAR} onError={({ currentTarget }) => {
         currentTarget.onerror = null

@@ -1,4 +1,4 @@
-import { curNetwork, FLAG } from '@/config';
+import { ASSIST_ENDPOINT, curNetwork, FLAG } from '@/config';
 import followEntitySchema, { getFollowEntitySchemaWithCustomHost } from '@/entities/follow';
 import { fetchFollowDetailPin } from '@/request/api';
 import { formatMessage, getEffectiveBTCFeerate, sleep } from '@/utils/utils';
@@ -11,6 +11,7 @@ import { useModel } from 'umi';
 
 type FollowProps = {
     metaid: string;
+    useAssist?: boolean;
     isFollowing?: boolean;
     onFollowToggle?: () => void;
     loading?: boolean;
@@ -21,9 +22,9 @@ type FollowProps = {
 // Higher-order component to provide follow logic
 const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
     return function FollowComponent(props: FollowProps) {
-        const { metaid } = props;
+        const { metaid, useAssist } = props;
         const { followList, chain, btcConnector, mvcConnector, user, feeRate, mvcFeeRate, setFollowList, fetchUserFollowingList, checkUserSetting, isLogin } = useModel('user');
-        const { fetchServiceFee, showConf } = useModel('dashboard');
+        const { fetchServiceFee, showConf, admin } = useModel('dashboard');
         const [loading, setLoading] = useState(false);
 
         const followItem = useMemo(() => {
@@ -57,11 +58,14 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                         },
                     })
                     if (!isNil(followRes?.revealTxIds[0])) {
-                        // setFollowList((prev) => {
-                        //     return [...prev, metaid]
-                        // })
-                        await sleep(5000);
-                        await fetchUserFollowingList()
+                        setFollowList((prev) => {
+                            return [...prev, {
+                                metaid,
+                                mempool: true,
+                            }]
+                        })
+                        // await sleep(3000);
+                        // await fetchUserFollowingList()
                         message.success(
                             'Follow successfully! Please wait for the transaction to be confirmed!',
                         )
@@ -70,11 +74,11 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
 
                     const Follow = await mvcConnector!.load(getFollowEntitySchemaWithCustomHost(showConf?.host || '')) as MvcEntity
 
-                    console.log('Follow', curNetwork)
 
                     const res = await Follow.create({
                         data: { body: metaid },
                         options: {
+                            assistDomian: admin?.assist || useAssist ? ASSIST_ENDPOINT : undefined,
                             network: curNetwork,
                             signMessage: 'Follow user',
                             service: fetchServiceFee('follow_service_fee_amount', 'MVC'),
@@ -84,11 +88,14 @@ const withFollow = (WrappedComponent: React.ComponentType<FollowProps>) => {
                     console.log('create res for inscribe', res)
 
                     if (!isNil(res?.txid)) {
-                        // setFollowList((prev) => {
-                        //     return [...prev, metaid]
-                        // })
-                        await sleep(5000);
-                        await fetchUserFollowingList()
+                        setFollowList((prev) => {
+                            return [...prev, {
+                                metaid,
+                                mempool: true,
+                            }]
+                        })
+                        // await sleep(3000);
+                        // await fetchUserFollowingList()
                         message.success(
                             'Follow successfully! Please wait for the transaction to be confirmed!',
                         )
@@ -243,10 +250,10 @@ const FollowIcon: React.FC<FollowProps> = ({ isFollowing, onFollowToggle, loadin
             onClick={(e) => { e.preventDefault(); onFollowToggle && onFollowToggle(); }}
             style={{ position: 'absolute', bottom: 0, right: 0, background: colorBgBase, borderRadius: '50%', border: `1px solid ${colorBgBase}`, boxSizing: 'border-box', width: 17, height: 17, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {
-                (loading || mempool) ? <LoadingOutlined style={{ color: showConf?.brandColor }} size={16} /> : <>
+                (loading) ? <LoadingOutlined style={{ color: showConf?.brandColor }} size={16} /> : <>
                     {
                         isFollowing
-                            ? <CheckCircleFilled size={16} style={{ color: showConf?.brandColor }} />
+                            ? (mempool ? <CheckCircleFilled onClick={(e) => { e.stopPropagation() }} size={16} style={{ color: showConf?.brandColor, cursor: 'not-allowed' }} /> : <CheckCircleFilled size={16} style={{ color: showConf?.brandColor }} />)
                             : <PlusCircleFilled size={16} style={{ color: showConf?.brandColor }} />
                     }
                 </>
@@ -263,13 +270,14 @@ const FollowButtonIcon: React.FC<FollowProps> = ({ isFollowing, onFollowToggle, 
         <Button
             onClick={(e) => { e.preventDefault(); onFollowToggle && onFollowToggle(); }}
             style={{ color: showConf?.colorButton, background: showConf?.gradientColor }}
-            loading={loading || mempool}
+            loading={loading}
             shape='round'
             size={size}
+            disabled={mempool}
         >
             {
                 isFollowing
-                    ? 'Unfollow'
+                    ? (mempool ? 'Followed' : 'Unfollow')
                     : 'Follow'
             }
         </Button>

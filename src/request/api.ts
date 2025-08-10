@@ -218,7 +218,7 @@ export async function fetchFollowerList({
 }): Promise<{ list: any; total: number }> {
   try {
     const data = await axios
-      .get(`${BASE_MAN_URL}/api/metaid/followerList/${metaid}`, {
+      .get(`${AVATAR_BASE_URL}/api/metaid/followerList/${metaid}`, {
         params,
       })
       .then((res) => res.data);
@@ -438,13 +438,16 @@ export const getDecryptContent = async (
   }>(`${Host + "/api/access/decrypt"}`, {
     method: "POST",
     data: params,
-    headers:{
+    headers: {
       "content-type": "text/plain",
-    }
+    },
   });
 };
 
 export const getUserInfo = async (params: { address: string }) => {
+  if(!params.address) {
+    return undefined;
+  }
   const ret = await request<{
     code: number;
     data: UserInfo;
@@ -505,7 +508,7 @@ export const getFollowList = async (params: { metaid: string }) => {
       list: API.FollowingItem[];
     };
     message: string;
-  }>(`${BASE_MAN_URL}/social/buzz/follow`, {
+  }>(`${AVATAR_BASE_URL}/social/buzz/follow`, {
     method: "GET",
     params,
   });
@@ -1049,4 +1052,28 @@ export const fetchBuzzContent = async (params: { pinId: string }) => {
       method: "GET",
     }
   );
+};
+
+export const getRecommendedFollow = async (params: { num: number }) => {
+  return request<{
+    code: number;
+    data: API.FollowingItem[];
+    message: string;
+  }>(`${BASE_MAN_URL}/api/metaid/recommended`, {
+    method: "GET",
+    params,
+  });
+};
+
+export const fetchComments = async (params: { pinId: string }) => {
+  return request<{
+    code: number;
+    data: {
+      comments: API.CommentRes[];
+    };
+    message: string;
+  }>(`${BASE_MAN_URL}/social/buzz/comments`, {
+    method: "GET",
+    params,
+  });
 };

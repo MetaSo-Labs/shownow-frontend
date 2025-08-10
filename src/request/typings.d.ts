@@ -78,16 +78,17 @@ declare namespace API {
     items: NFT[];
   };
   type CommentRes = {
-    _id: string;
-    commentTo: string;
+    CreateMetaid: string;
+    chainName: string;
+    commentNum: number;
     content: string;
-    pay: string;
-    payTo: string;
-    pinAddress: string;
-    pinId: string;
-    pinNumber: number;
-    replyTo: string;
     createAddress: string;
+    likeNum: number;
+    pinId: string;
+    timestamp: number;
+    donateNum: number;
+    forwardNum: number;
+    likeAddress: string[];
   };
 
   type LikeRes = {
@@ -196,6 +197,7 @@ declare namespace API {
     hot: number;
     like: string[];
     donate: string[];
+    forwardCount: number;
   };
 
   type BuzzListRet = {
@@ -252,13 +254,14 @@ declare namespace API {
     decimals: string;
     amtPerMint: "21000000";
     followersLimit: "1000";
-    mintCount: "1000";
+    mintCount: string;
     liquidityPerMint: 1200;
     premineCount: string;
-    totalMinted: "0";
+    totalMinted: string;
     blockHeight: string;
     metaData: string;
     type: string;
+    address: string;
     qual: {
       count: "1";
       creator: string;
@@ -293,6 +296,8 @@ declare namespace API {
     mintable: true;
     remaining: "21000000000";
     isFollowing?: boolean;
+    tag: string;
+    floorPrice: string;
   };
   type PayStatus = "purchased" | "unpurchased" | "mempool";
   type ControlByContentPinRet = {

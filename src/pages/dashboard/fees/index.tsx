@@ -44,7 +44,7 @@ export default () => {
             items: [
                 {
                     key: '1',
-                    label: 'Metaso Conf',
+                    label: 'MetaSo Conf',
                     children: <MetasoConf />
                 },
                 {
@@ -302,11 +302,11 @@ export default () => {
                     label: 'Token Airdrop',
                     children: <Airdrop />
                 },
-                // {
-                //     key: '7',
-                //     label: 'Assist',
-                //     children: <Assist />
-                // },
+                {
+                    key: '7',
+                    label: 'Assist',
+                    children: <Assist />
+                },
                 {
                     key: '8',
                     label: 'Recommend Users',

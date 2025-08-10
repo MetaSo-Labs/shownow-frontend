@@ -36,9 +36,9 @@ export async function fetchTranlateResult({
     q: sourceText,
     from,
     to,
-    appid: "20240727002109702",
+    appid: "20191010000340428",
     salt,
-    sign: md5("20240727002109702" + sourceText + salt + "Zn47LiY5HBPjSiMeN1Td"),
+    sign: md5("20191010000340428" + sourceText + salt + "08cmCzBLrp1l_fKQ9TL6"),
   };
   // const url = `https://fanyi-api.baidu.com/api/trans/vip/translate`;
   const url = `https://api.metaid.io/baidufanyi/api/trans/vip/translate`;
@@ -46,7 +46,7 @@ export async function fetchTranlateResult({
 
   try {
     const data = await axios
-      .get(url, { params: queryParams })
+      .get(url, { params: queryParams })  
       .then((res) => res.data);
     return data;
   } catch (error) {

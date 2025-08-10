@@ -13,6 +13,7 @@ export default ({ address, size = 34 }: Props) => {
         data: profileUserData,
         isFetching,
     } = useQuery({
+        enabled: Boolean(address),
         queryKey: ['userInfo', address],
         queryFn: () => getUserInfo({ address }),
     });

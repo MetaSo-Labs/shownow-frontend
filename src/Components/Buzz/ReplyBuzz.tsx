@@ -36,11 +36,13 @@ export default ({ buzzId, replyPinId, replyAddress, userAddress, host = '', type
 
 
 
-    return <Card style={{ padding: 0, marginBottom: 12, boxShadow: "none", border: 'none', background: colorBgLayout }}>
+    return <Card style={{ padding: 0, marginBottom: 12, boxShadow: "none", border: 'none', background: colorBgLayout }} styles={{
+        body: { paddingBottom: 0 }
+    }}>
         <div style={{ display: 'flex', gap: 8 }}>
             <PendingUserAvatar address={replyAddress} size={34} />
             <BuzzOriginLink host={type === 'repost' ? fromHost : host} buzzId={type === 'repost' ? replyPinId : buzzId}>
-                <Typography.Text style={{ lineHeight: '34px' }}  >{replyContent?.content||<Skeleton.Button active size='small' style={{marginTop:6}} />}</Typography.Text>
+                <Typography.Text style={{ lineHeight: '34px' }}  >{replyContent?.content}</Typography.Text>
             </BuzzOriginLink>
         </div>
         <Divider type="vertical" style={{ height: 26, margin: '12px 17px' }} />

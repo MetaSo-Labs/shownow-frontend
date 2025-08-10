@@ -19,47 +19,28 @@ const Home = () => {
         useInfiniteQuery({
             queryKey: ['homebuzzrecommend', user.address],
 
-            queryFn: async ({ pageParam: [lastId1, lastId2] }) => {
-                const recommend = fetchAllRecommendBuzzs({
+            queryFn: async ({ pageParam: [lastId1] }) => {
+                const recommendData = await fetchAllRecommendBuzzs({
                     size: 10,
                     lastId: lastId1,
-                    userAddress: user.address || '',
+                    userAddress: user.address || localStorage.getItem('metaso_uuid') || '',
                 });
-                const news = fetchAllBuzzs({
-                    size: 1,
-                    lastId: lastId2,
-                })
-                const [recommendData, newsData] = await Promise.all([recommend, news]);
-                if (!recommendData?.data || !newsData?.data) {
+                if (!recommendData?.data) {
                     return {
                         list: [],
-                        lastIds: ['', ''],
+                        lastIds: [''],
                     }
                 }
                 let list = [...(recommendData?.data?.list || [])];
-                // 过滤掉已存在的推文
-                (recommendData?.data?.list || []).forEach((item: API.Buzz) => {
-                    if (item.id) {
-                        tweetSet.current.add(item.id);
-                    }
-                });
-                (newsData?.data?.list || []).forEach((item: API.Buzz) => {
-                    if (tweetSet.current.has(item.id)) {
-                        return;
-                    }
-                    if (item.id) {
-                        list.push(item);
-                        tweetSet.current.add(item.id);
-                    }
-                });
+
 
                 return {
                     list,
-                    lastIds: [recommendData?.data?.lastId, newsData?.data?.lastId],
+                    lastIds: [recommendData?.data?.lastId],
                 }
             },
 
-            initialPageParam: ['', ''],
+            initialPageParam: ['',],
             getNextPageParam: (lastPage, allPages) => {
                 const { lastIds } = lastPage
                 if (!lastIds[0]) return
@@ -91,7 +72,7 @@ const Home = () => {
         style={{
             height: '100%',
             overflow: 'auto',
-            paddingBottom:60
+            paddingBottom: 60
         }}
     >
         <InfiniteScroll

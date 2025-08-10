@@ -4,6 +4,7 @@ import _like from "@/assets/notify/like.svg";
 import _follow from "@/assets/notify/follow.svg";
 import _reward from "@/assets/notify/reward.svg";
 import _repost from "@/assets/notify/repost.svg";
+import _mention from "@/assets/notify/mention.svg";
 import UserInfo from "../UserInfo";
 import PendingUser from "../UserInfo/PendingUser";
 import './index.less'
@@ -32,6 +33,20 @@ export default ({ notification, address }: NotificationProps) => {
                     <div className="notificationContent">
                         <PendingUser address={notification.fromAddress} />
                         <Typography.Text><PendingUserName address={notification.fromAddress} /> followed you</Typography.Text>
+                        <NotificationFooter item={notification} />
+                    </div>
+                </div>
+            )
+        case 'Mention':
+            return (
+                <div className="notificationItem">
+                    <div className="notificationIcon">
+                        <img src={_mention} alt="Like Icon" />
+                    </div>
+                    <div className="notificationContent">
+                        <PendingUser address={notification.fromAddress} />
+                        <Typography.Text><PendingUserName address={notification.fromAddress} /> mentioned you</Typography.Text>
+                        <SimpleBuzz buzzId={notification.fromPinId} userAddress={notification.fromAddress} host={notification.notifcationHost} />
                         <NotificationFooter item={notification} />
                     </div>
                 </div>
@@ -76,7 +91,7 @@ export default ({ notification, address }: NotificationProps) => {
                     <div className="notificationContent">
                         <PendingUser address={notification.fromAddress} />
                         <Typography.Text><PendingUserName address={notification.fromAddress} /> reply your <BuzzOriginLink host={notification.notifcationHost} buzzId={notification.notifcationPin}><Typography.Link >buzz</Typography.Link></BuzzOriginLink></Typography.Text>
-                        <ReplyBuzz buzzId={notification.notifcationPin} replyPinId={notification.fromPinId} replyAddress={notification.fromAddress} userAddress={address} host={notification.notifcationHost} type="comment"/>
+                        <ReplyBuzz buzzId={notification.notifcationPin} replyPinId={notification.fromPinId} replyAddress={notification.fromAddress} userAddress={address} host={notification.notifcationHost} type="comment" />
                         <NotificationFooter item={notification} />
                     </div>
                 </div>
@@ -90,7 +105,7 @@ export default ({ notification, address }: NotificationProps) => {
                     <div className="notificationContent">
                         <PendingUser address={notification.fromAddress} />
                         <Typography.Text><PendingUserName address={notification.fromAddress} /> forward your <BuzzOriginLink host={notification.notifcationHost} buzzId={notification.notifcationPin}><Typography.Link >buzz</Typography.Link></BuzzOriginLink></Typography.Text>
-                        <ReplyBuzz buzzId={notification.notifcationPin} replyPinId={notification.fromPinId} replyAddress={notification.fromAddress} userAddress={address} host={notification.notifcationHost} type="repost"  fromHost={notification.fromPinHost}/>
+                        <ReplyBuzz buzzId={notification.notifcationPin} replyPinId={notification.fromPinId} replyAddress={notification.fromAddress} userAddress={address} host={notification.notifcationHost} type="repost" fromHost={notification.fromPinHost} />
                         <NotificationFooter item={notification} />
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 
-import { Form, Input, Upload, Button, message, Avatar, UploadProps, theme } from "antd";
+import { Form, Input, Upload, Button, message, Avatar, UploadProps, theme, Typography } from "antd";
 import { CameraOutlined, FileImageFilled, LoadingOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { useModel } from "umi";
 import Trans from "../Trans";
@@ -39,7 +39,7 @@ const UploadAvatar = (props: any) => {
         if (props.value && typeof props.value === 'string' && props.value.indexOf('http') === 0) {
             setImageUrl(props.value)
         } else {
-            if(props.value===''){
+            if (props.value === '') {
                 setImageUrl('')
             }
         }
@@ -72,7 +72,7 @@ const UploadAvatar = (props: any) => {
         onSuccess()
     }
 
-    return (<div style={{ overflow: 'hidden',  display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    return (<div style={{ overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
         <ImgCrop rotationSlider cropShape='round' modalTitle={formatMessage('Avatar')}>
             <Upload
@@ -87,7 +87,13 @@ const UploadAvatar = (props: any) => {
             >
                 <div style={{ position: 'relative', width: 100, height: 100 }}>
                     <img src={imageUrl || DEFAULT_AVATAR} alt="avatar" style={{ width: 100, height: 100, objectFit: 'cover', overflow: 'hidden', borderRadius: "50%" }} />
-                    <Button style={{ position: 'absolute', bottom: 0, right: 0 }} size='small' shape='circle' type='primary' icon={<CameraOutlined />} />
+                    <Button style={{ position: 'absolute', bottom: 0, right: 0 }} size='small' shape='circle' type='primary' icon={<CameraOutlined />} >
+                    </Button>
+
+                    <Typography.Text style={{ fontSize: 12, position: 'absolute', right: -60, bottom: 0 }} type='secondary'>
+                        (Optional)
+                    </Typography.Text>
+
                 </div>
             </Upload>
         </ImgCrop>

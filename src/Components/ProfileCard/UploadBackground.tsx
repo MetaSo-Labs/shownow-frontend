@@ -56,7 +56,7 @@ const UploadBackground = (props: any) => {
     };
 
     const uploadButton = (
-        <Button block icon={<PlusOutlined />} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', border: 'none' }} type='text'>
+        <Button block icon={<PlusOutlined />} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', border: 'none', }} type='text'>
             <Trans>Upload</Trans>
         </Button>
     );

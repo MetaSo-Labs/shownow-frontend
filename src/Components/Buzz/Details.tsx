@@ -43,6 +43,7 @@ import { getMvcBalance, getUtxoBalance } from "@/utils/psbtBuild";
 const { Paragraph, Text } = Typography;
 import _btc from "@/assets/btc.png";
 import {
+    detectMentions,
     detectUrl,
     determineAddressInfo,
     formatMessage,
@@ -65,6 +66,8 @@ import Video from "./Video";
 import BuzzOrigin from "./components/BuzzOrigin";
 import MRC20Icon from "../MRC20Icon";
 import PayContent from "./components/PayContent";
+import IDCoinBadge from "../IDCoinBadge";
+import TextContent from "./TextContent";
 
 // TODO: use metaid manage state
 
@@ -122,6 +125,7 @@ export default ({
     const [handleLikeLoading, setHandleLikeLoading] = useState(false);
     const [likes, setLikes] = useState<string[]>([]);
     const [donates, setDonates] = useState<string[]>([]);
+    const [donateCount, setDonateCount] = useState<number>(0);
     const currentUserInfoData = useQuery({
         queryKey: ["userInfo", buzzItem!.creator],
         enabled: !isNil(buzzItem?.creator),
@@ -170,6 +174,7 @@ export default ({
         const _donates = buzzItem.donate ?? [];
         const _donate = donate ?? [];
         setDonates([..._donates, ..._donate.map((item) => item.CreateMetaid)]);
+        setDonateCount(buzzItem.donateCount ?? 0);
     }, [buzzItem, like, donate]);
 
     const payBuzz = useMemo(() => {
@@ -251,7 +256,6 @@ export default ({
                         feeRate: Number(mvcFeeRate),
                     },
                 });
-                console.log("likeRes", likeRes);
                 if (!isNil(likeRes?.txid)) {
                     // await sleep(8000);
                     // refetch && refetch()
@@ -366,6 +370,9 @@ export default ({
         }
     }, [showTrans, transResult, decryptContent, isTranslating]);
 
+
+
+
     const handleDonate = async () => {
         if (!isLogin) {
             message.error(formatMessage("Please connect your wallet first"));
@@ -426,10 +433,8 @@ export default ({
                     setDonates([...donates, user.metaid]);
                 }
             } else if (selectedChain === "mvc") {
-                console.log(chain);
 
                 const donateEntity = (await mvcConnector!.use("simpledonate")) as IMvcEntity;
-                console.log(donateEntity, 'donateEntity');
                 const donateRes = await donateEntity.create({
                     data: {
                         body: JSON.stringify({
@@ -457,10 +462,6 @@ export default ({
                     },
                 })
 
-                console.log(donateRes, 'donateRes');
-
-
-
                 if (!isNil(donateRes?.txid)) {
                     message.success("Donate successfully");
                     setShowGift(false);
@@ -468,6 +469,7 @@ export default ({
                     setDonateMessage("");
                     // setIsDonated(true);
                     setDonates([...donates, user.metaid]);
+                    setDonateCount(prev => prev + 1);
                 }
             } else {
                 throw new Error("Donate not supported on this chain");
@@ -495,7 +497,7 @@ export default ({
             }}
             styles={{
                 header: {
-                    height: 40,
+                    // height: ,
                     borderColor: isForward ? colorBorder : colorBorderSecondary,
                 },
                 body: {
@@ -503,47 +505,55 @@ export default ({
                 }
             }}
             title={
-                <div
-                    style={{
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                    }}
-                >
+                <div style={{
+                    height: "100%",
+                    padding: '12px 0',
+                }}>
+
+
                     <div
-                        className="avatar"
-                        style={{ cursor: "pointer", position: "relative" }}
-                    >
-                        <UserAvatar src={currentUserInfoData.data?.avatar} size={40} onClick={(e) => {
-                            e.stopPropagation();
-                            history.push(`/profile/${buzzItem.creator}`);
-                        }} />
-                        <FollowIconComponent
-                            metaid={currentUserInfoData.data?.metaid || ""}
-                        />
-                    </div>
-                    <div
-                        style={{ display: "flex", flexDirection: "column", gap: 8, cursor: "pointer" }}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            history.push(`/profile/${buzzItem.creator}`);
+                        style={{
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
                         }}
                     >
-                        <Text style={{ fontSize: 14, lineHeight: 1 }}>
-                            {" "}
-                            {currentUserInfoData.data?.name || "Unnamed"}
-                        </Text>
-                        <div style={{ display: "flex", gap: 8, alignItems: 'center' }}>
-                            <Text type="secondary" style={{ fontSize: 10, lineHeight: 1 }}>
-                                {currentUserInfoData.data?.metaid.slice(0, 8)}
+                        <div
+                            className="avatar"
+                            style={{ cursor: "pointer", position: "relative" }}
+                        >
+                            <UserAvatar src={currentUserInfoData.data?.avatar} size={40} onClick={(e) => {
+                                e.stopPropagation();
+                                history.push(`/profile/${buzzItem.creator}`);
+                            }} />
+                            <FollowIconComponent
+                                metaid={currentUserInfoData.data?.metaid || ""}
+                            />
+                        </div>
+                        <div
+                            style={{ display: "flex", flexDirection: "column", gap: 8, cursor: "pointer" }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                history.push(`/profile/${buzzItem.creator}`);
+                            }}
+                        >
+                            <Text style={{ fontSize: 14, lineHeight: 1 }}>
+                                {" "}
+                                {currentUserInfoData.data?.name || "Unnamed"}
                             </Text>
-                            <BuzzOrigin host={buzzItem.host} />
+                            <div style={{ display: "flex", gap: 8, alignItems: 'center' }}>
+                                <Text type="secondary" style={{ fontSize: 10, lineHeight: 1 }}>
+                                    {currentUserInfoData.data?.metaid.slice(0, 8)}
+                                </Text>
+                                <BuzzOrigin host={buzzItem.host} />
+                            </div>
+
                         </div>
 
+
                     </div>
-
-
+                    <IDCoinBadge address={buzzItem.address} />
                 </div>
             }
 
@@ -576,18 +586,7 @@ export default ({
                                 transition: "max-height 0.3s ease",
                             }}
                         >
-                            {(textContent ?? "")
-                                .split("\n")
-                                .map((line: string, index: number) => (
-                                    <span key={index} style={{}}>
-                                        <div
-                                            style={{ minHeight: 22 }}
-                                            dangerouslySetInnerHTML={{
-                                                __html: handleSpecial(detectUrl(line)),
-                                            }}
-                                        />
-                                    </span>
-                                ))}
+                            <TextContent textContent={textContent} />
 
                             <Button
                                 type="link"
@@ -689,7 +688,7 @@ export default ({
                             bordered={false}
                             color={buzzItem.chainName === "mvc" ? "blue" : "orange"}
                         >
-                            {buzzItem.chainName}
+                            {buzzItem.chainName.toUpperCase()}
                         </Tag>
                         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                             {dayjs.unix(buzzItem.timestamp).format("YYYY-MM-DD HH:mm:ss")}
@@ -755,25 +754,27 @@ export default ({
                                 showGift ? setShowGift(false) : setShowGift(true);
                             }}
                         >
-                            {donates.length}
+                            {donateCount}
                         </Button>
-                        <div className="item">
-                            <Button
-                                type="text"
-                                icon={<UploadOutlined />}
-                                onClick={() => {
-                                    if (!isLogin) {
-                                        message.error(
-                                            formatMessage("Please connect your wallet first")
-                                        );
-                                        return;
-                                    }
-                                    const isPass = checkUserSetting();
-                                    if (!isPass) return;
-                                    showNewPost ? setShowNewPost(false) : setShowNewPost(true);
-                                }}
-                            />
-                        </div>
+
+                        <Button
+                            type="text"
+                            icon={<UploadOutlined />}
+                            onClick={() => {
+                                if (!isLogin) {
+                                    message.error(
+                                        formatMessage("Please connect your wallet first")
+                                    );
+                                    return;
+                                }
+                                const isPass = checkUserSetting();
+                                if (!isPass) return;
+                                showNewPost ? setShowNewPost(false) : setShowNewPost(true);
+                            }}
+                        >
+                            {buzzItem.forwardCount}
+                        </Button>
+                        
                     </div>
                 )}
             </div>

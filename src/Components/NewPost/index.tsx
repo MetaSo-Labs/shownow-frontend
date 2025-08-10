@@ -2,9 +2,9 @@
 import { useIntl, useModel, history } from "umi"
 import Popup from "../ResponPopup"
 import UserInfo from "../UserInfo"
-import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumber, message, Radio, Result, Row, Segmented, Select, Space, Tag, Typography, Upload, UploadFile, UploadProps } from "antd";
-import { CheckCircleOutlined, CloseOutlined, ExclamationCircleOutlined, FileImageOutlined, LoadingOutlined, LockOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumber, Mentions, message, Radio, Result, Row, Segmented, Select, Space, Tag, Typography, Upload, UploadFile, UploadProps } from "antd";
+import { CheckCircleOutlined, CloseOutlined, ExclamationCircleOutlined, FileImageOutlined, LoadingOutlined, LockOutlined, SmileOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AttachmentItem, convertToFileList, image2Attach, processFile } from "@/utils/file";
 import { CreateOptions, IBtcEntity, IMvcEntity, MvcTransaction } from "@feiyangl1020/metaid";
 import { isEmpty, isNil, set } from "ramda";
@@ -27,11 +27,18 @@ import { getBuzzSchemaWithCustomHost } from "@/entities/buzz";
 import { v4 as uuidv4 } from 'uuid';
 import { clearDraftFiles, deleteDraftFile, getUploadDraftList, saveUploadItemsToDraft } from "@/utils/idb";
 import MRC20Icon from "../MRC20Icon";
+import debounce from 'lodash/debounce';
+import { fetchIDCoinInfo } from "@/request/metaso";
+import PendingUserAvatar from "../UserInfo/PendingUserAvatar";
+import EmojiPicker from 'emoji-picker-react';
+import idCoinStore, { IDCoin } from "@/utils/IDCoinStore";
+import CommentPanel, { CommentItem } from "../CommentPanel";
 const { TextArea } = Input;
 type Props = {
     show: boolean,
     onClose: () => void
     quotePin?: API.Pin;
+    quoteComment?: API.CommentRes;
 }
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 const getBase64 = (img: FileType, callback: (url: string) => void) => {
@@ -39,16 +46,16 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
     reader.addEventListener('load', () => callback(reader.result as string));
     reader.readAsDataURL(img);
 };
-export default ({ show, onClose, quotePin }: Props) => {
+export default ({ show, onClose, quotePin, quoteComment }: Props) => {
 
-    const isQuoted = !isNil(quotePin);
+    const isQuoted = !isNil(quotePin) || !isNil(quoteComment);
 
     const { user, btcConnector, feeRate, mvcFeeRate, chain, mvcConnector, checkUserSetting, isLogin, setMockBuzz } = useModel('user')
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
     const { showConf, fetchServiceFee, manPubKey, admin } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
     const [video, _setVideo] = useState<any>();
-    const [content, _setContent] = useState(localStorage.getItem('tmp_content') || '');
+    const [content, setContent] = useState(localStorage.getItem('tmp_content') || '');
     const [encryptContent, setEncryptContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const queryClient = useQueryClient();
@@ -62,16 +69,49 @@ export default ({ show, onClose, quotePin }: Props) => {
     const [encryptFiles, setEncryptFiles] = useState<string[]>([]);
     const [showNFTModal, setShowNFTModal] = useState(false);
     const [nfts, setNFTs] = useState<API.NFT[]>([]);
+    const [mentions, setMentions] = useState<Record<string, string>>({});
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState<IDCoin[]>([]);
+    const ref = useRef<string | null>(null);
+    const [lastFocus, setLastFocus] = useState<'content' | 'decrypt'>('content');
+
+    const loadGithubUsers = (key: string) => {
+        if (!key) {
+            setUsers([]);
+            return;
+        }
+        console.log(key, "key");
+
+        idCoinStore.getByTickPrefix(key.toUpperCase())
+            .then((res) => {
+                setLoading(false);
+                setUsers(res);
+            });
+    };
+
+    const debounceLoadGithubUsers = useCallback(debounce(loadGithubUsers, 800), []);
+
+    const onSearch = (search: string) => {
+        console.log('Search:', search);
+        ref.current = search;
+        setLoading(!!search);
+        setUsers([]);
+
+        debounceLoadGithubUsers(search);
+    };
 
     // const setImages = (images: any[]) => {
     //     images ? localStorage.setItem('tmp_images', JSON.stringify(images)) : localStorage.removeItem('tmp_images');
     //     _setImages(images);
     // }
 
-    const setContent = (content: string) => {
-        localStorage.setItem('tmp_content', content);
-        _setContent(content);
-    }
+    // const setContent = (_content: string) => {
+
+    //     _setContent(_content);
+
+    // }
 
     const setVideo = (video: any) => {
         // video ? localStorage.setItem('tmp_video', JSON.stringify(video)) : localStorage.removeItem('tmp_video');
@@ -116,8 +156,8 @@ export default ({ show, onClose, quotePin }: Props) => {
             message.error('You can only upload video file!');
             return Upload.LIST_IGNORE;
         }
-        if (file.size > 1024 * 1024 * 3) {
-            message.error('The video size must be less than 3MB');
+        if (file.size > 1024 * 1024 * 5) {
+            message.error('The video size must be less than 5MB');
             return Upload.LIST_IGNORE;
         }
         const previewUrl = URL.createObjectURL(file);
@@ -142,13 +182,22 @@ export default ({ show, onClose, quotePin }: Props) => {
             return;
         }
         setIsAdding(true);
+        const _mentions = { ...mentions };
+        if (_mentions && Object.keys(_mentions).length > 0) {
+            for (const [key, value] of Object.entries(_mentions)) {
+                if (content.indexOf(`@${key} `) === -1) {
+                    delete _mentions[key];
+                }
+            }
+        }
         const _images =
             images.length !== 0 ? await image2Attach(convertToFileList(images)) : [];
         if (lock) {
-            handleAddBuzzWhthLock()
+            handleAddBuzzWhthLock(_mentions)
         } else {
             await handleAddBuzz({
                 content: content,
+                mentions: _mentions,
                 images: _images,
             });
         }
@@ -172,6 +221,7 @@ export default ({ show, onClose, quotePin }: Props) => {
     })
     const handleAddBuzz = async (buzz: {
         content: string;
+        mentions: Record<string, string>;
         images: AttachmentItem[];
     }) => {
         setIsAdding(true);
@@ -185,6 +235,7 @@ export default ({ show, onClose, quotePin }: Props) => {
             const finalBody: any = {
                 content: buzz.content,
                 contentType: 'text/plain',
+                // mentions: mentions || {}
             };
 
             if (video && chainNet === 'mvc') {
@@ -338,6 +389,9 @@ export default ({ show, onClose, quotePin }: Props) => {
 
             if (!isNil(quotePin)) {
                 finalBody.quotePin = quotePin.id;
+            }
+            if (!isNil(quoteComment)) {
+                finalBody.quotePin = quoteComment.pinId;
             }
             if (nfts.length > 0) {
                 finalBody.attachments = [...nfts.map(nft => `metafile://nft/mrc721/${nft.itemPinId}`), ...finalBody.attachments || []]
@@ -532,6 +586,7 @@ export default ({ show, onClose, quotePin }: Props) => {
         } catch (error) {
             console.log('error', error);
             const errorMessage = (error as any)?.message ?? error;
+            localStorage.setItem('tmp_content', content);
             const toastMessage = errorMessage?.includes(
                 'Cannot read properties of undefined'
             )
@@ -543,7 +598,7 @@ export default ({ show, onClose, quotePin }: Props) => {
         }
         setIsAdding(false);
     };
-    const handleAddBuzzWhthLock = async () => {
+    const handleAddBuzzWhthLock = async (mentions: Record<string, string>) => {
         setIsAdding(true);
         try {
             if (!admin?.domainName) {
@@ -578,6 +633,8 @@ export default ({ show, onClose, quotePin }: Props) => {
 
             const { payload, pid } = await postPayBuzz({
                 content: content,
+                mentions: mentions || {},
+                quotePin: quotePin?.id || quoteComment?.pinId,
                 encryptImages: await image2Attach(convertToFileList(encryptImages)),
                 publicImages: await image2Attach(convertToFileList(publicImages)),
                 encryptContent: encryptContent,
@@ -668,6 +725,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                 : errorMessage;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             message.error(toastMessage);
+            localStorage.setItem('tmp_content', content);
 
 
         }
@@ -719,35 +777,75 @@ export default ({ show, onClose, quotePin }: Props) => {
 
 
 
-    return <Popup onClose={onClose} show={show} modalWidth={640} closable title={!isQuoted ? <Trans>New Buzz</Trans> : <Trans>Repost</Trans>}>
+    return <Popup onClose={() => {
+        localStorage.setItem('tmp_content', content);
+        onClose()
+    }} show={show} modalWidth={640} closable title={!isQuoted ? <Trans>New Buzz</Trans> : <Trans>Repost</Trans>}>
         {
             isQuoted && <Card style={{ margin: 24 }} styles={{
                 body: {
-                    padding: 0
+                    padding: quotePin ? 0 : 24
                 }
-            }}><Buzz buzzItem={quotePin} showActions={false} /></Card>
+            }}>{quotePin ? <Buzz buzzItem={quotePin} showActions={false} /> : <CommentItem item={quoteComment as API.CommentRes} level={1} />}</Card>
         }
         <div>
             <Row gutter={[12, 12]} >
                 <SelectChain chainNet={chainNet} setChainNet={setChainNet} />
                 <Col span={24}><Typography.Text strong><Trans>Public</Trans></Typography.Text></Col>
                 <Col span={24}>
-                    <TextArea autoSize={{ minRows: 4, maxRows: 16 }} placeholder={isQuoted ? formatMessage("Add a comment") : formatMessage("post_placeholder")} value={content} onChange={(e) => setContent(e.target.value)} />
+                    <Mentions
+                        autoSize={{ minRows: 4, maxRows: 16 }}
+                        placeholder={isQuoted ? formatMessage("Add a comment") : formatMessage("post_placeholder")}
+                        value={content}
+                        onChange={(value) => {
+                            console.log('value', value);
+                            setContent(value)
+                        }}
+                        loading={loading}
+                        onSearch={onSearch}
+                        options={users.map(({ tick, deployerAddress }) => ({
+                            key: deployerAddress,
+                            value: tick.toUpperCase(),
+                            className: 'antd-demo-dynamic-option',
+                            label: (
+                                <>
+                                    <PendingUserAvatar address={deployerAddress} size={24} />
+                                    <span>{tick.toUpperCase()}</span>
+                                </>
+                            ),
+                        }))}
+                        onSelect={(value) => {
+                            console.log('onSelect', value);
+                            setMentions({
+                                ...mentions,
+                                [value.value as string]: value.key as string
+                            });
+                        }}
+                        onFocus={() => {
+                            setLastFocus('content');
+                        }}
+
+
+
+                    />
                 </Col>
 
+
+                <Col span={24} style={{ justifyContent: 'space-between', display: 'flex', alignItems: "center" }}>
+                    <Typography.Text strong><Trans>Encrypt</Trans></Typography.Text>
+                    <Button type='text' icon={
+                        !lock ? <UnlockOutlined style={{ color: showConf?.brandColor }} /> : <LockOutlined style={{ color: showConf?.brandColor }} />
+                    } onClick={() => setLock(!lock)} />
+                </Col>
                 {
-                    !isQuoted && <>
-                        <Col span={24} style={{ justifyContent: 'space-between', display: 'flex', alignItems: "center" }}>
-                            <Typography.Text strong><Trans>Encrypt</Trans></Typography.Text>
-                            <Button type='text' icon={
-                                !lock ? <UnlockOutlined style={{ color: showConf?.brandColor }} /> : <LockOutlined style={{ color: showConf?.brandColor }} />
-                            } onClick={() => setLock(!lock)} />
-                        </Col>
-                        {
-                            lock && <Col span={24}><TextArea autoSize={{ minRows: 4, maxRows: 16 }} placeholder={formatMessage("encrypt content")} value={encryptContent} onChange={(e) => setEncryptContent(e.target.value)} /></Col>
-                        }
-                    </>
+                    lock && <Col span={24}><TextArea autoSize={{ minRows: 4, maxRows: 16 }}
+                        onFocus={() => {
+                            setLastFocus('decrypt');
+                        }}
+                        placeholder={formatMessage("encrypt content")} value={encryptContent} onChange={(e) => setEncryptContent(e.target.value)} /></Col>
                 }
+
+
                 <Col span={24}>
                     <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: 16 }}>
                         {
@@ -869,7 +967,7 @@ export default ({ show, onClose, quotePin }: Props) => {
                     </div>
                 </Col>
                 {
-                    !isQuoted && lock && <>
+                    lock && <>
                         <Col span={24} style={{ justifyContent: 'space-between', display: 'flex', alignItems: "center", flexWrap: 'wrap', gap: 20 }}>
                             <Typography.Text strong><Trans>Payment method</Trans></Typography.Text>
                             <Segmented<string>
@@ -1000,6 +1098,9 @@ export default ({ show, onClose, quotePin }: Props) => {
                         <Button icon={<FileImageOutlined />} variant='text' color='primary'></Button>
                     </Upload>
                     <Button type='text' onClick={() => setShowNFTModal(true)} variant='text' color='primary'>NFT</Button>
+                     {window.innerWidth > 768 &&<Button type="text" icon={<SmileOutlined />} variant='text' color='primary' onClick={() => setShowEmojiPicker(!showEmojiPicker)}></Button>}
+                    
+
                     <Upload beforeUpload={handleVideoBeforeUpload}
                         showUploadList={false}
                         accept='video/mp4'  >
@@ -1020,5 +1121,23 @@ export default ({ show, onClose, quotePin }: Props) => {
             </div>
         </div>
         <NFTModal show={showNFTModal} onClose={() => { setShowNFTModal(false) }} nfts={nfts} setNFTs={setNFTs} />
+
+        <Popup onClose={() => {
+            setShowEmojiPicker(false);
+        }} show={
+            showEmojiPicker
+        } closable title={<Trans>Select Emoji</Trans>}>
+            <EmojiPicker
+                onEmojiClick={(emoji) => {
+                    if (lock && lastFocus === 'decrypt') {
+                        setEncryptContent((prev: string) => prev + emoji.emoji);
+                    } else {
+                        setContent((prev: string) => prev + emoji.emoji);
+                    }
+
+                }}
+            />
+        </Popup>
+
     </Popup>
 }

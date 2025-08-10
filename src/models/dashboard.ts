@@ -2,13 +2,13 @@ import { DASHBOARD_TOKEN, DefaultLogo } from "@/config";
 import useIntervalAsync from "@/hooks/useIntervalAsync";
 import { getMetaidByAddress, getPubKey } from "@/request/api";
 import { fetchAdmin, fetchFees, fetchShowConf } from "@/request/dashboard";
-import { fetchDomianList } from "@/request/metaso";
+import { fetchDomianList, fetchIDCoins } from "@/request/metaso";
+import idCoinStore from "@/utils/IDCoinStore";
 import { useCallback, useEffect, useState } from "react";
 export const showNowConf = {
   alias: "default",
   brandColor: "rgba(0, 0, 0, 0.8)",
-  gradientColor:
-    "linear-gradient(90deg, #002E33 0%, #002E33 100%)",
+  gradientColor: "linear-gradient(90deg, #002E33 0%, #002E33 100%)",
   logo: DefaultLogo,
   theme: "light",
   showSliderMenu: true,
@@ -42,6 +42,8 @@ export default () => {
   const [manPubKey, setManPubKey] = useState<string>();
   const [fees, setFees] = useState<DB.FeeDto[]>([]);
   const [admin, setAdmin] = useState<DB.LoginWithWallerDto>();
+  const [idCoins, setIdCoins] = useState<string[]>([]);
+  const [idCoinsAddress, setIdCoinsAddress] = useState<string[]>([]); // idCoin tick -> address
 
   const [domainMap, setDomainMap] = useState<Record<string, string>>({}); // host -> domain
   const [logined, setLogined] = useState(
@@ -116,6 +118,20 @@ export default () => {
     }
   };
 
+  const _fetchIdCoins = useCallback(async () => {
+    fetchIDCoins({
+      cursor: 0,
+      size: 1000,
+    }).then((res) => {
+      if (res.data && res.data.list) {
+        idCoinStore.save(res.data.list);
+        setIdCoins(res.data.list.map((item) => item.tick.toUpperCase()));
+        setIdCoinsAddress(res.data.list.map((item) => item.deployerAddress));
+      }
+    });
+  }, []);
+
+  const updateIDCoins = useIntervalAsync(_fetchIdCoins, 600000);
   const updateFees = useIntervalAsync(_fetchFees, 600000);
   const updateDomainInfo = useIntervalAsync(_fetchDomainList, 600000);
   return {
@@ -132,5 +148,7 @@ export default () => {
     setLogined,
     admin,
     domainMap,
+    idCoins,
+    idCoinsAddress
   };
 };

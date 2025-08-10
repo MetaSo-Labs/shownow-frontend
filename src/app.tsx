@@ -1,6 +1,10 @@
 import type { RequestConfig } from 'umi';
 import { history } from 'umi';
+import { v4 as uuidv4 } from 'uuid';
 window.BUILD_ENV = (process.env.BUILD_ENV || 'testnetDev') as Window["BUILD_ENV"];
+if (!localStorage.getItem('metaso_uuid')) {
+    localStorage.setItem('metaso_uuid', uuidv4());
+}
 export const request: RequestConfig = {
     timeout: 10000,
     validateStatus: function (status: number) {

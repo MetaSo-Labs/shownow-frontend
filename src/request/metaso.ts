@@ -3,6 +3,7 @@ import {
   DASHBOARD_SIGNATURE,
   METASO_BASE_API,
 } from "@/config";
+import { IDCoin } from "@/utils/IDCoinStore";
 import { request } from "umi";
 
 export async function fetchCoinSummary() {
@@ -295,5 +296,76 @@ export async function metasoBroadcast(
     method: "POST",
     data: params,
     ...(options || {}),
+  });
+}
+
+export const fetchIDCoinInfo = async (params: {
+  tick?: string;
+  tickId?: string;
+  address?: string;
+}) => {
+  return request<{
+    code: number;
+    data: API.IdCoin;
+    message: string;
+  }>(`${METASO_BASE_API}/v1/common/idcoin/info`, {
+    method: "GET",
+    params,
+  });
+};
+
+export const fetchIDCoinInfoByAddress = async (params: {
+  tick?: string;
+  tickId?: string;
+  address?: string;
+}) => {
+  return request<{
+    code: number;
+    data: API.IdCoin;
+    message: string;
+  }>(`${METASO_BASE_API}/v1/common/address/idcoin/info`, {
+    method: "GET",
+    params,
+  });
+};
+
+export const fetchIDCoins = async (params: {
+  cursor: number;
+  size: number;
+}) => {
+  return request<{
+    code: number;
+    data: {
+      list: IDCoin[];
+    };
+    message: string;
+  }>(`${METASO_BASE_API}/v1/common/idcoin/simple-info-list`, {
+    method: "GET",
+    params,
+  });
+};
+
+export async function getMVCRewards(
+  params: {
+    address: string;
+    gasChain: "mvc";
+  },
+  options?: { [key: string]: any }
+) {
+  return request<
+    MS.IRet<{
+      address: "string";
+      amount: 0;
+      index: 0;
+      txId: "string";
+    }>
+  >(`https://www.metaso.network/assist-open-api/v1/assist/gas/mvc/address-reward`, {
+    method: "POST",
+    data: params,
+    ...(options || {}),
+    headers: {
+      "X-Signature": localStorage.getItem(DASHBOARD_SIGNATURE) || "",
+      "X-Public-Key": localStorage.getItem(DASHBOARD_ADMIN_PUBKEY) || "",
+    },
   });
 }

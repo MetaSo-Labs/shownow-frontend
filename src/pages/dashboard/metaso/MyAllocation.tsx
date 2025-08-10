@@ -60,8 +60,8 @@ export default () => {
         <Popover placement='topLeft' content={<div style={{
             maxWidth: 300
         }} >
-            Upon activation and allocation ratio configuration, the Metaso secondary distribution mechanism automatically triggers predefined incentive pool allocations based on real-time updated user contribution rankings, achieving intelligent mapping between contribution metrics and incentive values
-        </div>} title="Metaso secondary distribution">
+            Upon activation and allocation ratio configuration, the MetaSo secondary distribution mechanism automatically triggers predefined incentive pool allocations based on real-time updated user contribution rankings, achieving intelligent mapping between contribution metrics and incentive values
+        </div>} title="MetaSo secondary distribution">
             <Typography.Title level={4}>Secondary Distribution <QuestionCircleOutlined /></Typography.Title>
         </Popover>
         <Card>

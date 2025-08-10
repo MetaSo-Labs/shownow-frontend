@@ -29,6 +29,7 @@ import useIntervalAsync from "@/hooks/useIntervalAsync";
 import { add, isEmpty, set } from "ramda";
 import { useModel } from "umi";
 import { NotificationStore } from "@/utils/NotificationStore";
+import { UserInfo } from "node_modules/@metaid/metaid/dist/types";
 const checkExtension = () => {
   if (!window.metaidwallet) {
     window.open("https://www.metalet.space/");
@@ -62,12 +63,12 @@ export default () => {
   );
   const [showConnect, setShowConnect] = useState(false);
   const [user, setUser] = useState({
-    avater: "",
+    avatar: "",
     name: "",
     metaid: "",
-    notice: 1,
     address: "",
     background: "",
+    bio: "",
   });
 
   const [btcConnector, setBtcConnector] = useState<IBtcConnector>();
@@ -81,6 +82,8 @@ export default () => {
   const { showConf } = useModel("dashboard");
   const [showSetting, setShowSetting] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [showRecommendFollow, setShowRecommendFollow] = useState(false);
+  const [showFirstPost, setShowFirstPost] = useState(false);
   const [followList, setFollowList] = useState<API.FollowingItem[]>([]);
   const [searchWord, setSearchWord] = useState("");
   const [mockBuzz, setMockBuzz] = useState<API.Buzz>();
@@ -133,16 +136,27 @@ export default () => {
     });
     setMvcConnector(mvcConnector);
     const connector = chain === "btc" ? btcConnector : mvcConnector;
+    const localStorageProfile = sessionStorage.getItem(
+      `${connector.wallet.address}_profile`
+    );
+    let profile: Record<string, string> = {};
+    if (localStorageProfile) {
+      try {
+        profile = JSON.parse(localStorageProfile);
+      } catch (e) {
+        console.log(e);
+      }
+    }
     setUser({
-      avater: connector.user.avatar
-        ? `${getHostByNet(curNetwork)}${connector.user.avatar}`
+      avatar: connector.user.avatar
+        ? `${AVATAR_BASE_URL}${connector.user.avatar}`
         : "",
       background: connector.user.background
-        ? `${getHostByNet(curNetwork)}${connector.user.background}`
+        ? `${AVATAR_BASE_URL}${connector.user.background}`
         : "",
-      name: connector.user.name,
+      name: connector.user.name || profile.name,
       metaid: connector.user.metaid,
-      notice: 0,
+      bio: connector.user.bio || profile.bio || "",
       address: connector.wallet.address,
     });
     const publicKey = await window.metaidwallet.btc.getPublicKey();
@@ -164,10 +178,10 @@ export default () => {
     localStorage.removeItem(DASHBOARD_ADMIN_PUBKEY);
     setLogined(false);
     setUser({
-      avater: "",
+      avatar: "",
       name: "",
       metaid: "",
-      notice: 1,
+      bio: "",
       address: "",
       background: "",
     });
@@ -238,16 +252,28 @@ export default () => {
       setMvcConnector(mvcConnector);
       const connector = chain === "btc" ? btcConnector : mvcConnector;
       if (connector.user) {
+        const localStorageProfile = sessionStorage.getItem(
+          `${connector.wallet.address}_profile`
+        );
+        let profile: Record<string, string> = {};
+        if (localStorageProfile) {
+          try {
+            profile = JSON.parse(localStorageProfile);
+          } catch (e) {
+            console.log(e);
+          }
+        }
         setUser({
-          avater: connector.user.avatar
+          avatar: connector.user.avatar
             ? `${AVATAR_BASE_URL}${connector.user.avatar}`
             : "",
-          background: connector.user.background
-            ? `${AVATAR_BASE_URL}${connector.user.background}`
-            : "",
-          name: connector.user.name,
+          background:
+             connector.user.background
+              ? `${AVATAR_BASE_URL}${connector.user.background}`
+              : "",
+          name: connector.user.name || profile.name,
           metaid: connector.user.metaid,
-          notice: 0,
+          bio: connector.user.bio || profile.bio || "",
           address: connector.wallet.address,
         });
       }
@@ -258,15 +284,30 @@ export default () => {
   }, [chain]);
 
   const fetchUserInfo = useCallback(async () => {
-    const userInfo = await getUserInfo({ address: user.address });
+    const localStorageProfile = sessionStorage.getItem(
+      `${user.address}_profile`
+    );
+    let profile: Record<string, string> = {};
+    if (localStorageProfile) {
+      try {
+        profile = JSON.parse(localStorageProfile);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    if (!user.address) {
+      return;
+    }
+    const userInfo = (await getUserInfo({ address: user.address })) as UserInfo;
     setUser({
-      avater: userInfo.avatar ? `${AVATAR_BASE_URL}${userInfo.avatar}` : "",
+      avatar: userInfo.avatar ? `${AVATAR_BASE_URL}${userInfo.avatar}` : "",
       background: userInfo.background
         ? `${AVATAR_BASE_URL}${userInfo.background}`
         : "",
-      name: userInfo.name,
+      name: userInfo.name || profile.name,
       metaid: userInfo.metaid,
-      notice: 0,
+      bio: userInfo.bio || profile.bio || "",
+
       address: userInfo.address,
     });
   }, [user]);
@@ -285,7 +326,6 @@ export default () => {
         lastId: lastId || "0",
         size: 100,
       });
-      console.log("newNotis", newNotis);
       const _newNotis = (newNotis.data ?? []).map((item) => {
         item.notifcationId = item.notifcationId.toString();
         return item;
@@ -342,16 +382,27 @@ export default () => {
   const switchChain = async (chain: API.Chain) => {
     if (!btcConnector || !mvcConnector) return;
     const connector = chain === "btc" ? btcConnector : mvcConnector;
+    const localStorageProfile = sessionStorage.getItem(
+      `${connector.wallet.address}_profile`
+    );
+    let profile: Record<string, string> = {};
+    if (localStorageProfile) {
+      try {
+        profile = JSON.parse(localStorageProfile);
+      } catch (e) {
+        console.log(e);
+      }
+    }
     setUser({
-      avater: connector.user.avatar
+      avatar: connector.user.avatar
         ? `${AVATAR_BASE_URL}${connector.user.avatar}`
         : "",
       background: connector.user.background
         ? `${AVATAR_BASE_URL}${connector.user.background}`
         : "",
-      name: connector.user.name,
+      name: connector.user.name || profile.name,
       metaid: connector.user.metaid,
-      notice: 0,
+      bio: connector.user.bio || profile.bio || "",
       address: connector.wallet.address,
     });
     localStorage.setItem("show_chain_v2", chain);
@@ -362,8 +413,23 @@ export default () => {
     if (!isLogin) return true;
     if (!user.metaid) return true;
     if (!user.name) {
-      setShowSetting(true);
-      return false;
+      const localStorageProfile = sessionStorage.getItem(
+        `${user.address}_profile`
+      );
+      let profile: Record<string, string> = {};
+      if (localStorageProfile) {
+        try {
+          profile = JSON.parse(localStorageProfile);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      if (!profile.name) {
+        setShowSetting(true);
+        localStorage.setItem("show_chain_v2", "mvc");
+        setChain("mvc");
+        return false;
+      }
     }
     return true;
   }, [isLogin, chain, user]);
@@ -408,5 +474,9 @@ export default () => {
     setMvcFeerateLocked,
     unreadNotificationCount,
     updateNotify,
+    showRecommendFollow,
+    setShowRecommendFollow,
+    showFirstPost,
+    setShowFirstPost,
   };
 };

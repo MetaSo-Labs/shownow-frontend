@@ -61,15 +61,15 @@ export default () => {
                         padding: '20px 0'
                     }
                 }}>
-                    <DescItem label='Follow Serivice Fee' value={curFee?.follow_service_fee_amount} />
+                    <DescItem label='Follow Service Fee' value={curFee?.follow_service_fee_amount} />
                     <Divider />
-                    <DescItem label='Post Serivice Fee' value={curFee?.post_service_fee_amount} />
+                    <DescItem label='Post Service Fee' value={curFee?.post_service_fee_amount} />
                     <Divider />
-                    <DescItem label='Commet Serivice Fee' value={curFee?.comment_service_fee_amount} />
+                    <DescItem label='Comment Service Fee' value={curFee?.comment_service_fee_amount} />
                     <Divider />
-                    <DescItem label='Like Serivice Fee' value={curFee?.like_service_fee_amount} />
+                    <DescItem label='Like Service Fee' value={curFee?.like_service_fee_amount} />
                     <Divider />
-                    <DescItem label='Donate Serivice Fee' value={curFee?.donate_service_fee_amount} />
+                    <DescItem label='Donate Service Fee' value={curFee?.donate_service_fee_amount} />
 
                 </Card></> : <Card title={<Trans>Introduction</Trans>} styles={{
                     header: {
