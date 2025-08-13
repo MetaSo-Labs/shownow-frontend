@@ -41,7 +41,7 @@ export default () => {
             label: <Trans>Introduction</Trans>,
         },
     ];
-    return <Card bordered={false} tabList={tabListNoTitle}
+    return <Card variant='borderless' tabList={tabListNoTitle}
         activeTabKey={activeTabKey2}
         onTabChange={onTab2Change}>
         {

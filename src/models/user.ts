@@ -165,6 +165,17 @@ export default () => {
     localStorage.setItem(DASHBOARD_SIGNATURE, signature);
     localStorage.setItem(DASHBOARD_ADMIN_PUBKEY, publicKey);
     setIsLogin(true);
+    document.cookie = `last-connection=${JSON.stringify({
+      wallet: "metalet",
+      status: "connected",
+    })}; path=/`;
+    document.cookie = `user-info=${JSON.stringify(connector.user)}; path=/`;
+    document.cookie = `credential=${JSON.stringify([
+      {
+        signature,
+        publicKey,
+      },
+    ])}; path=/`;
   }, [chain]);
 
   const disConnect = async () => {
@@ -185,6 +196,12 @@ export default () => {
       address: "",
       background: "",
     });
+    document.cookie = `last-connection=${JSON.stringify({
+      wallet: "metalet",
+      status: "disconnected",
+    })}; path=/`;
+    document.cookie = `user-info=''; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    document.cookie = `credential=''; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
   };
   useEffect(() => {
     const handleAccountChange = (newAccount: any) => {
@@ -267,15 +284,26 @@ export default () => {
           avatar: connector.user.avatar
             ? `${AVATAR_BASE_URL}${connector.user.avatar}`
             : "",
-          background:
-             connector.user.background
-              ? `${AVATAR_BASE_URL}${connector.user.background}`
-              : "",
+          background: connector.user.background
+            ? `${AVATAR_BASE_URL}${connector.user.background}`
+            : "",
           name: connector.user.name || profile.name,
           metaid: connector.user.metaid,
           bio: connector.user.bio || profile.bio || "",
           address: connector.wallet.address,
         });
+
+        document.cookie = `last-connection=${JSON.stringify({
+          wallet: "metalet",
+          status: "connected",
+        })}; path=/`;
+        document.cookie = `user-info=${JSON.stringify(connector.user)}; path=/`;
+        document.cookie = `credential=${JSON.stringify([
+          {
+            signature: localStorage.getItem(DASHBOARD_SIGNATURE),
+            publicKey: localStorage.getItem(DASHBOARD_ADMIN_PUBKEY),
+          },
+        ])}; path=/`;
       }
 
       setIsLogin(true);

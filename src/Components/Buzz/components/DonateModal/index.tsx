@@ -179,7 +179,8 @@ const DonateModal: React.FC<DonateModalProps> = ({
                         ),
                       },
                     ]}
-                    bordered={false}
+                    // bordered={false}
+                    variant="borderless"
                     dropdownStyle={{ minWidth: 120 }}
                   />
                 ) : (

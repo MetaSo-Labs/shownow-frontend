@@ -20,7 +20,7 @@ export default () => {
         padding: "24px 36px"
     }} closable title={<></>} >
         <Typography.Title style={{ textAlign: 'center', fontSize: 20, fontWeight: 600, }}>
-            <Trans>Welcome to </Trans> {showConf?.brandIntroMainTitle || 'MetaSo'}!
+            <Trans>Welcome to</Trans> {showConf?.brandIntroMainTitle || 'MetaSo'}!
         </Typography.Title>
         <Typography.Text type='secondary' style={{ textAlign: 'center', display: 'block', }}>
             <Trans>Let’s get you set up! We’ll guide you through the basics so you’re ready to go.</Trans>

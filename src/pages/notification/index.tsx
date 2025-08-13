@@ -87,7 +87,7 @@ export default () => {
 
 
 
-    return <Card title={<Trans>Notifications</Trans>} bordered={false} className="notificationPage" tabList={tabList}
+    return <Card title={<Trans>Notifications</Trans>} variant='borderless' className="notificationPage" tabList={tabList}
         activeTabKey={activeTabKey}
         onTabChange={(key) => {
             setActiveTabKey(key);

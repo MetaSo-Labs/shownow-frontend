@@ -131,7 +131,7 @@ export default () => {
         <Button shape='round' style={{ color: showConf?.colorButton, background: showConf?.gradientColor }}>
             <Trans>Account</Trans>
         </Button>
-        <Card title={<Trans>Personal data</Trans>} style={{ marginTop: 12 }} bordered={false} extra={
+        <Card title={<Trans>Personal data</Trans>} style={{ marginTop: 12 }} variant='borderless' extra={
             <Button shape='round' type="primary" style={{ color: showConf?.colorButton, background: showConf?.gradientColor }} loading={submitting} onClick={updateUser}>
                 <Trans wrapper>Save</Trans>
             </Button>
@@ -143,7 +143,7 @@ export default () => {
 
                 form={form}
             >
-                <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} bordered={false} cover={
+                <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} variant='borderless' cover={
                     <div
                         style={{ width: '100%', height: 0, paddingBottom: '33.333%', borderRadius: 10, position: 'relative' }}
                     >

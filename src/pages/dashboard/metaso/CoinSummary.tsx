@@ -41,7 +41,7 @@ export default () => {
             <Col {...{ xs: 24, sm: 24, md: 8, lg: 8, xl: 8 }}>
                 <Card
                     loading={isFetching}
-                    bordered={false}
+                    variant='borderless'
                     style={{
                         backgroundImage: 'linear-gradient(141deg, #3B82F6 -5%, #9333EA 105%)'
                     }}>
@@ -66,7 +66,7 @@ export default () => {
             <Col {...{ xs: 24, sm: 24, md: 8, lg: 8, xl: 8 }}>
                 <Card
                     loading={isFetching}
-                    bordered={false}
+                    variant='borderless'
                     style={{
                         backgroundImage: 'linear-gradient(141deg, #31EACB -4%, #2763DB 105%)'
                     }}>
@@ -93,7 +93,7 @@ export default () => {
             <Col {...{ xs: 24, sm: 24, md: 8, lg: 8, xl: 8 }}>
                 <Card
                     loading={isFetching}
-                    bordered={false}
+                    variant="borderless"
                     style={{
                         backgroundImage: 'linear-gradient(141deg, #EC4899 -5%, #DC2626 105%)'
                     }}>

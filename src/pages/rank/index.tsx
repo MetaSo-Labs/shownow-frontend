@@ -172,80 +172,80 @@ export default () => {
         },
     ]
     return <ConfigProvider
-                    theme={{
-                        components: {
-                            Table: {
-                                headerBg: 'transparent',
-                                headerSplitColor: 'transparent',
-                            },
-                        },
-                    }}
-                ><div className={`rankPage ${showConf?.theme}`}>
-        <Card
-            title={<Trans>Contribution value</Trans>}
-            bordered={false}
-            styles={{
-                header: {
-                    borderBottomColor: 'transparent'
-                }
-            }}
-            extra={
-                <Space >
-                    <Typography.Text><Trans>Timeframe</Trans></Typography.Text>
-                    <Select
-                        placeholder="Select a time"
-                        variant="filled"
-                        style={{ flex: 1, width: 160 }}
-                        options={options}
-                        value={value}
-                        onChange={(value) => {
-                            setValue(value)
-                        }}
-                    />
-                </Space>
-            }
-        >
-            <Row gutter={[12, 12]}>
-                <Col span={12}>
-                    <Card loading={_ndvFetching}>
-                        <Typography.Title level={4} style={{ padding: 0, margin: 0 }}><NumberFormat value={totalNDV} precision={4}></NumberFormat></Typography.Title>
-                        <Typography.Text type='secondary'>
-                            <Trans>total NDV</Trans>
-                        </Typography.Text>
-                    </Card>
-                </Col>
-
-                <Col span={12} style={{
-                    visibility: isLogin ? 'visible' : 'hidden'
-                }}>
-                    <Card loading={_userValueFetching || _hostValueFetching}>
-                        <Typography.Title level={4} style={{ padding: 0, margin: 0 }}>
-                            <NumberFormat value={userValue} precision={4}></NumberFormat>
-                            <NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={2} prefix=' (' suffix='%)'></NumberFormat>
-                        </Typography.Title>
-                        <Typography.Text type='secondary'>
-                            <Trans>My contribution value</Trans>
-                        </Typography.Text>
-                    </Card>
-                </Col>
-            </Row>
-            {
-                isLogin && user?.address && <UserMetaSoReward address={user.address} host={admin!.host} />
-            }
-            <Typography.Title level={5}>
-                <Trans>Rank</Trans>
-            </Typography.Title>
-            <Card style={{
-                padding: 0,
-                overflow: 'hidden'
-            }}
+        theme={{
+            components: {
+                Table: {
+                    headerBg: 'transparent',
+                    headerSplitColor: 'transparent',
+                },
+            },
+        }}
+    ><div className={`rankPage ${showConf?.theme}`}>
+            <Card
+                title={<Trans>Contribution value</Trans>}
+                variant='borderless'
                 styles={{
-                    body: {
-                        padding: 0,
+                    header: {
+                        borderBottomColor: 'transparent'
                     }
                 }}
+                extra={
+                    <Space >
+                        <Typography.Text><Trans>Timeframe</Trans></Typography.Text>
+                        <Select
+                            placeholder="Select a time"
+                            variant="filled"
+                            style={{ flex: 1, width: 160 }}
+                            options={options}
+                            value={value}
+                            onChange={(value) => {
+                                setValue(value)
+                            }}
+                        />
+                    </Space>
+                }
             >
-               
+                <Row gutter={[12, 12]}>
+                    <Col span={12}>
+                        <Card loading={_ndvFetching}>
+                            <Typography.Title level={4} style={{ padding: 0, margin: 0 }}><NumberFormat value={totalNDV} precision={4}></NumberFormat></Typography.Title>
+                            <Typography.Text type='secondary'>
+                                <Trans>total NDV</Trans>
+                            </Typography.Text>
+                        </Card>
+                    </Col>
+
+                    <Col span={12} style={{
+                        visibility: isLogin ? 'visible' : 'hidden'
+                    }}>
+                        <Card loading={_userValueFetching || _hostValueFetching}>
+                            <Typography.Title level={4} style={{ padding: 0, margin: 0 }}>
+                                <NumberFormat value={userValue} precision={4}></NumberFormat>
+                                <NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={2} prefix=' (' suffix='%)'></NumberFormat>
+                            </Typography.Title>
+                            <Typography.Text type='secondary'>
+                                <Trans>My contribution value</Trans>
+                            </Typography.Text>
+                        </Card>
+                    </Col>
+                </Row>
+                {
+                    isLogin && user?.address && <UserMetaSoReward address={user.address} host={admin!.host} />
+                }
+                <Typography.Title level={5}>
+                    <Trans>Rank</Trans>
+                </Typography.Title>
+                <Card style={{
+                    padding: 0,
+                    overflow: 'hidden'
+                }}
+                    styles={{
+                        body: {
+                            padding: 0,
+                        }
+                    }}
+                >
+
                     <Table<API.MetaBlockValueListItem>
                         columns={columns}
                         dataSource={_listValue?.data.list}
@@ -264,42 +264,42 @@ export default () => {
 
 
                     />
-               
+
+                </Card>
+
+
+
             </Card>
+            {
+                isLogin && user?.address && <Card variant='borderless' style={{
+                    marginTop: 20
+                }}>
+                    <Flex align='center' gap={12} justify='space-between'>
+                        <Flex align='center' gap={12} >
+                            <PendingUser address={user.address} />
+                            <div style={{
+                                background: 'linear-gradient(125deg, #FF5D5D 15%, #FFDD6F 52%, #63FFBE 87%)',
+                                borderRadius: 12,
+                                height: 20,
+                                fontSize: 12,
+                                color: '#fff',
+                                width: 30,
+                                textAlign: 'center'
+                            }}>
+                                ME
+                            </div>
+                        </Flex>
 
 
+                        <Typography.Text strong><NumberFormat value={userValue} precision={4}></NumberFormat></Typography.Text>
+                        <Typography.Text ><NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={2} prefix='' suffix='%'></NumberFormat></Typography.Text>
 
-        </Card>
-        {
-            isLogin && user?.address && <Card bordered={false} style={{
-                marginTop: 20
-            }}>
-                <Flex align='center' gap={12} justify='space-between'>
-                    <Flex align='center' gap={12} >
-                        <PendingUser address={user.address} />
-                        <div style={{
-                            background: 'linear-gradient(125deg, #FF5D5D 15%, #FFDD6F 52%, #63FFBE 87%)',
-                            borderRadius: 12,
-                            height: 20,
-                            fontSize: 12,
-                            color: '#fff',
-                            width: 30,
-                            textAlign: 'center'
-                        }}>
-                            ME
-                        </div>
                     </Flex>
 
 
-                    <Typography.Text strong><NumberFormat value={userValue} precision={4}></NumberFormat></Typography.Text>
-                    <Typography.Text ><NumberFormat value={hostValue ? Number(userValue) / hostValue * 100 : '--'} precision={2} prefix='' suffix='%'></NumberFormat></Typography.Text>
+                </Card>
+            }
 
-                </Flex>
-
-
-            </Card>
-        }
-
-    </div >
+        </div >
     </ConfigProvider>
 }

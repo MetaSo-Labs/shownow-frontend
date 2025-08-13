@@ -384,7 +384,7 @@ export default ({
                     padding: panding
                 }
             }}
-            bordered={bordered}
+            variant={bordered ? "outlined" : "borderless"}
             title={showHeader ?
                 <div
                     style={{

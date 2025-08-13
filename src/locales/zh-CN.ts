@@ -122,4 +122,26 @@ export default {
   "Update Failed": "更新失败",
   "Update Successfully": "更新成功",
   "User Canceled": "用户取消",
+  "Welcome to": "欢迎来到",
+  "Let’s get you set up! We’ll guide you through the basics so you’re ready to go.":
+    "开始设置吧！我们会指导您完成基本设置，让您轻松上手",
+  Close: "关闭",
+  Next: "下一步",
+  "Set Up Your Profile": "设置您的个人资料",
+  "Make your account stand out — add a unique avatar and display name!":
+    "让您的帐户脱颖而出——添加独特的头像和显示名称！",
+  "Use Bitcoin, it costs about 2k -100k sats(about $2~200)":
+    "使用比特币，成本约为 2k -100k sats（约 2~200 美元）",
+  "Use Bitcoin sidechain, it is free (sponsored by Show.Now)":
+    "使用比特币侧链，它是免费的（由 Show.now 赞助）",
+  "Basic Info": "基本信息",
+  Optional: "可选",
+  "Profile  (Optional)": "个人描述（可选）",
+  "Find Your People": "发现你的好友",
+  "Get started by following some awesome Web3 creators we’ve picked for you , they’re active, insightful, and worth the follow.":
+    "首先关注我们为您挑选的一些出色的 Web3 创作者 —— 他们活跃、有见地，值得关注。",
+  recommandMore: "换一批",
+  "Everything’s ready ": "一切准备就绪",
+  "Say hello to the Web3 world! ": "向Web3世界问好！",
+
 };

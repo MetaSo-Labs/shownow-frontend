@@ -270,7 +270,7 @@ export default ({ show, onClose, callback, pinId, donateAddress }: Props) => {
                                         ),
                                     },
                                 ]}
-                                bordered={false}
+                                variant='borderless'
                                 dropdownStyle={{ minWidth: 120 }}
                             />
                         ) : (

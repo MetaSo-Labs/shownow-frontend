@@ -91,7 +91,7 @@ const UploadAvatar = (props: any) => {
                     </Button>
 
                     <Typography.Text style={{ fontSize: 12, position: 'absolute', right: -60, bottom: 0 }} type='secondary'>
-                        (Optional)
+                        (<Trans>Optional</Trans>)
                     </Typography.Text>
 
                 </div>

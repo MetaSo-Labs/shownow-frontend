@@ -47,7 +47,7 @@ export default () => {
         <Button style={{ marginTop: 20, width: '100%', marginBottom: 20, textDecoration: 'underline' }} type='link' onClick={() => {
             refetch()
         }}>
-            <Trans>More</Trans>
+            <Trans>recommandMore</Trans>
         </Button>
 
         <div style={{

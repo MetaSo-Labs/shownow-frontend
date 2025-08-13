@@ -647,7 +647,7 @@ export default ({
                                 e.stopPropagation();
                             }}
                             style={{ padding: 0, marginBottom: 12, boxShadow: "none" }}
-                            bordered={false}
+                            variant='borderless'
                             styles={{ body: { padding: 0 } }}
                             loading={isQuoteLoading}
                         >

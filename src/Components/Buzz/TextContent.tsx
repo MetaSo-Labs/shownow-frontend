@@ -40,7 +40,7 @@ const LinkifyText: React.FC<{ text: string }> = ({ text }) => {
                     );
                 } else {
                     // 普通文本渲染
-                    return <Typography.Text>{part}</Typography.Text>;
+                    return <Typography.Text key={index}>{part}</Typography.Text>;
                 }
             })}
         </span>

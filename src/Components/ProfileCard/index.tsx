@@ -50,7 +50,7 @@ export default ({ address, IDCoin }: Props) => {
             }),
     });
     return (
-        <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} bordered={false} cover={
+        <Card style={{ padding: 0 }} styles={{ body: { padding: 0 } }} variant='borderless' cover={
             <div
                 style={{ height: 0, position: 'relative', width: '100%', background: showConf?.gradientColor, borderRadius: 10, paddingBottom: '33.333%' }}
 

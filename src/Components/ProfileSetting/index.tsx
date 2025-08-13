@@ -9,7 +9,7 @@ import { getUserInfo } from "@/request/api"
 import { ASSIST_ENDPOINT, BASE_MAN_URL, curNetwork } from "@/config"
 import { image2Attach } from "@/utils/file"
 import UploadAvatar from "../ProfileCard/UploadAvatar"
-import { getEffectiveBTCFeerate } from "@/utils/utils"
+import { formatMessage, getEffectiveBTCFeerate } from "@/utils/utils"
 
 type Props = {
     show: boolean
@@ -61,74 +61,80 @@ export default () => {
             delete values.background
         }
         try {
-        if (profileUserData.data.name) {
-            const res = await connector!.updateUserInfo({
-                userData: {
-                    ...values
-                },
-                options: {
-                    feeRate: chainNet === 'btc' ? getEffectiveBTCFeerate(Number(feeRate)) : Number(mvcFeeRate),
-                    network: curNetwork,
-                },
-            }).catch(e => {
-                throw new Error(e)
-            });
-            if (!res) {
-                message.error('Update Failed')
+            if (profileUserData.data.name) {
+                // const res = await connector!.updateUserInfo({
+                //     userData: {
+                //         ...values
+                //     },
+                //     options: {
+                //         feeRate: chainNet === 'btc' ? getEffectiveBTCFeerate(Number(feeRate)) : Number(mvcFeeRate),
+                //         network: curNetwork,
+                //     },
+                // }).catch(e => {
+                //     throw new Error(e)
+                // });
+                // if (!res) {
+                //     message.error('Update Failed')
+                // } else {
+                //     const { avatarRes, backgroundRes, nameRes } = res;
+                //     if (avatarRes || backgroundRes || nameRes) {
+                //         const nameStatus = nameRes?.status ?? '';
+                //         const avatarStatus = avatarRes?.status ?? '';
+                //         const backgroundStatus = backgroundRes?.status ?? '';
+                //         if (!nameStatus && !avatarStatus && !backgroundStatus) {
+                //             message.success('Update Successfully')
+                //         } else {
+                //             message.error('User Canceled')
+                //         }
+
+                //     }
+
+                // }
+                setShowSetting(false)
+                setShowProfileEdit(false)
+                setShowRecommendFollow(true)
+                setSubmitting(false)
+                return
             } else {
-                const { avatarRes, backgroundRes, nameRes } = res;
-                if (avatarRes || backgroundRes || nameRes) {
-                    const nameStatus = nameRes?.status ?? '';
-                    const avatarStatus = avatarRes?.status ?? '';
-                    const backgroundStatus = backgroundRes?.status ?? '';
-                    if (!nameStatus && !avatarStatus && !backgroundStatus) {
-                        message.success('Update Successfully')
-                    } else {
-                        message.error('User Canceled')
+                const res = await connector!.createUserInfo({
+                    userData: values,
+                    options: {
+                        feeRate: chainNet === 'btc' ? getEffectiveBTCFeerate(Number(feeRate)) : Number(mvcFeeRate),
+                        network: curNetwork,
+                        assistDomain: ASSIST_ENDPOINT,
+                    },
+                }).catch(e => {
+                    throw new Error(e)
+                });
+                if (!res) {
+                    message.error('Create Failed')
+                } else {
+                    const { avatarRes, backgroundRes, nameRes, bioRes } = res;
+                    if (avatarRes || backgroundRes || nameRes || bioRes) {
+                        const nameStatus = nameRes?.status ?? '';
+                        const avatarStatus = avatarRes?.status ?? '';
+                        const backgroundStatus = backgroundRes?.status ?? '';
+                        const bioStatus = bioRes?.status ?? '';
+                        if (!nameStatus && !avatarStatus && !backgroundStatus && !bioStatus) {
+                            message.success('Create Successfully')
+                            sessionStorage.setItem(`${connector?.user?.address}_profile`, JSON.stringify({
+                                name: values.name,
+                                avatar: values.avatar,
+                                bio: values.bio,
+                            }))
+                        } else {
+                            message.error('User Canceled')
+                        }
+
                     }
 
                 }
-
             }
-        } else {
-            const res = await connector!.createUserInfo({
-                userData: values,
-                options: {
-                    feeRate: chainNet === 'btc' ? getEffectiveBTCFeerate(Number(feeRate)) : Number(mvcFeeRate),
-                    network: curNetwork,
-                    assistDomain: ASSIST_ENDPOINT,
-                },
-            }).catch(e => {
-                throw new Error(e)
-            });
-            if (!res) {
-                message.error('Create Failed')
-            } else {
-                const { avatarRes, backgroundRes, nameRes, bioRes } = res;
-                if (avatarRes || backgroundRes || nameRes || bioRes) {
-                    const nameStatus = nameRes?.status ?? '';
-                    const avatarStatus = avatarRes?.status ?? '';
-                    const backgroundStatus = backgroundRes?.status ?? '';
-                    const bioStatus = bioRes?.status ?? '';
-                    if (!nameStatus && !avatarStatus && !backgroundStatus && !bioStatus) {
-                        message.success('Create Successfully')
-                        sessionStorage.setItem(`${connector?.user?.address}_profile`, JSON.stringify({
-                            name: values.name,
-                            avatar: values.avatar,
-                            bio: values.bio,
-                        }))
-                    } else {
-                        message.error('User Canceled')
-                    }
-
-                }
-
-            }
-        }
-        fetchUserInfo();
-        setShowSetting(false)
-        setShowProfileEdit(false)
-        setShowRecommendFollow(true)
+            fetchUserInfo();
+            setShowSetting(false)
+            setShowProfileEdit(false)
+            setShowRecommendFollow(true)
+            setSubmitting(false)
 
         } catch (e: any) {
             console.log(e, 'error');
@@ -142,7 +148,7 @@ export default () => {
     }} show={showProfileEdit} style={{
         borderRadius: 24,
     }} modalWidth={740} bodyStyle={{
-         padding: "10px 36px 24px 36px"
+        padding: "10px 36px 24px 36px"
     }} closable title={<Trans>Set Up Your Profile</Trans>}>
         <Typography.Text type='secondary' style={{ textAlign: 'center', display: 'block', marginBottom: 16 }}>
             <Trans>Make your account stand out — add a unique avatar and display name!</Trans>
@@ -161,10 +167,10 @@ export default () => {
                 <UploadAvatar />
             </Form.Item>
             <Form.Item name='name'>
-                <Input size='large' placeholder='Name' />
+                <Input size='large' placeholder={formatMessage('Name')} />
             </Form.Item>
             <Form.Item name='bio'>
-                <Input.TextArea size='large' placeholder='Profile  (Optional)' maxLength={160} style={{ height: 120, resize: 'none' }}  showCount />
+                <Input.TextArea size='large' placeholder={formatMessage('Profile  (Optional)')} maxLength={160} style={{ height: 120, resize: 'none' }} showCount />
             </Form.Item>
         </Form>
         <div style={{

@@ -43,7 +43,7 @@ export const TweetCard = ({ quotePinId, onClose = () => history.back() }: Props)
 
 
 
-    return (<Card loading={isQuoteLoading} bordered={false} style={{ boxShadow: 'none', paddingBottom: 100 }} title={<>
+    return (<Card loading={isQuoteLoading} variant='borderless' style={{ boxShadow: 'none', paddingBottom: 100 }} title={<>
         {
             showConf?.showSliderMenu && <Button type="text" size='small' icon={<LeftOutlined />} onClick={onClose}>
 
