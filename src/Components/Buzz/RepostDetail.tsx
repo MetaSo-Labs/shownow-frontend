@@ -67,6 +67,7 @@ import BlockedBuzz from "./BlockedBuzz";
 import MRC20Icon from "../MRC20Icon";
 import PayContent from "./components/PayContent";
 import TextContent from "./TextContent";
+import TextWithTrans from "./TextWithTrans";
 
 // TODO: use metaid manage state
 
@@ -101,12 +102,8 @@ export default ({
     const [showTrans, setShowTrans] = useState(false);
     const [transResult, setTransResult] = useState<string[]>([]);
     const [showNewPost, setShowNewPost] = useState(false);
-    const [showUnlock, setShowUnlock] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null); // 引用内容容器
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [isOverflowing, setIsOverflowing] = useState(false); // 是否溢出
     const [paying, setPaying] = useState(false);
-    const [unlocking, setUnlocking] = useState(false);
     const {
         btcConnector,
         user,
@@ -119,8 +116,6 @@ export default ({
         checkUserSetting,
     } = useModel("user");
     const { showConf, fetchServiceFee, manPubKey } = useModel("dashboard");
-    const [handleLikeLoading, setHandleLikeLoading] = useState(false);
-    const [likes, setLikes] = useState<string[]>([]);
     const [donates, setDonates] = useState<string[]>([]);
     const currentUserInfoData = useQuery({
         queryKey: ["userInfo", buzzItem!.creator],
@@ -268,7 +263,7 @@ export default ({
                                 message: donateMessage,
                             }),
                             flag: FLAG,
-                            contentType: "text/plain;utf-8",
+                            contentType: "application/json;utf-8",
                             path: `${showConf?.host || ""}/protocols/simpledonate`,
                         },
                     ],
@@ -313,7 +308,7 @@ export default ({
                             message: donateMessage,
                         }),
                         flag: FLAG,
-                        contentType: "text/plain;utf-8",
+                        contentType: "application/json;utf-8",
                         path: `${showConf?.host || ""}/protocols/simpledonate`,
                         feeRate: Number(mvcFeeRate),
                     },
@@ -357,7 +352,14 @@ export default ({
         setPaying(false);
         setDonateLoading(false);
     };
-
+    const _textContent = useMemo(() => {
+        if (!decryptContent) return "";
+        const encryptContent =
+            decryptContent.status === "purchased"
+                ? decryptContent.encryptContent
+                : "";
+        return `${decryptContent.publicContent}${decryptContent.publicContent && encryptContent ? "\n" : ""}${encryptContent}`;
+    }, [decryptContent])
 
 
     if (buzzItem.blocked && user.metaid !== buzzItem.creator) {
@@ -440,63 +442,7 @@ export default ({
                         history.push(`/buzz/${buzzItem.id}`);
                     }}
                 >
-                    {textContent.length > 0 && (
-                        <div
-                            className="text"
-                            ref={contentRef}
-                            style={{
-                                position: "relative",
-                                maxHeight: isExpanded ? "none" : 200,
-                                overflow: "hidden",
-                                transition: "max-height 0.3s ease",
-                            }}
-                        >
-                            <TextContent textContent={textContent} />
-
-                            <Button
-                                type="link"
-                                style={{ padding: 0 }}
-                                loading={isTranslating}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleTranslate();
-                                }}
-                            >
-                                {showTrans
-                                    ? formatMessage("Show original content")
-                                    : formatMessage("Translate")}
-                            </Button>
-
-                            {isOverflowing && !isExpanded && (
-                                <div
-                                    style={{
-                                        width: "100%",
-                                        paddingTop: 78,
-                                        backgroundImage: `linear-gradient(-180deg,${colorBgBlur} 0%,${colorBgContainer} 100%)`,
-                                        position: "absolute",
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                        zIndex: 10,
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <Button
-                                        variant="filled"
-                                        color="primary"
-                                        size="small"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsExpanded(true);
-                                        }}
-                                        icon={<DownOutlined />}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    )}
+                    <TextWithTrans text={_textContent} />
 
                     {decryptContent && <NFTGallery nfts={decryptContent.nfts} />}
 
@@ -546,37 +492,7 @@ export default ({
 
                 </div>
             </div>
-            <NewPost
-                show={showNewPost}
-                onClose={() => {
-                    setShowNewPost(false);
-                }}
-                quotePin={buzzItem}
-            />
-            <DonateModal
-                show={showGift}
-                onClose={() => {
-                    setShowGift(false);
-                    setDonateAmount("");
-                    setDonateMessage("");
-                    setSelectedChain(chain);
-                }}
-                isLegacy={determineAddressInfo(buzzItem.address) === 'p2pkh'}
-                userInfo={{
-                    avatar: currentUserInfoData.data?.avatar,
-                    name: currentUserInfoData.data?.name,
-                    metaid: currentUserInfoData.data?.metaid,
-                }}
-                balance={balance}
-                chain={selectedChain}
-                setChain={setSelectedChain}
-                paying={paying}
-                donateAmount={donateAmount}
-                donateMessage={donateMessage}
-                setDonateAmount={setDonateAmount}
-                setDonateMessage={setDonateMessage}
-                onDonate={handleDonate}
-            />
+            
 
 
         </Card>

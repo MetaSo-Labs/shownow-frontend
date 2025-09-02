@@ -109,7 +109,7 @@ export const postPayBuzz = async (
   const payload: any = {
     publicContent,
     encryptContent: _encryptContent,
-    contentType: "text/plain",
+    contentType: "application/json;utf-8",
     publicFiles: [...nfts, ...attachments],
     encryptFiles: encryptAttachments,
     // mentions,
@@ -122,7 +122,7 @@ export const postPayBuzz = async (
     operation: "create",
     body: JSON.stringify(payload),
     path,
-    contentType: "text/plain",
+    contentType: "application/json;utf-8",
     flag: "metaid",
   };
 
@@ -259,7 +259,7 @@ export const postVideo = async (
     if (chain === "btc") {
       // todo
     } else {
-      const serialAction = (i + 1) % 4 === 0 ? "finish" : "combo";
+      const serialAction = i === chunks.length - 1 ? "finish" : "combo"; // (i + 1) % 4 === 0 ? "finish" : "combo";
       const { transactions, txid, txids } = await mvcConnector!.createPin(
         metaidData,
         {

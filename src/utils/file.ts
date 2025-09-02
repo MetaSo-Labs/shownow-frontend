@@ -89,8 +89,8 @@ export function parseAvatarWithUri(originUri: string, txid: string) {
 
 export async function compressImage(image: File) {
   const options = {
-    maxSizeMB: 0.3,
-    maxWidthOrHeight: 1024,
+    maxSizeMB: 0.9,
+    maxWidthOrHeight: 2048,
     useWebWorker: true,
   };
   const compressedFile = await imageCompression(image, options);

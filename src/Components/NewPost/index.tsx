@@ -234,7 +234,7 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const finalBody: any = {
                 content: buzz.content,
-                contentType: 'text/plain',
+                contentType: 'application/json;utf-8',
                 // mentions: mentions || {}
             };
 
@@ -399,7 +399,7 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
             if (chainNet === 'btc') {
                 console.log('finalBody', {
                     body: JSON.stringify(finalBody),
-                    contentType: 'text/plain;utf-8',
+                    contentType: 'application/json;utf-8',
                     flag: FLAG,
                     path: `${showConf?.host || ''}/protocols/simplebuzz`
                 });
@@ -407,7 +407,7 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
                     dataArray: [
                         {
                             body: JSON.stringify(finalBody),
-                            contentType: 'text/plain;utf-8',
+                            contentType: 'application/json;utf-8',
                             flag: FLAG,
                             path: `${showConf?.host || ''}/protocols/simplebuzz`
                         },
@@ -1098,8 +1098,8 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
                         <Button icon={<FileImageOutlined />} variant='text' color='primary'></Button>
                     </Upload>
                     <Button type='text' onClick={() => setShowNFTModal(true)} variant='text' color='primary'>NFT</Button>
-                     {window.innerWidth > 768 &&<Button type="text" icon={<SmileOutlined />} variant='text' color='primary' onClick={() => setShowEmojiPicker(!showEmojiPicker)}></Button>}
-                    
+                    {window.innerWidth > 768 && <Button type="text" icon={<SmileOutlined />} variant='text' color='primary' onClick={() => setShowEmojiPicker(!showEmojiPicker)}></Button>}
+
 
                     <Upload beforeUpload={handleVideoBeforeUpload}
                         showUploadList={false}

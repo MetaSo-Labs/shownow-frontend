@@ -21,8 +21,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       '@feiyangl1020/metaid':
-        specifier: 0.0.25
-        version: 0.0.25(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+        specifier: 0.0.29
+        version: 0.0.29(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
       '@ivliu/react-offscreen':
         specifier: ^1.0.8
         version: 1.0.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -971,8 +971,8 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@feiyangl1020/metaid@0.0.25':
-    resolution: {integrity: sha512-n/epsZZvHJyoc35N2Qw283RucAJ7L+iGGzYo9aS/UgJ3UlNBZY3wJK6BJTSSRlmdhWzt8VT8zmyz8cf3yqYVBQ==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.25.tgz}
+  '@feiyangl1020/metaid@0.0.29':
+    resolution: {integrity: sha512-bwwPw49cA7PehK02FUdm/9SnY3bPcb9SeWyaCpUtLAiNqQXCxeA6j/2BxYzgvrv0BMkdOF2AZzv/Vi5RyfYS2A==, tarball: https://registry.npmjs.org/@feiyangl1020/metaid/-/metaid-0.0.29.tgz}
 
   '@floating-ui/core@0.6.2':
     resolution: {integrity: sha512-jktYRmZwmau63adUG3GKOAVCofBXkk55S/zQ94XOorAHhwqFIOFAy1rSp2N0Wp6/tGbe9V3u/ExlGZypyY17rg==, tarball: https://registry.npmjs.org/@floating-ui/core/-/core-0.6.2.tgz}
@@ -7506,7 +7506,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@feiyangl1020/metaid@0.0.25(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
+  '@feiyangl1020/metaid@0.0.29(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))':
     dependencies:
       '@bitcoin-js/tiny-secp256k1-asmjs': 2.2.3
       '@metaid/metaid': 1.5.19(@types/react@18.3.20)(encoding@0.1.13)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))

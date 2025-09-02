@@ -386,6 +386,19 @@ export const fetchAllRecommendBuzzs = async (params: {
   });
 };
 
+export const reportBuzzView = async (params: {
+  address: string;
+  pinIdList: string[];
+}) => {
+  return request<API.BuzzListRet>(`${BASE_MAN_URL}/social/buzz/viewed/add`, {
+    method: "POST",
+    data: JSON.stringify(params),
+    headers: {
+      "content-type": "text/plain",
+    },
+  });
+};
+
 export const searchBuzzs = async (params: {
   size: number;
   lastId?: string;
@@ -445,13 +458,25 @@ export const getDecryptContent = async (
 };
 
 export const getUserInfo = async (params: { address: string }) => {
-  if(!params.address) {
+  if (!params.address) {
     return undefined;
   }
   const ret = await request<{
     code: number;
     data: UserInfo;
   }>(`${getHostByNet(curNetwork)}/api/info/address/${params.address}`, {
+    method: "GET",
+  });
+  return ret.data ?? undefined;
+};
+export const getUserInfoByMetaid = async (params: { metaid: string }) => {
+  if (!params.metaid) {
+    return undefined;
+  }
+  const ret = await request<{
+    code: number;
+    data: UserInfo;
+  }>(`${getHostByNet(curNetwork)}/api/info/metaid/${params.metaid}`, {
     method: "GET",
   });
   return ret.data ?? undefined;

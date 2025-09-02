@@ -369,3 +369,17 @@ export async function getMVCRewards(
     },
   });
 }
+
+
+export const fetchChatGroupInfo = async (params: {
+  groupId: string;
+}) => {
+  return request<{
+    code: number;
+    data: MS.ChatGroupInfo;
+    message: string;
+  }>(`https://www.show.now/chat-api-test/group-chat/group-info`, {
+    method: "GET",
+    params,
+  });
+};

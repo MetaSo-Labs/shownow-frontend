@@ -14,6 +14,7 @@ const size = 10;
 export default () => {
     const { showRecommendFollow, setShowRecommendFollow, setShowFirstPost, chain, btcConnector, mvcConnector, feeRate, mvcFeeRate, user, isLogin } = useModel('user');
     const { data, isLoading, isFetching, refetch } = useQuery({
+        enabled: isLogin && showRecommendFollow,
         queryKey: ['getRecommendedFollow'],
         queryFn: () =>
             getRecommendedFollow({ num: 6 }),

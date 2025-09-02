@@ -68,6 +68,8 @@ import MRC20Icon from "../MRC20Icon";
 import PayContent from "./components/PayContent";
 import IDCoinBadge from "../IDCoinBadge";
 import TextContent from "./TextContent";
+import TextWithTrans from "./TextWithTrans";
+import Actions from "./Actions";
 
 // TODO: use metaid manage state
 
@@ -97,35 +99,17 @@ export default ({
     const {
         token: { colorBorderSecondary, colorBorder, colorBgBlur, colorBgContainer },
     } = theme.useToken();
-    const { locale } = useIntl();
-    const [isTranslated, setIsTranslated] = useState(false);
-    const [isTranslating, setIsTranslating] = useState(false);
-    const [showTrans, setShowTrans] = useState(false);
-    const [transResult, setTransResult] = useState<string[]>([]);
-    const [showComment, setShowComment] = useState(false);
-    const [showNewPost, setShowNewPost] = useState(false);
-    const [showUnlock, setShowUnlock] = useState(false);
-    const contentRef = useRef<HTMLDivElement>(null); // 引用内容容器
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [isOverflowing, setIsOverflowing] = useState(false); // 是否溢出
-    const [paying, setPaying] = useState(false);
-    const [unlocking, setUnlocking] = useState(false);
+   
     const {
-        btcConnector,
+       
         user,
         isLogin,
-        connect,
-        feeRate,
-        mvcFeeRate,
+        
         chain,
-        mvcConnector,
-        checkUserSetting,
+        
     } = useModel("user");
-    const { showConf, fetchServiceFee, manPubKey } = useModel("dashboard");
-    const [handleLikeLoading, setHandleLikeLoading] = useState(false);
-    const [likes, setLikes] = useState<string[]>([]);
-    const [donates, setDonates] = useState<string[]>([]);
-    const [donateCount, setDonateCount] = useState<number>(0);
+    const {  manPubKey } = useModel("dashboard");
+   
     const currentUserInfoData = useQuery({
         queryKey: ["userInfo", buzzItem!.creator],
         enabled: !isNil(buzzItem?.creator),
@@ -164,18 +148,7 @@ export default ({
         fetchBalance();
     }, [isLogin, selectedChain]);
 
-    useEffect(() => {
-        if (!buzzItem) {
-            return;
-        }
-        const _likes = buzzItem.like ?? [];
-        const _like = like ?? [];
-        setLikes([..._likes, ..._like.map((item) => item.CreateMetaid)]);
-        const _donates = buzzItem.donate ?? [];
-        const _donate = donate ?? [];
-        setDonates([..._donates, ..._donate.map((item) => item.CreateMetaid)]);
-        setDonateCount(buzzItem.donateCount ?? 0);
-    }, [buzzItem, like, donate]);
+
 
     const payBuzz = useMemo(() => {
         try {
@@ -190,97 +163,10 @@ export default ({
 
     }, [buzzItem]);
 
-    const isLiked = useMemo(() => {
-        if (!buzzItem || !user) return false;
 
-        return likes.includes(user.metaid);
-    }, [likes]);
 
-    const isDonatedUser = useMemo(() => {
-        if (!buzzItem || !user) return false;
-        return donates.includes(user.metaid);
-    }, [donates]);
-    const handleLike = async () => {
-        if (!isLogin) {
-            message.error(formatMessage("Please connect your wallet first"));
-            return;
-        }
-        const isPass = checkUserSetting();
-        if (!isPass) return;
-        const pinId = buzzItem!.id;
-        if (isLiked) {
-            message.error("You have already liked that buzz...");
-            return;
-        }
-        setHandleLikeLoading(true);
-        try {
-            if (chain === "btc") {
-                const likeEntity = await btcConnector!.use("like");
-                const likeRes = await likeEntity.create({
-                    dataArray: [
-                        {
-                            body: JSON.stringify({ isLike: "1", likeTo: pinId }),
-                            flag: FLAG,
-                            contentType: "text/plain;utf-8",
-                            path: `${showConf?.host || ""}/protocols/paylike`,
-                        },
-                    ],
-                    options: {
-                        noBroadcast: "no",
-                        feeRate: getEffectiveBTCFeerate(Number(feeRate)),
-                        service: fetchServiceFee("like_service_fee_amount", "BTC"),
-                    },
-                });
-                if (!isNil(likeRes?.revealTxIds[0])) {
-                    setLikes([...likes, user.metaid]);
-                    // await sleep(5000);
-                    // queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] });
-                    // queryClient.invalidateQueries({ queryKey: ['payLike', buzzItem!.id] });
-
-                    message.success("like buzz successfully");
-                }
-            } else {
-                const likeEntity = (await mvcConnector!.use("like")) as IMvcEntity;
-                const likeRes = await likeEntity.create({
-                    data: {
-                        body: JSON.stringify({
-                            isLike: "1",
-                            likeTo: pinId,
-                        }),
-                        path: `${showConf?.host || ""}/protocols/paylike`,
-                    },
-                    options: {
-                        network: curNetwork,
-                        signMessage: "like buzz",
-                        service: fetchServiceFee("like_service_fee_amount", "MVC"),
-                        feeRate: Number(mvcFeeRate),
-                    },
-                });
-                if (!isNil(likeRes?.txid)) {
-                    // await sleep(8000);
-                    // refetch && refetch()
-                    // queryClient.invalidateQueries({ queryKey: ['homebuzzesnew'] })
-                    // queryClient.invalidateQueries({
-                    //     queryKey: ['payLike', buzzItem!.id],
-                    // })
-                    // await sleep(5000);
-                    setLikes([...likes, user.metaid]);
-                    message.success("like buzz successfully");
-                }
-            }
-        } catch (error) {
-            console.log("error", error);
-            const errorMessage = (error as any)?.message ?? error;
-            const toastMessage = errorMessage?.includes(
-                "Cannot read properties of undefined"
-            )
-                ? "User Canceled"
-                : errorMessage;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            message.error(toastMessage);
-        }
-        setHandleLikeLoading(false);
-    };
+    
+   
     const quotePinId = useMemo(() => {
         if (isForward) return "";
         try {
@@ -314,178 +200,19 @@ export default ({
     });
 
 
-
-
-
-    useEffect(() => {
-        // 检测内容是否溢出
-        if (contentRef.current) {
-            const { scrollHeight, offsetHeight } = contentRef.current;
-            setIsOverflowing(scrollHeight > offsetHeight);
-        }
-    }, [contentRef.current]); // 当内容变化时重新检测
-
-    const handleTranslate = async () => {
-        if (!decryptContent) return;
-        setShowTrans(!showTrans);
-        if (isTranslated) {
-            setIsTranslated(false);
-            return;
-        }
-        setIsTranslating(true);
-        try {
-            const encryptContent =
-                decryptContent.status === "purchased"
-                    ? decryptContent.encryptContent
-                    : "";
-            const res = await fetchTranlateResult({
-                sourceText: `${decryptContent.publicContent}\n${encryptContent}`,
-                from: locale === "en-US" ? "zh" : "en",
-                to: locale === "en-US" ? "en" : "zh",
-            });
-
-            setTransResult(
-                res!.trans_result.map((item) => {
-                    return item.dst;
-                })
-            );
-
-            setIsTranslated(true);
-        } catch (e) {
-            message.error("Translate Failed");
-        }
-        setIsTranslating(false);
-    };
-
-    const textContent = useMemo(() => {
+    const _textContent = useMemo(() => {
         if (!decryptContent) return "";
-        if (!showTrans || isTranslating) {
-            const encryptContent =
-                decryptContent.status === "purchased"
-                    ? decryptContent.encryptContent
-                    : "";
-            return `${decryptContent.publicContent}${decryptContent.publicContent && encryptContent ? "\n" : ""}${encryptContent}`;
-        } else {
-            return transResult.join("\n");
-        }
-    }, [showTrans, transResult, decryptContent, isTranslating]);
+        const encryptContent =
+            decryptContent.status === "purchased"
+                ? decryptContent.encryptContent
+                : "";
+        return `${decryptContent.publicContent}${decryptContent.publicContent && encryptContent ? "\n" : ""}${encryptContent}`;
+    }, [decryptContent])
 
 
 
 
-    const handleDonate = async () => {
-        if (!isLogin) {
-            message.error(formatMessage("Please connect your wallet first"));
-            return;
-        }
-        const isPass = checkUserSetting();
-        if (!isPass) return;
-
-        if (!donateAmount || parseFloat(donateAmount) <= 0) {
-            message.error("Please enter a valid amount");
-            return;
-        }
-
-        setPaying(true);
-        setDonateLoading(true);
-        try {
-            if (selectedChain === "btc") {
-                const donateEntity = await btcConnector!.use("simpledonate");
-                const donateRes = await donateEntity.create({
-                    dataArray: [
-                        {
-                            body: JSON.stringify({
-                                createTime: Date.now().toString(),
-                                to: buzzItem.address,
-                                coinType: chain,
-                                amount: donateAmount,
-                                toPin: buzzItem.id,
-                                message: donateMessage,
-                            }),
-                            flag: FLAG,
-                            contentType: "text/plain;utf-8",
-                            path: `${showConf?.host || ""}/protocols/simpledonate`,
-                        },
-                    ],
-                    options: {
-                        noBroadcast: "no",
-                        feeRate: getEffectiveBTCFeerate(Number(feeRate)),
-                        outputs: [
-                            {
-                                address: buzzItem.address,
-                                satoshis: new Decimal(donateAmount).times(1e8).toString(),
-                            },
-                        ],
-                        service: fetchServiceFee("donate_service_fee_amount", "BTC"),
-                    },
-                });
-                if (donateRes.status) {
-                    throw new Error(donateRes.status)
-                }
-
-                if (!isNil(donateRes?.revealTxIds[0])) {
-                    message.success("Donate successfully");
-                    setShowGift(false);
-                    setDonateAmount("");
-                    setDonateMessage("");
-                    // setIsDonated(true);
-                    setDonateCount(prev => prev + 1);
-                    setDonates([...donates, user.metaid]);
-                }
-            } else if (selectedChain === "mvc") {
-
-                const donateEntity = (await mvcConnector!.use("simpledonate")) as IMvcEntity;
-                const donateRes = await donateEntity.create({
-                    data: {
-                        body: JSON.stringify({
-                            createTime: Date.now().toString(),
-                            to: buzzItem.address,
-                            coinType: chain,
-                            amount: donateAmount,
-                            toPin: buzzItem.id,
-                            message: donateMessage,
-                        }),
-                        flag: FLAG,
-                        contentType: "text/plain;utf-8",
-                        path: `${showConf?.host || ""}/protocols/simpledonate`,
-                    },
-                    options: {
-                        network: curNetwork,
-                        signMessage: "donate buzz",
-                        service: fetchServiceFee("donate_service_fee_amount", "MVC"),
-                        outputs: [
-                            {
-                                address: buzzItem.address,
-                                satoshis: new Decimal(donateAmount).times(1e8).toString(),
-                            },
-                        ],
-                    },
-                })
-
-                if (!isNil(donateRes?.txid)) {
-                    message.success("Donate successfully");
-                    setShowGift(false);
-                    setDonateAmount("");
-                    setDonateMessage("");
-                    // setIsDonated(true);
-                    setDonates([...donates, user.metaid]);
-                    setDonateCount(prev => prev + 1);
-                }
-            } else {
-                throw new Error("Donate not supported on this chain");
-            }
-        } catch (error: unknown) {
-            const errorMessage = (error as any)?.message ?? error;
-            const toastMessage = errorMessage?.includes(
-                'Cannot read properties of undefined'
-            )
-                ? 'User Canceled'
-                : errorMessage;
-            message.error(toastMessage);
-        }
-        setPaying(false);
-        setDonateLoading(false);
-    };
+    
 
     return (
         <Card
@@ -575,63 +302,8 @@ export default ({
                         handleClick ? handleClick() : history.push(`/buzz/${buzzItem.id}`);
                     }}
                 >
-                    {textContent.length > 0 && (
-                        <div
-                            className="text"
-                            ref={contentRef}
-                            style={{
-                                position: "relative",
-                                maxHeight: isExpanded ? "none" : 200,
-                                overflow: "hidden",
-                                transition: "max-height 0.3s ease",
-                            }}
-                        >
-                            <TextContent textContent={textContent} />
+                    <TextWithTrans text={_textContent} />
 
-                            <Button
-                                type="link"
-                                style={{ padding: 0 }}
-                                loading={isTranslating}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleTranslate();
-                                }}
-                            >
-                                {showTrans
-                                    ? formatMessage("Show original content")
-                                    : formatMessage("Translate")}
-                            </Button>
-
-                            {isOverflowing && !isExpanded && (
-                                <div
-                                    style={{
-                                        width: "100%",
-                                        paddingTop: 78,
-                                        backgroundImage: `linear-gradient(-180deg,${colorBgBlur} 0%,${colorBgContainer} 100%)`,
-                                        position: "absolute",
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                        zIndex: 10,
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <Button
-                                        variant="filled"
-                                        color="primary"
-                                        size="small"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsExpanded(true);
-                                        }}
-                                        icon={<DownOutlined />}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    )}
 
                     {decryptContent && <NFTGallery nfts={decryptContent.nfts} />}
 
@@ -697,127 +369,9 @@ export default ({
                 </div>
 
                 {showActions && (
-                    <div className="actions">
-                        <Button
-                            type="text"
-                            icon={<MessageOutlined />}
-                            onClick={async () => {
-                                if (!isLogin) {
-                                    message.error(
-                                        formatMessage("Please connect your wallet first")
-                                    );
-                                    return;
-                                }
-                                const isPass = checkUserSetting();
-                                if (!isPass) return;
-
-                                showComment ? setShowComment(false) : setShowComment(true);
-                            }}
-                        >
-                            {buzzItem.commentCount}
-                        </Button>
-
-                        <Button
-                            type="text"
-                            loading={handleLikeLoading}
-                            onClick={handleLike}
-                            icon={
-                                isLiked ? (
-                                    <HeartFilled style={{ color: "red" }} />
-                                ) : (
-                                    <HeartOutlined />
-                                )
-                            }
-                        >
-                            {likes.length}
-                        </Button>
-                        <Button
-                            type="text"
-                            icon={
-                                isDonatedUser ? (
-                                    <GiftFilled style={{ color: showConf?.brandColor }} />
-                                ) : (
-                                    <GiftOutlined />
-                                )
-                            }
-                            loading={donateLoading}
-                            onClick={async () => {
-                                if (!isLogin) {
-                                    message.error(
-                                        formatMessage("Please connect your wallet first")
-                                    );
-                                    return;
-                                }
-                                const isPass = checkUserSetting();
-                                if (!isPass) return;
-
-                                showGift ? setShowGift(false) : setShowGift(true);
-                            }}
-                        >
-                            {donateCount}
-                        </Button>
-
-                        <Button
-                            type="text"
-                            icon={<UploadOutlined />}
-                            onClick={() => {
-                                if (!isLogin) {
-                                    message.error(
-                                        formatMessage("Please connect your wallet first")
-                                    );
-                                    return;
-                                }
-                                const isPass = checkUserSetting();
-                                if (!isPass) return;
-                                showNewPost ? setShowNewPost(false) : setShowNewPost(true);
-                            }}
-                        >
-                            {buzzItem.forwardCount}
-                        </Button>
-                        
-                    </div>
+                    <Actions buzzItem={buzzItem} like={like} donate={donate} />
                 )}
             </div>
-
-            <Comment
-                tweetId={buzzItem.id}
-                onClose={() => {
-                    setShowComment(false);
-                }}
-                show={showComment}
-                refetch={refetch}
-            />
-            <NewPost
-                show={showNewPost}
-                onClose={() => {
-                    setShowNewPost(false);
-                }}
-                quotePin={buzzItem}
-            />
-            <DonateModal
-                show={showGift}
-                onClose={() => {
-                    setShowGift(false);
-                    setDonateAmount("");
-                    setDonateMessage("");
-                    setSelectedChain(chain);
-                }}
-                isLegacy={determineAddressInfo(buzzItem.address) === 'p2pkh'}
-                userInfo={{
-                    avatar: currentUserInfoData.data?.avatar,
-                    name: currentUserInfoData.data?.name,
-                    metaid: currentUserInfoData.data?.metaid,
-                }}
-                balance={balance}
-                chain={selectedChain}
-                setChain={setSelectedChain}
-                paying={paying}
-                donateAmount={donateAmount}
-                donateMessage={donateMessage}
-                setDonateAmount={setDonateAmount}
-                setDonateMessage={setDonateMessage}
-                onDonate={handleDonate}
-            />
         </Card >
     );
 };

@@ -109,4 +109,41 @@ declare namespace MS {
     reward: string;
     status: string;
   };
+  type ChatGroupInfo = {
+    communityId: string;
+    groupId: string;
+    txId: string;
+    pinId: string;
+    roomName: string;
+    roomNote: string;
+    roomType: string;
+    roomStatus: string;
+    roomJoinType: string;
+    roomAvatarUrl: string;
+    roomNinePersonHash: string;
+    roomNewestTxId: string;
+    roomNewestPinId: string;
+    roomNewestMetaId: string;
+    roomNewestUserName: string;
+    roomNewestProtocol: string;
+    roomNewestContent: string;
+    roomNewestTimestamp: number;
+    createUserMetaId: string;
+    createUserAddress: string;
+    createUserInfo: {
+      metaid: string;
+      name: string;
+      avatar: string;
+      avatarImage: string;
+      chatPublicKey: string;
+      chatPublicKeyId: string;
+    };
+    userCount: number;
+    chatSettingType: number;
+    deleteStatus: number;
+    timestamp: number;
+    chain: string;
+    blockHeight: number;
+    index: number;
+  };
 }

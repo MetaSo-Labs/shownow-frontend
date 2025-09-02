@@ -39,7 +39,7 @@ export default ({ show, onClose, tweetId }: Props) => {
         try {
             const finalBody: any = {
                 content: content,
-                contentType: 'text/plain',
+                contentType: 'application/json;utf-8',
                 commentTo: tweetId,
             };
             console.log('finalBody', finalBody);
@@ -51,7 +51,7 @@ export default ({ show, onClose, tweetId }: Props) => {
                             operation: 'create',
                             path: `${showConf?.host ?? ''}/protocols/paycomment`,
                             body: JSON.stringify(finalBody),
-                            contentType: 'text/plain;utf-8',
+                            contentType: 'application/json;utf-8',
                             flag: FLAG,
                         },
                     ],

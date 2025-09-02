@@ -29,7 +29,7 @@ export default () => {
        
         const finalBody: any = {
             content: content,
-            contentType: 'text/plain',
+            contentType: 'application/json;utf-8',
         };
         const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity;
         let createRes: any;

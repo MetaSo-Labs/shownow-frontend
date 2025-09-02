@@ -86,7 +86,7 @@ export default ({ show, onClose, callback, pinId, donateAddress }: Props) => {
                                 message: donateMessage,
                             }),
                             flag: FLAG,
-                            contentType: "text/plain;utf-8",
+                            contentType: "application/json;utf-8",
                             path: `${showConf?.host || ""}/protocols/simpledonate`,
                         },
                     ],
@@ -129,7 +129,7 @@ export default ({ show, onClose, callback, pinId, donateAddress }: Props) => {
                             message: donateMessage,
                         }),
                         flag: FLAG,
-                        contentType: "text/plain;utf-8",
+                        contentType: "application/json;utf-8",
                         path: `${showConf?.host || ""}/protocols/simpledonate`,
                     },
                     options: {

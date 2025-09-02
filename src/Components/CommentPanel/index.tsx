@@ -61,7 +61,7 @@ export const CommentItem = ({ item, level }: { item: API.CommentRes, level: numb
                         {
                             body: JSON.stringify({ isLike: "1", likeTo: pinId }),
                             flag: FLAG,
-                            contentType: "text/plain;utf-8",
+                            contentType: "application/json;utf-8",
                             path: `${showConf?.host || ""}/protocols/paylike`,
                         },
                     ],

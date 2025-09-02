@@ -107,6 +107,7 @@ export default () => {
     feeType: keyof DB.FeeDto,
     chain: "BTC" | "MVC" = "BTC"
   ) => {
+    return undefined;
     const _fee = fees.find((item) => item.chain === chain);
     if (_fee && _fee[feeType]) {
       return {

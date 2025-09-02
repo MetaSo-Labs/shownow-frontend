@@ -143,5 +143,7 @@ export default {
   recommandMore: "换一批",
   "Everything’s ready ": "一切准备就绪",
   "Say hello to the Web3 world! ": "向Web3世界问好！",
+  'Floor price': '地板价',
+  "IDCOIN": "IDCOIN"
 
 };
