@@ -638,8 +638,9 @@ export const formatSimpleBuzz = async (parseSummary: {
           parseSummary.attachments[i] =
             parseSummary.attachments[i].split("metafile://")[1];
         }
-        _publicFiles.push(parseSummary.attachments[i]);
+       
       }
+       _publicFiles.push(parseSummary.attachments[i]);
     }
   }
 

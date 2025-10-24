@@ -3,7 +3,7 @@ import { useIntl, useModel, history } from "umi"
 import Popup from "../ResponPopup"
 import UserInfo from "../UserInfo"
 import { Avatar, Button, Card, Checkbox, Col, Divider, GetProp, Input, InputNumber, Mentions, message, Radio, Result, Row, Segmented, Select, Space, Tag, Typography, Upload, UploadFile, UploadProps } from "antd";
-import { CheckCircleOutlined, CloseOutlined, ExclamationCircleOutlined, FileImageOutlined, LoadingOutlined, LockOutlined, SmileOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, CloseOutlined, ExclamationCircleOutlined, FileImageOutlined, FileTextOutlined, LoadingOutlined, LockOutlined, SmileOutlined, UnlockOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AttachmentItem, convertToFileList, image2Attach, processFile } from "@/utils/file";
 import { CreateOptions, IBtcEntity, IMvcEntity, MvcTransaction } from "@feiyangl1020/metaid";
@@ -54,6 +54,7 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
     const [chainNet, setChainNet] = useState<API.Chain>(chain)
     const { showConf, fetchServiceFee, manPubKey, admin } = useModel('dashboard')
     const [images, setImages] = useState<any[]>([]);
+    const [otherFiles, setOtherFiles] = useState<any[]>([]);
     const [video, _setVideo] = useState<any>();
     const [content, setContent] = useState(localStorage.getItem('tmp_content') || '');
     const [encryptContent, setEncryptContent] = useState('');
@@ -139,9 +140,49 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
         return false;
     };
 
+    const handleOtherFilesUpload = (file: any) => {
+        // 检查文件大小限制 (10MB)
+        if (file.size > 1024 * 1024 * 10) {
+            message.error('File size must be less than 10MB');
+            return Upload.LIST_IGNORE;
+        }
+        
+        // 获取文件扩展名
+        const fileName = file.name;
+        const extension = fileName.split('.').pop()?.toLowerCase() || '';
+        
+        // 支持的文件类型
+        const supportedTypes = [
+            // 文档类型
+            'pdf', 'doc', 'docx', 'txt', 'rtf',
+            // 压缩包类型  
+            'zip', 'rar', '7z', 'tar', 'gz',
+            // 音频类型
+            'mp3', 'aac', 'wav', 'flac', 'ogg',
+            // 其他类型
+            'json', 'xml', 'csv'
+        ];
+
+        if (!supportedTypes.includes(extension)) {
+            message.error(`Unsupported file type: ${extension}`);
+            return Upload.LIST_IGNORE;
+        }
+
+        const fileItem = {
+            file,
+            fileName,
+            extension,
+            previewUrl: URL.createObjectURL(file)
+        };
+        
+        setOtherFiles((prevFiles) => [...prevFiles, fileItem]);
+        return false;
+    };
+
     const reset = () => {
         setContent('')
         setImages([])
+        setOtherFiles([])
         setVideo(undefined)
         setEncryptContent('')
         setEncryptFiles([])
@@ -169,6 +210,11 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
         deleteDraftFile(image.uid || image.file?.uid)
     };
+    
+    const handleRemoveOtherFile = (index: number) => {
+        setOtherFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    };
+    
     const handleRemoveVideo = () => {
         setVideo(undefined);
     }
@@ -199,6 +245,7 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
                 content: content,
                 mentions: _mentions,
                 images: _images,
+                otherFiles: otherFiles,
             });
         }
 
@@ -223,6 +270,7 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
         content: string;
         mentions: Record<string, string>;
         images: AttachmentItem[];
+        otherFiles: any[];
     }) => {
         setIsAdding(true);
         const buzzEntity: IBtcEntity = await btcConnector!.use('buzz');
@@ -364,16 +412,21 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
                                 transactions: fileTransactions,
                                 feeRate: mvcFeeRate
                             },
-                        })
+                        }) as any
 
                         if (!transactions) {
                             throw new Error('upload image file failed')
                         }
 
+                        // 获取对应图片的扩展名
+                        const imageFile = buzz.images[i];
+                        const extension = imageFile.fileName ? 
+                            `.${imageFile.fileName.split('.').pop()?.toLowerCase()}` : '';
+
                         finalAttachMetafileUri.push(
                             'metafile://' +
                             transactions[transactions.length - 1].txComposer.getTxId() +
-                            'i0',
+                            'i0' + extension,
                         )
                         fileTransactions = transactions
                     }
@@ -381,6 +434,67 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
                     finalBody.attachments = [...finalBody.attachments || [], ...finalAttachMetafileUri]
                 }
 
+            }
+
+            // 处理其他文件类型（仅支持MVC链）
+            if (chainNet === 'mvc' && buzz.otherFiles && buzz.otherFiles.length > 0) {
+                const fileEntity = (await mvcConnector!.use('file')) as IMvcEntity;
+                
+                for (let i = 0; i < buzz.otherFiles.length; i++) {
+                    const otherFile = buzz.otherFiles[i];
+                    const fileData = await new Promise<string>((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const arrayBuffer = reader.result as ArrayBuffer;
+                            const uint8Array = new Uint8Array(arrayBuffer);
+                            
+                            // 分块处理大文件，避免堆栈溢出
+                            let binaryString = '';
+                            const chunkSize = 8192; // 8KB chunks
+                            for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                                const chunk = uint8Array.slice(i, i + chunkSize);
+                                binaryString += String.fromCharCode.apply(null, Array.from(chunk));
+                            }
+                            
+                            const base64String = btoa(binaryString);
+                            resolve(base64String);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsArrayBuffer(otherFile.file);
+                    });
+
+                    const fileOption: CreateOptions = {
+                        body: fileData,
+                        contentType: `${otherFile.file.type || 'application/octet-stream'};binary`,
+                        encoding: 'base64',
+                        flag: FLAG,
+                        path: `${showConf?.host || ''}/file`
+                    };
+
+                    const { transactions } = await fileEntity.create({
+                        data: fileOption,
+                        options: {
+                            network: curNetwork,
+                            signMessage: 'upload other file',
+                            serialAction: 'combo',
+                            transactions: fileTransactions,
+                            feeRate: mvcFeeRate
+                        },
+                    }) as any;
+
+                    if (!transactions) {
+                        throw new Error('upload other file failed');
+                    }
+
+                    // 添加文件扩展名到metafile URI
+                    const extension = otherFile.extension ? `.${otherFile.extension}` : '';
+                    const metafileUri = 'metafile://' +
+                        transactions[transactions.length - 1].txComposer.getTxId() +
+                        'i0' + extension;
+
+                    finalBody.attachments = [...finalBody.attachments || [], metafileUri];
+                    fileTransactions = transactions;
+                }
             }
 
 
@@ -488,7 +602,7 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
             } else {
                 const buzzEntity = await mvcConnector!.load(getBuzzSchemaWithCustomHost(showConf?.host ?? '')) as IMvcEntity;
                 let createRes: any;
-                if (admin?.assist && isEmpty(buzz.images) && !video) {
+                if (false && admin?.assist && isEmpty(buzz.images) && !video) {
                     createRes = await buzzEntity!.create({
                         data: { body: JSON.stringify({ ...finalBody }) },
                         options: {
@@ -964,6 +1078,50 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
                                 </div>
                             )
                         }
+
+                        {/* 显示其他文件 */}
+                        {chainNet === 'mvc' && otherFiles.map((file, index) => (
+                            <div
+                                key={`other-${index}`}
+                                style={{
+                                    position: 'relative',
+                                    marginRight: 8,
+                                    marginBottom: 8,
+                                    width: 100,
+                                    height: 100,
+                                    backgroundColor: '#f5f5f5',
+                                    border: '1px solid #d9d9d9',
+                                    borderRadius: 8,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                }}
+                            >
+                                <FileTextOutlined style={{ fontSize: 24, color: '#8c8c8c' }} />
+                                <Typography.Text 
+                                    style={{ 
+                                        fontSize: 10, 
+                                        textAlign: 'center', 
+                                        wordBreak: 'break-all',
+                                        marginTop: 4 
+                                    }}
+                                >
+                                    {file.fileName}
+                                </Typography.Text>
+                                <Button
+                                    onClick={() => handleRemoveOtherFile(index)}
+                                    size="small"
+                                    style={{
+                                        position: 'absolute',
+                                        top: 4,
+                                        right: 4,
+                                    }}
+                                    icon={<CloseOutlined />}
+                                />
+                            </div>
+                        ))}
                     </div>
                 </Col>
                 {
@@ -1105,6 +1263,20 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
                         showUploadList={false}
                         accept='video/mp4'  >
                         <Button disabled={chainNet === 'btc' || lock} icon={<VideoCameraOutlined />} variant='text' color='primary'></Button>
+                    </Upload>
+
+                    {/* 其他文件上传 - 只在MVC链上支持 */}
+                    <Upload beforeUpload={handleOtherFilesUpload}
+                        showUploadList={false}
+                        accept='.pdf,.doc,.docx,.txt,.rtf,.zip,.rar,.7z,.tar,.gz,.mp3,.aac,.wav,.flac,.ogg,.json,.xml,.csv'
+                    >
+                        <Button 
+                            disabled={chainNet === 'btc' || lock} 
+                            icon={<FileTextOutlined />} 
+                            variant='text' 
+                            color='primary'
+                            title="Upload other files (PDF, DOC, ZIP, MP3, etc.)"
+                        />
                     </Upload>
 
 

@@ -80,6 +80,6 @@ export default defineConfig({
   define: {
     "process.env.BUILD_ENV": process.env.BUILD_ENV,
   },
-  publicPath: "/buzz/", // 指定静态资源的公共路径
-  base: "/buzz/",
+  // publicPath: "/buzz/", // 指定静态资源的公共路径
+  // base: "/buzz/",
 });

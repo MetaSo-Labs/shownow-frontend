@@ -144,4 +144,22 @@ export default {
   "Everything’s ready ": "Everything’s ready ",
   "Say hello to the Web3 world! ": "Say hello to the Web3 world! ",
   recommandMore: "More",
+  // DocumentRenderer
+  "Document": "Document",
+  "Download": "Download",
+  "Preparing download...": "Preparing download...",
+  "Download started": "Download started",
+  "Download failed, please try again": "Download failed, please try again",
+  "Server error": "Server error",
+  // FileRenderer
+  "File": "File",
+  "Archive": "Archive",
+  // File types
+  "Image": "Image",
+  "Video": "Video",
+  "Audio": "Audio",
+  "Unknown": "Unknown",
+  // AudioRenderer
+  "Audio File": "Audio File",
+  "Your browser does not support audio playback": "Your browser does not support audio playback"
 };

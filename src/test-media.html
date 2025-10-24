@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>媒体URL测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .url-link {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+        }
+        .url-link:hover {
+            background: #e9e9e9;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>媒体URL测试</h1>
+    
+    <div class="test-section">
+        <h2>测试URL: b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0</h2>
+        
+        <h3>原始URL（带扩展名 - 用于预览）:</h3>
+        <a href="https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0.pdf" 
+           target="_blank" class="url-link">
+            https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0.pdf
+        </a>
+        
+        <h3>下载URL（无扩展名 - 用于下载）:</h3>
+        <a href="https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0" 
+           target="_blank" class="url-link">
+            https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0
+        </a>
+        
+        <h3>测试按钮:</h3>
+        <button onclick="testPreview()">测试预览（带扩展名）</button>
+        <button onclick="testDownload()">测试下载（无扩展名）</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>期望行为:</h2>
+        <ul>
+            <li><strong>预览</strong>：使用带.pdf扩展名的URL，服务器能正确识别为PDF并设置Content-Type，浏览器可以直接预览</li>
+            <li><strong>下载</strong>：使用无扩展名的URL，下载时文件名不包含扩展名，用户体验更清洁</li>
+        </ul>
+    </div>
+
+    <script>
+        function testPreview() {
+            const previewUrl = 'https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0.pdf';
+            console.log('Opening preview URL:', previewUrl);
+            window.open(previewUrl, '_blank');
+        }
+        
+        function testDownload() {
+            const downloadUrl = 'https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0';
+            console.log('Downloading from URL:', downloadUrl);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'document'; // 下载文件名不包含扩展名
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

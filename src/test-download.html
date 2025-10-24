@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>下载MIME类型测试</h1>
+    
+    <button onclick="testPdfDownload()">测试PDF下载</button>
+    <button onclick="testDocDownload()">测试DOC下载</button>
+    <button onclick="testZipDownload()">测试ZIP下载</button>
+    
+    <div id="log" class="log">点击按钮开始测试...</div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+        }
+
+        function getMimeType(extension) {
+            const ext = extension.toLowerCase();
+            
+            switch (ext) {
+                case 'pdf':
+                    return 'application/pdf';
+                case 'doc':
+                    return 'application/msword';
+                case 'docx':
+                    return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                case 'zip':
+                    return 'application/zip';
+                case 'txt':
+                    return 'text/plain';
+                default:
+                    return 'application/octet-stream';
+            }
+        }
+
+        async function downloadFile(url, fileName, extension) {
+            try {
+                log(`开始下载: ${fileName}`);
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const blob = await response.blob();
+                log(`原始blob类型: ${blob.type}`);
+                
+                // 确保blob具有正确的MIME类型
+                const mimeType = getMimeType(extension);
+                log(`设置MIME类型: ${mimeType}`);
+                
+                const typedBlob = new Blob([blob], { type: mimeType });
+                log(`新blob类型: ${typedBlob.type}`);
+                
+                const downloadUrl = window.URL.createObjectURL(typedBlob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = fileName; // 不包含扩展名
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                log(`下载完成: ${fileName}`);
+            } catch (error) {
+                log(`下载失败: ${error.message}`);
+            }
+        }
+
+        function testPdfDownload() {
+            const url = 'https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0';
+            downloadFile(url, 'test-document', 'pdf');
+        }
+
+        function testDocDownload() {
+            // 使用一个假设的DOC文件URL
+            const url = 'https://www.show.now/man/content/sample-doc-file';
+            downloadFile(url, 'test-document', 'doc');
+        }
+
+        function testZipDownload() {
+            // 使用一个假设的ZIP文件URL
+            const url = 'https://www.show.now/man/content/sample-zip-file';
+            downloadFile(url, 'test-archive', 'zip');
+        }
+    </script>
+</body>
+</html>

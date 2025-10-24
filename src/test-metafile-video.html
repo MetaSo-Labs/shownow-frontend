@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>metafile://video/ URL测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>metafile://video/ URL 格式测试</h1>
+    
+    <div class="test-section">
+        <h2>测试URL格式处理</h2>
+        <button onclick="testVideoUrl()">测试 metafile://video/ 格式</button>
+        <button onclick="testAudioUrl()">测试 metafile://audio/ 格式</button>
+        <button onclick="testNormalUrl()">测试普通 metafile:// 格式</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const BASE_MAN_URL = 'https://www.show.now/man';
+
+        // 模拟 getFileType 函数
+        function getFileType(url) {
+            // 特殊处理：检查URL路径中的类型标识
+            if (url.includes('/video/')) {
+                return 'VIDEO';
+            }
+            if (url.includes('/audio/')) {
+                return 'AUDIO';
+            }
+            if (url.includes('/image/')) {
+                return 'IMAGE';
+            }
+            
+            // 没有扩展名默认图片
+            return 'IMAGE';
+        }
+
+        // 模拟 getFileUrl 函数
+        function getFileUrl(url) {
+            if (url.startsWith('metafile://')) {
+                const fullPath = url.replace('metafile://', '');
+                
+                // 处理特殊格式：metafile://video/pinId
+                if (fullPath.startsWith('video/') || fullPath.startsWith('audio/') || fullPath.startsWith('image/')) {
+                    const pinId = fullPath.split('/')[1];
+                    return `${BASE_MAN_URL}/content/${pinId}`;
+                }
+                
+                // 处理普通格式：metafile://pinId.ext
+                return `${BASE_MAN_URL}/content/${fullPath}`;
+            }
+            return url;
+        }
+
+        // 模拟 getDownloadUrl 函数
+        function getDownloadUrl(url) {
+            if (url.startsWith('metafile://')) {
+                const fullPath = url.replace('metafile://', '');
+                
+                // 处理特殊格式
+                if (fullPath.startsWith('video/') || fullPath.startsWith('audio/') || fullPath.startsWith('image/')) {
+                    const pinId = fullPath.split('/')[1];
+                    return `${BASE_MAN_URL}/content/${pinId}`;
+                }
+                
+                // 处理普通格式，移除扩展名
+                const parts = fullPath.split('.');
+                const pinId = parts.length > 1 ? parts.slice(0, -1).join('.') : fullPath;
+                return `${BASE_MAN_URL}/content/${pinId}`;
+            }
+            return url;
+        }
+
+        function showResult(title, original, fileType, fileUrl, downloadUrl) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += `
+                <div class="result">
+                    <strong>${title}:</strong><br>
+                    原始URL: ${original}<br>
+                    文件类型: ${fileType}<br>
+                    渲染URL: ${fileUrl}<br>
+                    下载URL: ${downloadUrl}
+                </div>
+            `;
+        }
+
+        function testVideoUrl() {
+            const url = 'metafile://video/85d290cb22bac3a8d542c1b769e436080032ed76ed0771b6ea35814b86f7df7ei0';
+            const fileType = getFileType(url);
+            const fileUrl = getFileUrl(url);
+            const downloadUrl = getDownloadUrl(url);
+            showResult('视频URL测试', url, fileType, fileUrl, downloadUrl);
+        }
+
+        function testAudioUrl() {
+            const url = 'metafile://audio/sample123456789';
+            const fileType = getFileType(url);
+            const fileUrl = getFileUrl(url);
+            const downloadUrl = getDownloadUrl(url);
+            showResult('音频URL测试', url, fileType, fileUrl, downloadUrl);
+        }
+
+        function testNormalUrl() {
+            const url = 'metafile://sample123456789.mp4';
+            const fileType = getFileType(url);
+            const fileUrl = getFileUrl(url);
+            const downloadUrl = getDownloadUrl(url);
+            showResult('普通URL测试', url, fileType, fileUrl, downloadUrl);
+        }
+    </script>
+</body>
+</html>

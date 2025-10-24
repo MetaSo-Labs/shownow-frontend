@@ -54,10 +54,9 @@ import {
 } from "@/utils/utils";
 
 import UserAvatar from "../UserAvatar";
-import ImageGallery from "./ImageGallery";
-import { fetchTranlateResult } from "@/request/baidu-translate";
-import Trans from "../Trans";
+import EnhancedMediaGallery from "./EnhancedMediaGallery";
 import NFTGallery from "./NFTGallery";
+import Trans from "../Trans";
 import _mvc from "@/assets/mvc.png";
 import DonateModal from "./components/DonateModal";
 import Decimal from "decimal.js";
@@ -191,7 +190,7 @@ export default ({
     const { data: accessControl } = useQuery({
         enabled: !isEmpty(payBuzz?.id),
         queryKey: ["buzzAccessControl", payBuzz?.id],
-        queryFn: () => getControlByContentPin({ pinId: payBuzz?.id }),
+        queryFn: () => getControlByContentPin({ pinId: payBuzz!.id }),
     });
 
     const { data: decryptContent, refetch: refetchDecrypt, isLoading: decryptLoading } = useQuery({
@@ -307,10 +306,7 @@ export default ({
 
                     {decryptContent && <NFTGallery nfts={decryptContent.nfts} />}
 
-                    {decryptContent && <ImageGallery decryptContent={decryptContent} />}
-                    {
-                        decryptContent && decryptContent.video[0] && <Video pid={decryptContent?.video[0]} />
-                    }
+                    {decryptContent && <EnhancedMediaGallery decryptContent={decryptContent} />}
                     <PayContent decryptContent={decryptContent} accessControl={accessControl} refetchDecrypt={refetchDecrypt} />
 
                     {!isEmpty(quotePinId) && (

@@ -144,6 +144,24 @@ export default {
   "Everything’s ready ": "一切准备就绪",
   "Say hello to the Web3 world! ": "向Web3世界问好！",
   'Floor price': '地板价',
-  "IDCOIN": "IDCOIN"
+  "IDCOIN": "IDCOIN",
+  // DocumentRenderer
+  "Document": "文档文件",
+  "Download": "下载",
+  "Preparing download...": "正在准备下载...",
+  "Download started": "下载开始",
+  "Download failed, please try again": "下载失败，请重试",
+  "Server error": "服务器错误",
+  // FileRenderer
+  "File": "文件",
+  "Archive": "压缩包",
+  // File types
+  "Image": "图片",
+  "Video": "视频",
+  "Audio": "音频",
+  "Unknown": "未知",
+  // AudioRenderer
+  "Audio File": "音频文件",
+  "Your browser does not support audio playback": "您的浏览器不支持音频播放"
 
 };

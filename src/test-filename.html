@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件名生成测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>文件名生成逻辑测试</h1>
+    
+    <div class="test-section">
+        <h2>测试不同场景的文件名生成</h2>
+        <button onclick="testScenario1()">测试场景1: 有alt属性</button>
+        <button onclick="testScenario2()">测试场景2: 有fileName</button>
+        <button onclick="testScenario3()">测试场景3: 从URL提取pinId</button>
+        <button onclick="testScenario4()">测试场景4: 使用时间戳</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function generateFileName(alt, fileName, downloadUrl) {
+            if (alt && alt.trim()) {
+                return alt.trim();
+            }
+            if (fileName && fileName.trim()) {
+                return fileName.trim();
+            }
+            // 从URL中提取pinId作为文件名
+            const pinId = downloadUrl.split('/').pop() || '';
+            if (pinId) {
+                return pinId;
+            }
+            // 最后使用时间戳作为文件名
+            return `file_${Date.now()}`;
+        }
+
+        function showResult(scenario, result) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += `<div class="result"><strong>${scenario}:</strong> ${result}</div>`;
+        }
+
+        function testScenario1() {
+            const alt = "我的重要文档";
+            const fileName = "";
+            const downloadUrl = "https://example.com/content/abc123";
+            const result = generateFileName(alt, fileName, downloadUrl);
+            showResult("场景1 (有alt)", result);
+        }
+
+        function testScenario2() {
+            const alt = "";
+            const fileName = "合同文档";
+            const downloadUrl = "https://example.com/content/def456";
+            const result = generateFileName(alt, fileName, downloadUrl);
+            showResult("场景2 (有fileName)", result);
+        }
+
+        function testScenario3() {
+            const alt = "";
+            const fileName = "";
+            const downloadUrl = "https://www.show.now/man/content/b219e5271e012fb8f711fa029fb76be6ea19bc674e95d2200555806d7f67a1dei0";
+            const result = generateFileName(alt, fileName, downloadUrl);
+            showResult("场景3 (从URL提取pinId)", result);
+        }
+
+        function testScenario4() {
+            const alt = "";
+            const fileName = "";
+            const downloadUrl = "";
+            const result = generateFileName(alt, fileName, downloadUrl);
+            showResult("场景4 (使用时间戳)", result);
+        }
+    </script>
+</body>
+</html>
