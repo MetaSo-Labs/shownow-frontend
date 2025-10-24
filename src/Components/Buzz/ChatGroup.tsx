@@ -4,6 +4,7 @@ import { Skeleton, Space, theme, Typography } from "antd";
 import { isEmpty } from "lodash";
 import { useMemo } from "react";
 import _chatAvatar from '@/assets/chatAvatar.png'
+import MRC20Icon from "../MRC20Icon";
 type Props = {
     groupId: string;
 }
@@ -24,7 +25,7 @@ export default ({ groupId }: Props) => {
 
     return <>{
         isLoading ? <Skeleton active /> : null
-    } {groupInfo && <Typography.Paragraph onClick={()=>{
+    } {groupInfo && <Typography.Paragraph onClick={() => {
         window.open(`https://chat.show.now/talk/channels/public/${groupId}`, '_blank');
     }}>
         <Typography.Text type='secondary'>From the public group chat</Typography.Text>
@@ -38,10 +39,12 @@ export default ({ groupId }: Props) => {
                 borderRadius: 12,
                 padding: 16,
                 gap: 20,
-                marginTop:16
+                marginTop: 16,
+                flexWrap: 'wrap'
             }}
         >
-            <img src={_chatAvatar} alt="" style={{ height: 60 }} />
+            
+            <MRC20Icon size={60} tick={groupInfo.roomName} metadata={JSON.stringify({ icon: groupInfo.roomIcon })} />
             <div style={{
                 display: "flex",
                 flexDirection: "column",
@@ -55,9 +58,9 @@ export default ({ groupId }: Props) => {
                     fontSize: 16,
                     fontWeight: 600
                 }}> {groupInfo.roomName}</div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 30 }}>
-                    <Space><Typography.Text type='secondary'>Creator:</Typography.Text><Typography.Text >{groupInfo.createUserInfo.name}</Typography.Text></Space>
-                    <Space><Typography.Text type='secondary'>Member</Typography.Text><Typography.Text >{groupInfo.userCount}</Typography.Text></Space>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, flexWrap: 'wrap' }}>
+                    <Space><Typography.Text type='secondary' style={{ whiteSpace: 'nowrap' }}>Creator:</Typography.Text><Typography.Text style={{ whiteSpace: 'nowrap' }}>{groupInfo.createUserInfo.name}</Typography.Text></Space>
+                    <Space><Typography.Text type='secondary' style={{ whiteSpace: 'nowrap' }}>Member</Typography.Text><Typography.Text style={{ whiteSpace: 'nowrap' }}>{groupInfo.userCount}</Typography.Text></Space>
                 </div>
 
             </div>

@@ -115,6 +115,7 @@ declare namespace MS {
     txId: string;
     pinId: string;
     roomName: string;
+    roomIcon: string;
     roomNote: string;
     roomType: string;
     roomStatus: string;

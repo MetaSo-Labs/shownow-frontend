@@ -16,6 +16,7 @@ import { curNetwork } from "@/config";
 import dayjs from "dayjs";
 import Actions from "./Actions";
 import ChatGroup from "./ChatGroup";
+import ImageGallery from "./ImageGallery";
 const { Text } = Typography;
 
 type Props = {
@@ -38,9 +39,10 @@ type ShareChatMessageData = {
     comment: string
     message: {
         content: string
-        contentType: string
+        contentType: 'jpeg' | 'png' | 'text/plain'
         metanetId: string
-        protocol: string
+        chain: 'btc' | 'mvc'
+        protocol: '/protocols/simplefilegroupchat' | "/protocols/simplegroupchat"
         timestamp: number
         txId: string
         pinId: string
@@ -122,7 +124,6 @@ export default ({ buzzItem, showActions = true, padding = 20, reLoading = false,
                         }}
                     >
                         <Text style={{ fontSize: 14, lineHeight: 1 }}>
-                            {" "}
                             {currentUserInfoData.data?.name || "Unnamed"}
                         </Text>
                         <div style={{ display: "flex", gap: 8, alignItems: 'center' }}>
@@ -230,7 +231,22 @@ export default ({ buzzItem, showActions = true, padding = 20, reLoading = false,
                     }
 
                 >
-                    <TextWithTrans text={chatMessage.message.content} />
+                    {
+                        chatMessage.message.contentType === 'text/plain' && <TextWithTrans text={chatMessage.message.content} />
+                    }
+                    {
+                        chatMessage.message.protocol === '/protocols/simplefilegroupchat' && <ImageGallery decryptContent={
+                            {
+                                publicFiles: [chatMessage.message.content],
+                                publicContent: '',
+                                encryptContent: '',
+                                encryptFiles: [],
+                                buzzType: "normal",
+                                status: 'purchased'
+                            }
+                        } />
+                    }
+
                     <ChatGroup groupId={chatMessage.groupId} />
                     <Space>
                         <Button
@@ -242,9 +258,8 @@ export default ({ buzzItem, showActions = true, padding = 20, reLoading = false,
                             }}
                             onClick={(e) => {
                                 e.stopPropagation();
-
                                 const link =
-                                    chatMessage.message.chainName === "btc"
+                                    chatMessage.message.chain === "btc"
                                         ? `${curNetwork === "testnet"
                                             ? "https://mempool.space/testnet/tx/"
                                             : "https://mempool.space/tx/"
@@ -259,9 +274,9 @@ export default ({ buzzItem, showActions = true, padding = 20, reLoading = false,
                         <Tag
 
                             bordered={false}
-                            color={chatMessage.message.chainName === "btc" ? "orange" : "blue"}
+                            color={chatMessage.message.chain === "btc" ? "orange" : "blue"}
                         >
-                            {chatMessage.message.chainName === 'btc' ? 'BTC' : 'MVC'}
+                            {chatMessage.message.chain === 'btc' ? 'BTC' : 'MVC'}
                         </Tag>
                         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                             {dayjs.unix(chatMessage.message.timestamp).format("YYYY-MM-DD HH:mm:ss")}

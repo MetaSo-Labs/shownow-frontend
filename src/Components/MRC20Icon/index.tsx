@@ -29,5 +29,5 @@ export default ({ size = 40, tick, metadata = '' }: Props) => {
         }
         return ''
     }, [metadata, err])
-    return <Avatar src={src ? <img src={src} onError={() => { setErr(true) }}></img> : null} style={{ background: showConf?.brandColor, color: '#fff', fontWeight: 'bold', fontSize: size * 16 / 40, minWidth: size }} size={size}>{tick && tick[0].toUpperCase()}</Avatar>
+    return <Avatar src={src ? <img src={src} onError={() => { setErr(true) }}></img> : null} style={{ background: showConf?.brandColor, color: '#fff', fontWeight: 'bold', fontSize: size * 16 / 40, minWidth: size }} size={size}>{tick && tick.slice(0, 2).toUpperCase()}</Avatar>
 }

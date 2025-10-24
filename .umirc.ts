@@ -30,13 +30,13 @@ export default defineConfig({
         { path: "follow/:address", component: "@/pages/followInfo" },
         { path: "profile", component: "@/pages/profile" },
         { path: "profile/:address", component: "@/pages/profile" },
-         { path: "user/:tick", component: "@/pages/profile" },
+        { path: "user/:tick", component: "@/pages/profile" },
         { path: "tweet/:id", component: "@/pages/tweet" },
         { path: "buzz/:id", component: "@/pages/tweet" },
         { path: "setting", component: "@/pages/setting" },
         { path: "about", component: "@/pages/about" },
         { path: "rank", component: "@/pages/rank" },
-        {path: "notification", component: "@/pages/notification" },
+        { path: "notification", component: "@/pages/notification" },
       ],
     },
     {
@@ -75,11 +75,11 @@ export default defineConfig({
   // process.env.BUILD_ENV === "docker" ? "../server-shownow/public" : "dist",
   esbuildMinifyIIFE: true,
   jsMinifier: "none",
-  favicons: [
-    "/ico/favicon.ico",
-    "/favicon.ico"],
+  favicons: ["/ico/favicon.ico", "/favicon.ico"],
   title: "MetaSo",
   define: {
     "process.env.BUILD_ENV": process.env.BUILD_ENV,
   },
+  publicPath: "/buzz/", // 指定静态资源的公共路径
+  base: "/buzz/",
 });
