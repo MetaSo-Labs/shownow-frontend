@@ -16,7 +16,7 @@ import { curNetwork } from "@/config";
 import dayjs from "dayjs";
 import Actions from "./Actions";
 import ChatGroup from "./ChatGroup";
-import ImageGallery from "./ImageGallery";
+import EnhancedMediaGallery from "./EnhancedMediaGallery";
 const { Text } = Typography;
 
 type Props = {
@@ -235,7 +235,7 @@ export default ({ buzzItem, showActions = true, padding = 20, reLoading = false,
                         chatMessage.message.contentType === 'text/plain' && <TextWithTrans text={chatMessage.message.content} />
                     }
                     {
-                        chatMessage.message.protocol === '/protocols/simplefilegroupchat' && <ImageGallery decryptContent={
+                        chatMessage.message.protocol === '/protocols/simplefilegroupchat' && <EnhancedMediaGallery decryptContent={
                             {
                                 publicFiles: [chatMessage.message.content],
                                 publicContent: '',

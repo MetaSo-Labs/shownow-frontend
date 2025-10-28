@@ -7,7 +7,6 @@ import PendingUserAvatar from "../UserInfo/PendingUserAvatar";
 import Trans from "../Trans";
 import { useEffect } from "react";
 import { FormatBuzz, formatSimpleBuzz } from "@/utils/buzz";
-import ImageGallery from "./ImageGallery";
 import { SimpleBuzzContent } from "./SimpleBuzz";
 import { history } from "umi";
 import BuzzOriginLink from "./components/BuzzOriginLink";

@@ -53,15 +53,13 @@ import {
 } from "@/utils/utils";
 
 import UserAvatar from "../UserAvatar";
-import ImageGallery from "./ImageGallery";
+import EnhancedMediaGallery from "./EnhancedMediaGallery";
 import { fetchTranlateResult } from "@/request/baidu-translate";
 import Trans from "../Trans";
-import NFTGallery from "./NFTGallery";
 import _mvc from "@/assets/mvc.png";
 import DonateModal from "./components/DonateModal";
 import Decimal from "decimal.js";
 import Unlock from "../Unlock";
-import Video from "./Video";
 import BuzzOrigin from "./components/BuzzOrigin";
 import BlockedBuzz from "./BlockedBuzz";
 import MRC20Icon from "../MRC20Icon";
@@ -180,13 +178,7 @@ export default ({
         queryFn: () => decodePayBuzz(buzzItem, manPubKey!, isLogin),
     });
 
-    useEffect(() => {
-        // 检测内容是否溢出
-        if (contentRef.current) {
-            const { scrollHeight, offsetHeight } = contentRef.current;
-            setIsOverflowing(scrollHeight > offsetHeight);
-        }
-    }, [contentRef.current]); // 当内容变化时重新检测
+
 
     const handleTranslate = async () => {
         if (!decryptContent) return;
@@ -444,12 +436,8 @@ export default ({
                 >
                     <TextWithTrans text={_textContent} />
 
-                    {decryptContent && <NFTGallery nfts={decryptContent.nfts} />}
-
-                    {decryptContent && <ImageGallery decryptContent={decryptContent} />}
-                    {
-                        decryptContent && decryptContent.video && decryptContent.video[0] && <Video pid={decryptContent.video[0]} />
-                    }
+                    {decryptContent && <EnhancedMediaGallery decryptContent={decryptContent} />}
+                    
                     <PayContent decryptContent={decryptContent} accessControl={accessControl} refetchDecrypt={refetchDecrypt} />
 
                     {

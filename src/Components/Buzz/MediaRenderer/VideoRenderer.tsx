@@ -4,6 +4,7 @@ import { useModel } from 'umi';
 import Plyr from 'plyr-react';
 import 'plyr-react/plyr.css';
 import { getPinId } from './utils';
+import './video.less';
 
 interface VideoRendererProps {
     url: string;

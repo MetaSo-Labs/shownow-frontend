@@ -55,13 +55,11 @@ import {
 
 import UserAvatar from "../UserAvatar";
 import EnhancedMediaGallery from "./EnhancedMediaGallery";
-import NFTGallery from "./NFTGallery";
 import Trans from "../Trans";
 import _mvc from "@/assets/mvc.png";
 import DonateModal from "./components/DonateModal";
 import Decimal from "decimal.js";
 import Unlock from "../Unlock";
-import Video from "./Video";
 import BuzzOrigin from "./components/BuzzOrigin";
 import MRC20Icon from "../MRC20Icon";
 import PayContent from "./components/PayContent";
@@ -302,9 +300,6 @@ export default ({
                     }}
                 >
                     <TextWithTrans text={_textContent} />
-
-
-                    {decryptContent && <NFTGallery nfts={decryptContent.nfts} />}
 
                     {decryptContent && <EnhancedMediaGallery decryptContent={decryptContent} />}
                     <PayContent decryptContent={decryptContent} accessControl={accessControl} refetchDecrypt={refetchDecrypt} />

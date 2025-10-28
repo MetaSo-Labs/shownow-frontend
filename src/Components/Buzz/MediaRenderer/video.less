@@ -1,0 +1,14 @@
+.video {
+  --plyr-color-main: #f18f35;
+  .plyr {
+    height: 100% !important;
+    // width: 100% !important;
+  }
+
+  /* 设置视频元素自适应宽度，高度固定 */
+  .plyr__video-wrapper {
+    height: 100% !important;
+    // width: 100% !important;
+    object-fit: cover; /* 保持视频宽度自适应，高度固定，可能裁切视频 */
+  }
+}

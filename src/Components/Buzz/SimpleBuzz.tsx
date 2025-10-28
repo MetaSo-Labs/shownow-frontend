@@ -5,7 +5,7 @@ import { fetchBuzzContent, fetchBuzzDetail } from "@/request/api";
 import { Alert, Button, Card, Skeleton, Spin, theme, Typography } from "antd";
 import Trans from "../Trans";
 import { FormatBuzz, formatSimpleBuzz, SimpleBuzz } from "@/utils/buzz";
-import ImageGallery from "./ImageGallery";
+import EnhancedMediaGallery from "./EnhancedMediaGallery";
 import PendingUserAvatar from "../UserInfo/PendingUserAvatar";
 import { history } from "umi";
 import BuzzOriginLink from "./components/BuzzOriginLink";
@@ -72,7 +72,7 @@ export const SimpleBuzzContent = ({ buzzId, host = '' }: Props) => {
                 <BuzzOriginLink host={host} buzzId={buzzId}>
                     <Typography.Paragraph style={{ marginBottom: 0, fontSize: 12 }}><Typography.Text style={{ lineHeight: '34px' }} >{buzzDetail?.content?.publicContent}</Typography.Text></Typography.Paragraph>
                     {
-                        buzzDetail?.content?.publicFiles && buzzDetail?.content?.publicFiles.length > 0 && <ImageGallery decryptContent={buzzDetail.content} />
+                        buzzDetail?.content && <EnhancedMediaGallery decryptContent={buzzDetail.content} />
                     }
 
                 </BuzzOriginLink>

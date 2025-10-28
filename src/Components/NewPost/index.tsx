@@ -142,8 +142,8 @@ export default ({ show, onClose, quotePin, quoteComment }: Props) => {
 
     const handleOtherFilesUpload = (file: any) => {
         // 检查文件大小限制 (10MB)
-        if (file.size > 1024 * 1024 * 10) {
-            message.error('File size must be less than 10MB');
+        if (file.size > 1024 * 1024 * 5) {
+            message.error('File size must be less than 5MB');
             return Upload.LIST_IGNORE;
         }
         
