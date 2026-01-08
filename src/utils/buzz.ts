@@ -244,6 +244,7 @@ export const postVideo = async (
   const chunkSize = 1024 * 1024 * 0.2;
   const { chunks, chunkNumber, sha256, fileSize, dataType, name } =
     await processFile(file, chunkSize);
+    debugger
   let chunkPids: string[] = [];
   let chunkList: any[] = [];
   for (let i = 0; i < chunks.length; i++) {

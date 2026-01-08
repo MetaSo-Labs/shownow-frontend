@@ -235,6 +235,9 @@ export default ({ buzzItem, showActions = true, padding = 20, reLoading = false,
                         chatMessage.message.contentType === 'text/plain' && <TextWithTrans text={chatMessage.message.content} />
                     }
                     {
+                        chatMessage.message.contentType === 'text/markdown' && <TextWithTrans text={chatMessage.message.content} />
+                    }
+                    {
                         chatMessage.message.protocol === '/protocols/simplefilegroupchat' && <EnhancedMediaGallery decryptContent={
                             {
                                 publicFiles: [chatMessage.message.content],

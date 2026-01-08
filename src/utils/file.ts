@@ -248,10 +248,26 @@ export const convertToFileList = (images: any) => {
 
 // Calculate the SHA-256 hash of a chunk
 export function calculateChunkHash(chunk: ArrayBuffer): string {
-  // Convert ArrayBuffer to CryptoJS WordArray
-  const wordArray = CryptoJS.lib.WordArray.create(new Uint8Array(chunk));
+  // Convert ArrayBuffer to Uint8Array
+  const uint8Array = new Uint8Array(chunk);
+  
+  // Create an array of 32-bit words from the bytes
+  const words: number[] = [];
+  for (let i = 0; i < uint8Array.length; i += 4) {
+    words.push(
+      (uint8Array[i] << 24) |
+      (uint8Array[i + 1] << 16) |
+      (uint8Array[i + 2] << 8) |
+      (uint8Array[i + 3] || 0)
+    );
+  }
+  
+  // Create WordArray with proper sigBytes
+  const wordArray = CryptoJS.lib.WordArray.create(words, uint8Array.length);
+  
   // Compute the SHA-256 hash
   const hash = CryptoJS.SHA256(wordArray);
+  
   // Return the hash as a hexadecimal string
   return hash.toString(CryptoJS.enc.Hex);
 }
@@ -310,7 +326,7 @@ export async function processFile(
     const chunkHash = calculateChunkHash(chunkBuffer);
     metafile.chunks.push({
       chunk: chunkBase64Str,
-      hash: chunkHash,
+      hash: chunkHash, 
     });
   }
   return metafile;

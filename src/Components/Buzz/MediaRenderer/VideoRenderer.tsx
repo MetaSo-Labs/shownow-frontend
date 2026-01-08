@@ -3,8 +3,9 @@ import { Spin } from 'antd';
 import { useModel } from 'umi';
 import Plyr from 'plyr-react';
 import 'plyr-react/plyr.css';
-import { getPinId } from './utils';
+import { getDownloadUrl, getPinId } from './utils';
 import './video.less';
+import { BASE_MAN_URL, METAFS_API } from '@/config';
 
 interface VideoRendererProps {
     url: string;
@@ -31,6 +32,7 @@ type Metafile = {
 };
 
 async function fetchChunksAndCombine(chunkUrls: string[], dataType: string) {
+debugger;
     const responses = await Promise.all(chunkUrls.map(url => fetch(url)));
     const arrays = await Promise.all(responses.map(response => response.arrayBuffer()));
     const combined = new Uint8Array(arrays.reduce((acc, curr) => acc.concat(Array.from(new Uint8Array(curr)) as any), []));
@@ -59,7 +61,7 @@ const VideoRenderer: React.FC<VideoRendererProps> = ({
     // 检查是否为分片视频
     const checkIfChunkedVideo = useCallback(async () => {
         try {
-            const response = await fetch(url);
+            const response = await fetch(getDownloadUrl(url).replace(METAFS_API, BASE_MAN_URL));
             const contentType = response.headers.get('content-type') || '';
             console.log('Fetched content type:', contentType);
             // 如果是 JSON 响应，可能是分片视频的元数据
@@ -73,7 +75,7 @@ const VideoRenderer: React.FC<VideoRendererProps> = ({
 
             // 如果是普通视频文件，直接使用 URL
             if (contentType.includes('video/')) {
-                setVideoSrc(url);
+                setVideoSrc(getDownloadUrl(url));
                 return null;
             }
 
@@ -94,7 +96,7 @@ const VideoRenderer: React.FC<VideoRendererProps> = ({
             const metafile = await checkIfChunkedVideo();
             if (metafile) {
                 const chunkUrls = metafile.chunkList.map(chunk =>
-                    url.replace(pinId, chunk.pinId)
+                    url.replace(pinId, chunk.pinId).replace(METAFS_API, BASE_MAN_URL)
                 );
                 const processedUrl = await fetchChunksAndCombine(chunkUrls, metafile.dataType);
                 setVideoSrc(processedUrl);

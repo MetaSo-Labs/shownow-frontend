@@ -26,7 +26,7 @@ export default ({ groupId }: Props) => {
     return <>{
         isLoading ? <Skeleton active /> : null
     } {groupInfo && <Typography.Paragraph onClick={() => {
-        window.open(`https://chat.show.now/talk/channels/public/${groupId}`, '_blank');
+        window.open(`https://www.idchat.io/chat/talk/channels/public/${groupId}`, '_blank');
     }}>
         <Typography.Text type='secondary'>From the public group chat</Typography.Text>
         <Typography.Text> "{groupInfo.roomName}"</Typography.Text>

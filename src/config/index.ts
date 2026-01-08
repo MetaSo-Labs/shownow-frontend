@@ -4,6 +4,7 @@ import defaultAvatar from "@/assets/defaultAvatar.svg";
 const TESTNET_CONTENT_HOST = "https://man-test.metaid.io";
 const MAINNET_CONTENT_HOST = "https://man.metaid.io";
 export const MAINNET_MAN_HOST_V1 = "https://v1man.metaid.io";
+export const METAFS_API = "https://file.metaid.io/metafile-indexer/api/v1/files";
 
 export const getHostByNet = (network: API.Network) => {
   if (network === "testnet") return TESTNET_CONTENT_HOST;

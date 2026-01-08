@@ -479,7 +479,7 @@ export const getUserInfoByMetaid = async (params: { metaid: string }) => {
   }>(`${getHostByNet(curNetwork)}/api/info/metaid/${params.metaid}`, {
     method: "GET",
   });
-  return ret.data ?? undefined;
+  return ret.data ?? ret ?? undefined;
 };
 
 export const getMRC20Info = async (params: { id?: string; tick?: string }) => {

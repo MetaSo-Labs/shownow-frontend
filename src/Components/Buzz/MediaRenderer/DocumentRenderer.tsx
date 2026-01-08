@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Typography, message } from 'antd';
 import { FilePdfOutlined, FileTextOutlined, DownloadOutlined } from '@ant-design/icons';
-import { getFileExtension, getFileName, getDownloadUrl, getMimeType } from './utils';
+import { getFileExtension, getFileName, getDownloadUrl, getMimeType, getPinId, fetchFileInfo } from './utils';
 import { formatMessage } from '@/utils/utils';
 
 interface DocumentRendererProps {
@@ -25,7 +25,33 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
 }) => {
   const extension = getFileExtension(originalUrl).toLowerCase();
   const extensionUpper = extension.toUpperCase();
-  const fileName = getFileName(originalUrl);
+  const defaultFileName = getFileName(originalUrl);
+  const [realFileName, setRealFileName] = useState<string>('');
+  const [isLoadingFileName, setIsLoadingFileName] = useState<boolean>(true);
+
+  // 获取真实文件名
+  useEffect(() => {
+    const loadFileName = async () => {
+      try {
+        const pinId = getPinId(originalUrl);
+        if (pinId) {
+          const fileInfo = await fetchFileInfo(pinId);
+          if (fileInfo && fileInfo.file_name) {
+            setRealFileName(fileInfo.file_name);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch file name:', error);
+      } finally {
+        setIsLoadingFileName(false);
+      }
+    };
+    loadFileName();
+  }, [originalUrl]);
+
+  // 优先使用真实文件名，其次使用 alt，最后使用从 URL 提取的文件名
+  const displayName = realFileName || alt || defaultFileName;
+  const fileName = realFileName || defaultFileName;
 
   const getIcon = () => {
     if (extension === 'pdf') {
@@ -40,6 +66,10 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
     
     // 生成一个有意义的文件名
     const generateFileName = () => {
+      // 优先使用从 API 获取的真实文件名
+      if (realFileName && realFileName.trim()) {
+        return realFileName.trim();
+      }
       if (alt && alt.trim()) {
         return alt.trim();
       }
@@ -135,7 +165,7 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
         
         <div style={{ flex: 1, minWidth: 0 }}>
           <Text strong style={{ display: 'block', marginBottom: 4 }}>
-            {alt || fileName || formatMessage('Document')}
+            {displayName || formatMessage('Document')}
           </Text>
           <Text type="secondary">
             {extensionUpper} {formatMessage('Document')}

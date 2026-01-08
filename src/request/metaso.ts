@@ -378,7 +378,7 @@ export const fetchChatGroupInfo = async (params: {
     code: number;
     data: MS.ChatGroupInfo;
     message: string;
-  }>(`https://www.show.now/chat-api-test/group-chat/group-info`, {
+  }>(`https://www.show.now/chat-api/group-chat/group-info`, {
     method: "GET",
     params,
   });
